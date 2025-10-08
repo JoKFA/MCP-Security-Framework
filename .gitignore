@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Captures & Reports (sensitive data)
+captures/*.ndjson
+reports/*.json
+reports/*.html
+
+# Keep directory structure
+!captures/.gitkeep
+!reports/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+*.env
+.env.*
+credentials.json
+
+# Test Targets (external repos - keep locally but don't commit)
+targets/
+
+# Local Claude settings and documentation
+.claude/
+CLAUDE.md
+
+# Test coverage
+.pytest_cache/
+.coverage
+htmlcov/

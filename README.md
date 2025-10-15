@@ -235,28 +235,56 @@ python examples/test_official_time_server.py   # stdio transport test
 - ✅ NDJSON capture system
 - ✅ Integration tests
 - ✅ Manual exploitation framework
-- ✅ Professional reporting
 
 **Tested against:**
 - DV-MCP Challenge 1 (Prompt Injection)
 - DV-MCP Challenge 2 (Tool Poisoning)
 - Official MCP reference servers (@modelcontextprotocol/server-everything)
 
-### 📋 Phase 2: Test Runner (Next)
+### ✅ Phase 2: Security Assessment Framework (COMPLETE - v0.2)
 
-- Automated test module loading
-- Vulnerability scanner orchestration
-- Batch testing capabilities
+**Core Framework:**
+- ✅ Pydantic data models (DetectionStatus, Signal, DetectionResult, ServerProfile, AssessmentResult)
+- ✅ Signal-based detection architecture (8 signal types)
+- ✅ Detector base class with auto-discovery registry
+- ✅ TestRunner orchestration with timeout enforcement
+- ✅ Policy engine (scope.yaml, rate limiter, redactor, audit logger)
+- ✅ SafeAdapter wrapper with complete safety guardrails
+- ✅ Standards mapping (CWE, OWASP LLM/API, ASVS, CVSS v3.1)
 
-### 📋 Phase 3: Test Modules (Planned)
+**First Detector:**
+- ✅ Prompt Injection via Resource Parameters (MCP-2024-PI-001)
+- ✅ Successfully detected DV-MCP Challenge 1 with 95% confidence
+- ✅ Evidence redaction and audit trail with integrity verification
 
-10 security test modules covering:
-- Credential exposure
-- Prompt injection
-- Tool poisoning
-- Excessive permissions
-- Code execution
-- And more...
+**Test Coverage:**
+- ✅ 80 unit tests (100% passing)
+- ✅ 1 integration test against live vulnerable server
+- ✅ Manual test script for detector debugging
+
+**Branch:** `v0.2/First-PromptInjection-Improvement` (ready for merge)
+
+### 🔄 Phase 2C: Reporting & CLI (IN PROGRESS)
+
+**Next Tasks:**
+- [ ] JSON/SARIF report generators (T7)
+- [ ] HTML report generator (T8)
+- [ ] CLI interface with `mcpsf assess` command (T9)
+- [ ] Additional integration tests (T10)
+
+### 📋 Phase 3: Additional Detectors (PLANNED)
+
+10 security test modules covering DV-MCP challenges:
+1. ✅ Credential exposure (Challenge 1) - DONE
+2. [ ] Tool poisoning (Challenge 2)
+3. [ ] Excessive permissions (Challenge 3)
+4. [ ] Rug pull attacks (Challenge 4)
+5. [ ] Tool shadowing (Challenge 5)
+6. [ ] Indirect prompt injection (Challenge 6)
+7. [ ] Token theft (Challenge 7)
+8. [ ] Code execution (Challenge 8)
+9. [ ] Remote access (Challenge 9)
+10. [ ] Multi-vector attacks (Challenge 10)
 
 ---
 
@@ -287,6 +315,25 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Project Status
 
-**Current Version:** v0.1.0 (Phase 1 Complete)
+**Current Version:** v0.2.0 (Phase 2 Complete - Core Framework + First Detector)
+
+**Latest Branch:** `v0.2/First-PromptInjection-Improvement` (ready for PR)
 
 **Repository:** https://github.com/JoKFA/MCP-Security-Framework
+
+**Weekly Report:** See `WEEKLY_REPORT_2025-10-15.md` for detailed progress
+
+---
+
+## Quick Test (v0.2 Framework)
+
+```bash
+# Run the first detector against DV-MCP Challenge 1
+python test_detector_manual.py
+
+# Run full test suite
+pytest tests/unit -v
+
+# Run integration test
+pytest tests/integration/test_dv_mcp_challenge1.py -v -s
+```

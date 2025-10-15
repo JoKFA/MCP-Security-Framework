@@ -1,0 +1,95 @@
+# MCP Security Framework - Scope Configuration
+#
+# This file defines the assessment scope, safety limits, and policy settings.
+
+# Target server configuration
+# DV-MCP Challenge 1 (make sure server is running)
+target: "http://localhost:9001/sse"  # SSE endpoint
+# OR for stdio:
+# target: "stdio://npx/-s/@modelcontextprotocol/server-time"
+
+# Transport type (auto-detected from target if omitted)
+# transport: "sse"  # or "stdio", "ws"
+
+# Allowed resource/tool prefixes (whitelist)
+# Only resources/tools matching these prefixes will be tested
+allowed_prefixes:
+  - "/resources"
+  - "/tools"
+  - "internal://"  # Allow internal resources (for DV-MCP testing)
+
+# Blocked paths (blacklist - takes precedence over allowed_prefixes)
+# These paths will NEVER be accessed, even if they match allowed_prefixes
+blocked_paths:
+  - "/admin"
+  - "/internal/credentials"
+  - "/system"
+
+# Rate limiting configuration
+rate_limit:
+  qps: 2                      # Queries per second (max sustained rate)
+  burst: 5                    # Burst capacity (tokens in bucket)
+  backoff_ms: [200, 400, 800, 1600]  # Exponential backoff on rate limit (milliseconds)
+
+# Policy settings
+policy:
+  # Dry run mode - preview actions without executing (default: false)
+  dry_run: false
+
+  # Redact evidence in reports (hash large payloads, mask secrets)
+  redact_evidence: true
+
+  # Maximum payload size in KB (requests/responses larger than this are truncated/hashed)
+  max_payload_kb: 128
+
+  # Fail assessment on HIGH severity findings (for CI/CD gates)
+  fail_on_high: false
+
+  # Maximum total requests per assessment (safety limit)
+  max_total_requests: 1000
+
+  # Request timeout in seconds
+  request_timeout_s: 30
+
+# Authentication (if required by target)
+# Options: none, api_key, oauth, mtls
+auth:
+  type: "none"
+  # For api_key:
+  # api_key: "${MCP_API_KEY}"  # Reference to environment variable
+  # header_name: "X-API-Key"
+
+  # For oauth:
+  # token_url: "https://auth.example.com/token"
+  # client_id: "${OAUTH_CLIENT_ID}"
+  # client_secret: "${OAUTH_CLIENT_SECRET}"
+
+# Detector selection (optional - default: all compatible detectors)
+# detectors:
+#   include: ["MCP-2024-PI-001", "MCP-2024-AUTH-001"]  # Only run these
+#   exclude: ["MCP-2024-DOS-001"]  # Skip these
+
+# Reporting options
+reporting:
+  # Output directory for reports
+  output_dir: "./reports"
+
+  # Formats to generate
+  formats:
+    - "json"
+    - "sarif"
+    - "html"
+    # - "pdf"
+
+  # Evidence storage
+  store_evidence: true
+  evidence_retention_days: 30
+
+# Metadata (optional)
+metadata:
+  project: "MCP Server Security Assessment"
+  environment: "development"
+  assessed_by: "Security Team"
+  tags:
+    - "mcp"
+    - "security-assessment"

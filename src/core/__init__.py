@@ -1,3 +1,10 @@
 """Test runner and orchestration for MCP security testing"""
 
-# Future: TestRunner class will go here
+# Import classes directly to avoid circular imports
+from .module_loader import ModuleLoader
+from .test_runner import TestRunner
+
+__all__ = [
+    'ModuleLoader',
+    'TestRunner'
+]

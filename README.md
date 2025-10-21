@@ -9,6 +9,7 @@ A Metasploit-like security testing framework for Model Context Protocol (MCP) se
 - 📝 **Evidence Capture** - Automatic NDJSON logging of all traffic
 - 📊 **Professional Reporting** - Detailed findings with attack chains and remediation
 - 🧪 **Manual Exploitation** - Craft custom attacks with full control
+- 🖥️ **Command Line Interface** - Easy-to-use CLI for security scanning
 - ✅ **Production Ready** - Tested against vulnerable and official MCP servers
 
 ## Project Structure
@@ -26,9 +27,16 @@ mcp-security-framework/
 │   │   ├── mcp_client_adapter.py    # Main adapter (MCP SDK)
 │   │   └── http_sse_adapter.py      # Raw protocol adapter
 │   ├── core/              # Test runner (Phase 2)
+│   │   ├── module_loader.py
+│   │   └── test_runner.py
 │   └── modules/           # Test modules (Phase 3)
+│       ├── base.py
+│       ├── credential_exposure.py
+│       ├── prompt_injection.py
+│       └── tool_enumeration.py
 │
 ├── examples/              # Manual exploitation examples
+│   ├── comprehensive_security_scan.py
 │   ├── manual_exploit_challenge1_prompt_injection.py
 │   ├── test_dv_mcp_challenge1.py
 │   ├── test_dv_mcp_challenge2.py
@@ -189,6 +197,59 @@ Finding #1: Credential Exposure via Prompt Injection [CRITICAL]
 - `reports/manual_exploit_challenge1_TIMESTAMP.json` - Structured finding report
 - `captures/manual_exploit_challenge1_TIMESTAMP.ndjson` - Complete traffic capture
 
+### 5. Run Automated Security Scan
+
+**Run comprehensive security testing with the command line interface:**
+
+```bash
+# Scan DV-MCP Challenge 1 (SSE transport)
+python examples/comprehensive_security_scan.py --url http://localhost:9001/sse
+
+# Scan using stdio transport
+python examples/comprehensive_security_scan.py --transport stdio --command python -m mcp_server_time
+
+# Get help
+python examples/comprehensive_security_scan.py --help
+```
+
+**Expected output:**
+```
+======================================================================
+  MCP Security Framework - Comprehensive Security Scan
+======================================================================
+
+[*] Discovering and loading security modules...
+[+] Loaded 3 security modules
+    - Credential Exposure Detector v1.0.0
+    - Prompt Injection Detector v1.0.0
+    - Tool Enumeration Analyzer v1.0.0
+
+[*] Connecting to target MCP server...
+[+] Connected to: Challenge 1 - Basic Prompt Injection
+[+] Server capabilities: resources, tools, prompts
+
+[*] Running comprehensive security scan...
+[+] Credential Exposure Detector: 1 findings
+[+] Prompt Injection Detector: 0 findings
+[+] Tool Enumeration Analyzer: 1 findings
+
+======================================================================
+  SECURITY SCAN SUMMARY
+======================================================================
+Target: http://localhost:9001/sse
+Modules Executed: 3
+Successful: 3
+Failed: 0
+Total Findings: 2
+Risk Rating: CRITICAL
+
+Findings by Severity:
+  CRITICAL: 1
+  MEDIUM: 1
+
+[+] Comprehensive report saved to: reports/comprehensive_scan_TIMESTAMP.json
+```
+
 ---
 
 ## Programmatic Usage
@@ -242,20 +303,27 @@ python examples/test_official_time_server.py   # stdio transport test
 - DV-MCP Challenge 2 (Tool Poisoning)
 - Official MCP reference servers (@modelcontextprotocol/server-everything)
 
-### 📋 Phase 2: Test Runner (Next)
+### ✅ Phase 2: Test Runner & Module System (COMPLETE)
 
-- Automated test module loading
-- Vulnerability scanner orchestration
-- Batch testing capabilities
+- ✅ Dynamic module discovery and loading
+- ✅ Automated security testing framework
+- ✅ Command line interface with argparse
+- ✅ TestRunner orchestration system
+- ✅ BaseSecurityModule abstract base class
+- ✅ Comprehensive JSON reporting
 
-### 📋 Phase 3: Test Modules (Planned)
+**Implemented modules:**
+- Credential Exposure Detector
+- Prompt Injection Detector
+- Tool Enumeration Analyzer
 
-10 security test modules covering:
-- Credential exposure
-- Prompt injection
+### 📋 Phase 3: Additional Security Modules (IN PROGRESS)
+
+Additional security test modules covering:
 - Tool poisoning
 - Excessive permissions
 - Code execution
+- Authentication bypass
 - And more...
 
 ---
@@ -287,6 +355,6 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Project Status
 
-**Current Version:** v0.1.0 (Phase 1 Complete)
+**Current Version:** v0.2.0 (Phase 2 Complete)
 
 **Repository:** https://github.com/JoKFA/MCP-Security-Framework

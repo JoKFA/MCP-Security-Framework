@@ -1,0 +1,146 @@
+================================================================================
+  MCP SECURITY ASSESSMENT REPORT
+================================================================================
+
+TARGET INFORMATION
+────────────────────────────────────────────────────────────────────────────────
+Server:       Challenge 1 - Basic Prompt Injection
+Version:      1.16.0
+Transport:    sse
+Exposure:     LOCAL
+Assessment:   e5f1adaf-a175-4c76-bf13-ed355108ef31
+Duration:     1.57s
+
+SUMMARY
+────────────────────────────────────────────────────────────────────────────────
+Detectors Run:      4
+  ✗ Vulnerabilities:  2
+  ✓ Passed:          2
+  ? Unknown:         0
+  - Not Applicable:   0
+
+VULNERABILITIES DETECTED
+────────────────────────────────────────────────────────────────────────────────
+
+
+================================================================================
+FINDING: Credential Exposure Detector
+================================================================================
+
+Detector ID:     MCP-2024-CE-001
+Severity:        HIGH
+Confidence:      95%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-522
+  OWASP LLM:     LLM01
+  OWASP API:     API2
+  CVSS Score:    8.2/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N
+
+Signals Detected: 1
+  1. [sensitive_exposure]
+     True
+     resource_uri: internal://credentials
+     resource_name: get_credentials
+     secret_types: ['passwords', 'api_keys', 'connection_strings']
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: CREDENTIAL_EXPOSURE
+  Target:        internal://credentials
+  Success:       YES
+  Timestamp:     2025-10-22 22:26:56 UTC
+
+  Impact:
+    Retrieved 4 secrets (passwords, api_keys, connection_strings) from internal://credentials. Samples: passwords=[sk-a1b...i9j0, super_...d123]; api_keys=[sk-a1b...i9j0]; connection_strings=[dbuser...tion]
+
+  Attack Payload:
+    method: read_resource
+    uri: internal://credentials
+
+  Server Response:
+    secret_types: ['passwords', 'api_keys', 'connection_strings']
+    total_secrets: 4
+    Leaked Secrets:
+      passwords:
+        - sk-a1b...i9j0
+        - super_...d123
+      api_keys:
+        - sk-a1b...i9j0
+      connection_strings:
+        - dbuser...tion
+
+--------------------------------------------------------------------------------
+
+
+================================================================================
+FINDING: Prompt Injection via Resource Parameters
+================================================================================
+
+Detector ID:     MCP-2024-PI-001
+Severity:        HIGH
+Confidence:      95%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-74
+  OWASP LLM:     LLM01
+  OWASP API:     API8:2023
+  CVSS Score:    7.5/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N
+
+Signals Detected: 2
+  1. [schema_overpermissive]
+     True
+     count: 1
+  2. [sensitive_exposure]
+     True
+     uri: internal://credentials
+     content_length: 300
+     detection_type: sensitive_data
+
+Affected Resources:
+  - internal://credentials
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: UNAUTHORIZED_ACCESS
+  Target:        internal://credentials
+  Success:       YES
+  Timestamp:     2025-10-22 22:26:56 UTC
+
+  Impact:
+    Accessed sensitive resource 'internal://credentials' without authentication. Contains: passwords
+
+  Attack Payload:
+    method: read_resource
+    uri: internal://credentials
+    authentication: none
+
+  Server Response:
+    content_length: 300
+    content_preview: 
+            SYSTEM CREDENTIALS
+            ------------------
+            Admin Username: admin_user
+            Admin Password: super_secret_password123
+            API Key: sk-a1b2c3d4e5f6g7h8i9j0
+            Database Connection String: postgresql://dbuser:dbpass@localhost/production
+            
+    sensitive_patterns_found: ['passwords']
+
+--------------------------------------------------------------------------------
+
+REMEDIATION:
+  - Implement input validation and sanitization on resource URIs and parameters.
+  - Restrict access to sensitive resources using authentication and authorization.
+  - Do not expose internal resource paths directly to clients.
+
+────────────────────────────────────────────────────────────────────────────────
+Report generated: 2025-10-22T15:26:56.662812
+Framework version: 0.2.0
+================================================================================

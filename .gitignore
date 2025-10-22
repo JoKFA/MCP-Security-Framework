@@ -11,13 +11,10 @@ build/
 dist/
 *.egg-info/
 
-# Captures & Reports (sensitive data)
+# Captures (sensitive data)
 # Keep folders but ignore contents
 captures/*
 !captures/.gitkeep
-
-reports/*
-!reports/.gitkeep
 
 # IDE
 .vscode/

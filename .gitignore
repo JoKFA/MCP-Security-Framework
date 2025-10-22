@@ -38,9 +38,8 @@ credentials.json
 targets/*
 !targets/.gitkeep
 
-# Local Claude settings and documentation
+# Local Claude settings
 .claude/
-CLAUDE.md
 
 
 # Test coverage

@@ -12,12 +12,11 @@ dist/
 *.egg-info/
 
 # Captures & Reports (sensitive data)
-captures/*.ndjson
-reports/*.json
-reports/*.html
-
-# Keep directory structure
+# Keep folders but ignore contents
+captures/*
 !captures/.gitkeep
+
+reports/*
 !reports/.gitkeep
 
 # IDE
@@ -35,8 +34,9 @@ Thumbs.db
 .env.*
 credentials.json
 
-# Test Targets (external repos - keep locally but don't commit)
-targets/
+# Test Targets (external repos - keep folder but ignore contents)
+targets/*
+!targets/.gitkeep
 
 # Local Claude settings and documentation
 .claude/
@@ -45,7 +45,6 @@ CLAUDE.md
 # Private documentation (for internal/academic use only)
 WEEKLY_PROJECT_UPDATE_*.md
 SUMMARY_*.md
-reports/*.jsonl
 
 # Test coverage
 .pytest_cache/

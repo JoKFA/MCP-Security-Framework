@@ -132,10 +132,10 @@ class TestRunner:
         else:
             raise ValueError(f"Unknown target format: {target_str}")
 
-        # Create SafeAdapter
-        output_dir = Path(self.scope.reporting.output_dir)
-        output_dir.mkdir(parents=True, exist_ok=True)
-        audit_log = output_dir / f"audit_{self.assessment_id}.jsonl"
+        # Create SafeAdapter with audit log in captures/
+        captures_dir = Path("captures")
+        captures_dir.mkdir(parents=True, exist_ok=True)
+        audit_log = captures_dir / f"audit_{self.assessment_id}.jsonl"
 
         return SafeAdapter(base_adapter, self.scope, audit_log)
 

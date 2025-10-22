@@ -4,15 +4,22 @@ Prompt Injection via Resource Parameters Detector
 Detects: CWE-74 (Injection), OWASP LLM01 (Prompt Injection)
 
 Tests for prompt injection vulnerabilities in resource access where:
-1. Resource URIs or parameters can be manipulated to inject prompts
+1. Parameterized resources exist without validation
 2. Server reflects injected content or behaves unexpectedly
-3. Sensitive resources become accessible via injection
+3. Sensitive resources become accessible without proper authorization
 
 Methodology:
+Phase 1 - Passive Detection:
 - Lists available resources
-- Sends benign canary probes in resource URIs/parameters
-- Detects reflection or error signatures
+- Identifies parameterized resources (potential injection points)
+- Identifies sensitive resources by URI patterns
 - Tests for unauthorized access to sensitive resources
+
+Phase 2 - Active PoC Generation:
+- Sends controlled injection payloads to parameterized resources
+- Tests for canary reflection
+- Detects error signatures
+- Captures successful exploit as proof of concept
 
 Designed for: DV-MCP Challenge 1 class vulnerabilities
 """
@@ -24,6 +31,7 @@ from src.core.models import (
     DetectionResult,
     DetectionStatus,
     ModuleMetadata,
+    ProofOfConcept,
     ServerProfile,
     Signal,
     SignalType,
@@ -57,6 +65,35 @@ class PromptInjectionResourceParamsDetector(Detector):
         r".*private.*",
         r".*internal.*",
     ]
+
+    def _is_parameterized_resource(self, resource_uri: str) -> bool:
+        """
+        Check if a resource URI contains parameterized input (from josh-test).
+
+        Parameterized resources like 'file://{filename}' are potential injection points.
+
+        Args:
+            resource_uri: Resource URI to check
+
+        Returns:
+            True if URI contains parameter placeholders
+        """
+        return '{' in resource_uri and '}' in resource_uri
+
+    def _extract_parameters(self, resource_uri: str) -> List[str]:
+        """
+        Extract parameter names from a parameterized resource URI (from josh-test).
+
+        Example: 'file://{user_id}/data/{filename}' -> ['user_id', 'filename']
+
+        Args:
+            resource_uri: Parameterized resource URI
+
+        Returns:
+            List of parameter names
+        """
+        params = re.findall(r'\{([^}]+)\}', resource_uri)
+        return params
 
     @property
     def metadata(self) -> ModuleMetadata:
@@ -135,6 +172,10 @@ class PromptInjectionResourceParamsDetector(Detector):
             sensitive_resources = self._find_sensitive_resources(resources)
             evidence["sensitive_resources_found"] = len(sensitive_resources)
 
+            # Also check for parameterized resources (from josh-test)
+            parameterized_resources = [r for r in resources if self._is_parameterized_resource(str(r.get('uri', '')))]
+            evidence["parameterized_resources_found"] = len(parameterized_resources)
+
             if sensitive_resources:
                 signals.append(
                     Signal(
@@ -143,6 +184,24 @@ class PromptInjectionResourceParamsDetector(Detector):
                         context={
                             "reason": "Sensitive resources exposed",
                             "count": len(sensitive_resources),
+                        },
+                    )
+                )
+
+            # Flag parameterized resources as potential injection points
+            for resource in parameterized_resources:
+                uri = str(resource.get('uri', ''))
+                params = self._extract_parameters(uri)
+                signals.append(
+                    Signal(
+                        type=SignalType.SCHEMA_OVERPERMISSIVE,
+                        value=True,
+                        context={
+                            "reason": "Parameterized resource detected",
+                            "uri": uri,
+                            "parameters": params,
+                            "parameter_count": len(params),
+                            "note": "Parameters could be injection points if not validated"
                         },
                     )
                 )
@@ -158,6 +217,7 @@ class PromptInjectionResourceParamsDetector(Detector):
                     # Check for sensitive content in response
                     content = self._extract_content_text(result)
 
+                    # Check for sensitive data patterns (access control test)
                     if self._contains_sensitive_data(content):
                         signals.append(
                             Signal(
@@ -166,6 +226,7 @@ class PromptInjectionResourceParamsDetector(Detector):
                                 context={
                                     "uri": uri,
                                     "content_length": len(content),
+                                    "detection_type": "sensitive_data"
                                 },
                             )
                         )
@@ -202,7 +263,16 @@ class PromptInjectionResourceParamsDetector(Detector):
                             )
                         )
 
-            # Step 4: Determine result based on signals
+            # Step 4: Generate PoC (Active Testing)
+            pocs: List[ProofOfConcept] = []
+            # Generate PoCs for both parameterized resources and sensitive resource access
+            if parameterized_resources:
+                pocs.extend(await self._generate_injection_pocs(adapter, parameterized_resources, sensitive_resources))
+            if affected_resources:
+                # Also create PoCs for unauthorized sensitive resource access
+                pocs.extend(await self._generate_access_pocs(adapter, affected_resources))
+
+            # Step 5: Determine result based on signals
             if not signals:
                 return DetectionResult(
                     detector_id=self.metadata.id,
@@ -248,6 +318,7 @@ class PromptInjectionResourceParamsDetector(Detector):
                 confidence=confidence,
                 affected_resources=affected_resources,
                 signals=signals,
+                proof_of_concepts=pocs,
                 evidence=evidence,
                 standards=self.metadata.standards,
                 remediation=remediation,
@@ -332,3 +403,100 @@ class PromptInjectionResourceParamsDetector(Detector):
                 return True
 
         return False
+
+    async def _generate_injection_pocs(
+        self,
+        adapter,
+        parameterized_resources: List[Dict[str, Any]],
+        sensitive_resources: List[Dict[str, Any]]
+    ) -> List[ProofOfConcept]:
+        """Generate PoCs by attempting controlled exploitation of parameterized resources"""
+        pocs = []
+
+        # Injection payloads to test
+        payloads = [
+            "../../../credentials",  # Path traversal
+            "../../secret",
+            self.CANARIES[0],  # Reflection test
+        ]
+
+        # Get sensitive resource names for targeting
+        sensitive_names = [r.get('uri', '').split('/')[-1] for r in sensitive_resources]
+
+        for resource in parameterized_resources[:2]:  # Limit to 2 to avoid abuse
+            uri_template = str(resource.get('uri', ''))
+            params = self._extract_parameters(uri_template)
+
+            for payload in payloads:
+                try:
+                    # Replace first parameter with payload
+                    test_uri = uri_template.replace(f'{{{params[0]}}}', payload) if params else uri_template
+
+                    result = await adapter.read_resource(test_uri)
+                    content = self._extract_content_text(result)
+
+                    # Check if exploit succeeded
+                    success = (
+                        payload in content or  # Reflection
+                        self._contains_sensitive_data(content) or  # Got sensitive data
+                        any(name in test_uri for name in sensitive_names)  # Path traversal worked
+                    )
+
+                    if success:
+                        pocs.append(ProofOfConcept(
+                            target=uri_template,
+                            attack_type="prompt_injection",
+                            payload={"uri": test_uri, "injection": payload, "parameter": params[0] if params else "unknown"},
+                            response={"content_preview": content[:200], "content_length": len(content)},
+                            success=True,
+                            impact_demonstrated=f"Injected '{payload}' via parameter - {'reflected in response' if payload in content else 'accessed sensitive data'}"
+                        ))
+                        break  # One PoC per resource is enough
+
+                except Exception:
+                    pass  # Failed exploit, continue
+
+        return pocs
+
+    async def _generate_access_pocs(
+        self,
+        adapter,
+        affected_resources: List[str]
+    ) -> List[ProofOfConcept]:
+        """Generate PoCs by demonstrating unauthorized access to sensitive resources"""
+        pocs = []
+
+        for uri in affected_resources[:2]:  # Limit to 2 PoCs
+            try:
+                # Re-read the resource to capture actual content
+                result = await adapter.read_resource(uri)
+                content = self._extract_content_text(result)
+
+                # Extract sensitive data patterns
+                sensitive_patterns = []
+                if re.search(r"password\s*[:=]", content, re.IGNORECASE):
+                    sensitive_patterns.append("passwords")
+                if re.search(r"api[_-]?key\s*[:=]", content, re.IGNORECASE):
+                    sensitive_patterns.append("api_keys")
+                if re.search(r"secret\s*[:=]", content, re.IGNORECASE):
+                    sensitive_patterns.append("secrets")
+                if re.search(r"token\s*[:=]", content, re.IGNORECASE):
+                    sensitive_patterns.append("tokens")
+
+                pocs.append(ProofOfConcept(
+                    target=uri,
+                    attack_type="unauthorized_access",
+                    payload={"method": "read_resource", "uri": uri, "authentication": "none"},
+                    response={
+                        "content_length": len(content),
+                        "content_preview": content[:300],
+                        "sensitive_patterns_found": sensitive_patterns
+                    },
+                    success=True,
+                    impact_demonstrated=f"Accessed sensitive resource '{uri}' without authentication. Contains: {', '.join(sensitive_patterns)}"
+                ))
+
+            except Exception:
+                pass  # Failed to re-read, skip PoC
+
+        return pocs

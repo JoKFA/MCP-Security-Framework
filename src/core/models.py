@@ -67,6 +67,41 @@ class Signal(BaseModel):
     )
 
 
+class ProofOfConcept(BaseModel):
+    """
+    Proof of concept demonstrating successful exploitation.
+
+    After passive detection identifies a potential vulnerability,
+    the detector attempts a controlled exploit to prove it's exploitable.
+    This captures the actual attack payload and response.
+    """
+    target: str = Field(..., description="Target resource/tool that was exploited")
+
+    attack_type: str = Field(..., description="Type of attack (e.g., 'credential_exposure', 'prompt_injection', 'tool_abuse')")
+
+    payload: Dict[str, Any] = Field(
+        ...,
+        description="The actual payload sent (e.g., injection string, tool call parameters)"
+    )
+
+    response: Dict[str, Any] = Field(
+        ...,
+        description="Server response showing successful exploitation"
+    )
+
+    success: bool = Field(..., description="Whether the exploit succeeded")
+
+    impact_demonstrated: str = Field(
+        ...,
+        description="What the PoC demonstrates (e.g., 'Retrieved admin credentials', 'Executed system command')"
+    )
+
+    timestamp: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        description="When PoC was executed (UTC)"
+    )
+
+
 # ============================================================================
 # Standards Mapping
 # ============================================================================
@@ -126,6 +161,11 @@ class DetectionResult(BaseModel):
     signals: List[Signal] = Field(
         default_factory=list,
         description="Signals emitted during detection"
+    )
+
+    proof_of_concepts: List[ProofOfConcept] = Field(
+        default_factory=list,
+        description="Proof of concept exploits demonstrating the vulnerability"
     )
 
     evidence: Dict[str, Any] = Field(

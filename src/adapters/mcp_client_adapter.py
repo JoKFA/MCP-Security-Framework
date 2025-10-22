@@ -8,7 +8,7 @@ Captures all requests/responses in NDJSON format for evidence collection.
 import json
 import asyncio
 from typing import Optional, Dict, Any, List
-from datetime import datetime
+from datetime import datetime, timezone
 from contextlib import asynccontextmanager
 
 from mcp import ClientSession, StdioServerParameters
@@ -41,7 +41,7 @@ class McpClientAdapter:
         """Log an event to the capture log"""
         event = {
             "type": event_type,
-            "ts": datetime.utcnow().isoformat() + "Z",
+            "ts": datetime.now(timezone.utc).isoformat(),
             "data": data,
             **metadata
         }
@@ -190,7 +190,7 @@ class McpClientAdapter:
             result = await self.session.list_resources()
             resources = [
                 {
-                    "uri": resource.uri,
+                    "uri": str(resource.uri),  # Convert to string (Pydantic AnyUrl → str)
                     "name": resource.name,
                     "description": resource.description,
                     "mimeType": resource.mimeType

@@ -42,9 +42,6 @@ targets/*
 .claude/
 CLAUDE.md
 
-# Private documentation (for internal/academic use only)
-WEEKLY_PROJECT_UPDATE_*.md
-SUMMARY_*.md
 
 # Test coverage
 .pytest_cache/

@@ -1,0 +1,147 @@
+{
+  "target": "http://localhost:9003/sse",
+  "timestamp": "2025-10-21T08:16:19.367166",
+  "test_type": "Comprehensive Security Scan",
+  "framework_version": "0.2.0",
+  "summary": {
+    "total_modules": 4,
+    "successful_modules": 4,
+    "failed_modules": 0,
+    "total_findings": 2,
+    "risk_rating": "HIGH",
+    "severity_breakdown": {
+      "MEDIUM": 1,
+      "HIGH": 1
+    }
+  },
+  "findings": [
+    {
+      "type": "Potentially Dangerous Tool",
+      "severity": "MEDIUM",
+      "resource": "tool://file_manager",
+      "description": "Tool 'file_manager' contains potentially dangerous keywords ('delete') in name or description. This could indicate system-level access capabilities.",
+      "evidence": "Tool Name: file_manager\nDescription: File manager tool that can read, write, and delete files\n            \n            Args:\n                action: The action to perform (read, write, delete)\n                path: The file path to operate on\n            ",
+      "attack_vector": "Tool call: file_manager",
+      "attack_chain": [
+        "1. Attacker enumerates available tools",
+        "2. Attacker identifies potentially dangerous tool",
+        "3. Attacker analyzes tool capabilities",
+        "4. Attacker attempts to exploit tool functionality"
+      ],
+      "impact": "Potential for system-level access or destructive operations through tool usage.",
+      "remediation": "Review tool permissions and capabilities. Implement proper access controls and input validation for all tools.",
+      "metadata": {
+        "tool_name": "file_manager",
+        "tool_description": "File manager tool that can read, write, and delete files\n            \n            Args:\n                action: The action to perform (read, write, delete)\n                path: The file path to operate on\n            ",
+        "dangerous_keyword": "delete",
+        "input_schema": {
+          "properties": {
+            "action": {
+              "title": "Action",
+              "type": "string"
+            },
+            "path": {
+              "title": "Path",
+              "type": "string"
+            }
+          },
+          "required": [
+            "action",
+            "path"
+          ],
+          "title": "file_managerArguments",
+          "type": "object"
+        },
+        "module": "tool_enumeration"
+      }
+    },
+    {
+      "type": "Potential Tool Poisoning",
+      "severity": "HIGH",
+      "resource": "tool://file_manager",
+      "description": "Tool 'file_manager' shows potential poisoning indicators: Tool description suggests file system access capabilities",
+      "evidence": "Tool Name: file_manager\nDescription: File manager tool that can read, write, and delete files\n            \n            Args:\n                action: The action to perform (read, write, delete)\n                path: The file path to operate on\n            \nPattern Matched: (?i)(read|write|delete|modify).*(file|directory|path)",
+      "attack_vector": "Tool call: file_manager",
+      "attack_chain": [
+        "1. Attacker identifies tool with suspicious description",
+        "2. Attacker calls tool expecting hidden functionality",
+        "3. Tool executes malicious behavior not described in normal documentation",
+        "4. Attacker gains unauthorized access or performs unintended actions"
+      ],
+      "impact": "Potential for unauthorized system access, data exfiltration, or malicious behavior through tool misuse.",
+      "remediation": "Review tool descriptions for accuracy. Implement proper input validation and access controls. Monitor tool usage for suspicious patterns.",
+      "metadata": {
+        "tool_name": "file_manager",
+        "tool_description": "File manager tool that can read, write, and delete files\n            \n            Args:\n                action: The action to perform (read, write, delete)\n                path: The file path to operate on\n            ",
+        "suspicious_pattern": "(?i)(read|write|delete|modify).*(file|directory|path)",
+        "pattern_description": "Tool description suggests file system access capabilities",
+        "tool_schema": {
+          "properties": {
+            "action": {
+              "title": "Action",
+              "type": "string"
+            },
+            "path": {
+              "title": "Path",
+              "type": "string"
+            }
+          },
+          "required": [
+            "action",
+            "path"
+          ],
+          "title": "file_managerArguments",
+          "type": "object"
+        },
+        "module": "tool_poisoning"
+      }
+    }
+  ],
+  "module_results": {
+    "credential_exposure": {
+      "success": true,
+      "findings_count": 0,
+      "error_message": null,
+      "metadata": {
+        "resources_scanned": 0,
+        "sensitive_resources_found": 0,
+        "total_findings": 0
+      }
+    },
+    "prompt_injection": {
+      "success": true,
+      "findings_count": 0,
+      "error_message": null,
+      "metadata": {
+        "resources_scanned": 0,
+        "parameterized_resources": 0,
+        "total_findings": 0
+      }
+    },
+    "tool_enumeration": {
+      "success": true,
+      "findings_count": 1,
+      "error_message": null,
+      "metadata": {
+        "tools_enumerated": 1,
+        "tools_analyzed": [
+          "file_manager"
+        ],
+        "total_findings": 1
+      }
+    },
+    "tool_poisoning": {
+      "success": true,
+      "findings_count": 1,
+      "error_message": null,
+      "metadata": {
+        "tools_analyzed": 1,
+        "tools_list": [
+          "file_manager"
+        ],
+        "total_findings": 1,
+        "poisoning_patterns_checked": 8
+      }
+    }
+  }
+}

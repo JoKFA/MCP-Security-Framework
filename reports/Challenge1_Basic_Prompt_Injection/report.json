@@ -1,12 +1,13 @@
 {
-  "assessment_id": "e5f1adaf-a175-4c76-bf13-ed355108ef31",
-  "started_at": "2025-10-22T22:26:55.086272Z",
-  "completed_at": "2025-10-22T22:26:56.659634Z",
+  "assessment_id": "e38e7d98-936a-4748-bd46-6e76571e9330",
+  "started_at": "2025-10-28T17:28:43.066149Z",
+  "completed_at": "2025-10-28T17:28:45.695523Z",
   "scope": {
     "target": "http://localhost:9001/sse",
     "transport": "sse",
     "allowed_prefixes": [
       "internal://",
+      "notes://",
       "/"
     ],
     "blocked_paths": [],
@@ -65,9 +66,126 @@
     "auth_type": "none",
     "exposure": "local",
     "metadata": {},
-    "profiled_at": "2025-10-22T22:26:56.009969Z"
+    "profiled_at": "2025-10-28T17:28:43.632017Z"
   },
   "results": [
+    {
+      "detector_id": "MCP-2024-ACTIVE-PI-001",
+      "detector_name": "Active Prompt Injection Confirmation",
+      "detector_version": "1.0.0",
+      "status": "PRESENT",
+      "confidence": 0.98,
+      "affected_resources": [],
+      "signals": [
+        {
+          "type": "reflection",
+          "value": true,
+          "context": {
+            "resource_uri": "notes://{user_id}",
+            "parameter": "user_id",
+            "canary": "MCPSF_INJECT_3874c4e425542f24",
+            "attack_type": "injection_test",
+            "vulnerable": true,
+            "proof": "Canary 'MCPSF_INJECT_3874c4e425542f24' reflected in server response"
+          },
+          "timestamp": "2025-10-28T17:28:43.642706Z"
+        }
+      ],
+      "proof_of_concepts": [
+        {
+          "target": "notes://{user_id}",
+          "attack_type": "active_injection_test",
+          "payload": {
+            "method": "read_resource",
+            "uri": "notes://MCPSF_INJECT_3874c4e425542f24",
+            "canary_injected": "MCPSF_INJECT_3874c4e425542f24",
+            "parameter": "user_id"
+          },
+          "response": {
+            "canary_found": true,
+            "response_preview": "No notes found for user: MCPSF_INJECT_3874c4e425542f24",
+            "vulnerable": true
+          },
+          "success": true,
+          "impact_demonstrated": "CONFIRMED VULNERABILITY: Server reflects unsanitized input. Injected canary 'MCPSF_INJECT_3874c4e425542f24' appears in response. This proves the server does not validate/sanitize parameter values.",
+          "timestamp": "2025-10-28T17:28:43.642706Z"
+        }
+      ],
+      "evidence": {
+        "resources_tested": 1,
+        "parameterized_resources_found": 1,
+        "vulnerable_resources": [
+          {
+            "resource_uri": "notes://{user_id}",
+            "test_uri": "notes://MCPSF_INJECT_3874c4e425542f24",
+            "canary": "MCPSF_INJECT_3874c4e425542f24",
+            "parameter": "user_id",
+            "response_preview": "No notes found for user: MCPSF_INJECT_3874c4e425542f24"
+          }
+        ],
+        "exploit_attempts": [],
+        "confirmations": [
+          {
+            "canary": "MCPSF_INJECT_3874c4e425542f24",
+            "confirmed": true,
+            "timestamp": "2025-10-28T17:28:43.642706+00:00"
+          }
+        ]
+      },
+      "standards": {
+        "cwe": "CWE-74",
+        "owasp_llm": "LLM01",
+        "owasp_api": "API8:2023",
+        "asvs": [
+          "V5.1",
+          "V9.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+          "base_score": 7.5,
+          "severity": "HIGH"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-10-28T17:28:43.637017Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-ACTIVE-TA-001",
+      "detector_name": "Active Tool Abuse Confirmation",
+      "detector_version": "1.0.0",
+      "status": "ABSENT",
+      "confidence": 0.9,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "tools_tested": 1,
+        "dangerous_tools_found": 0,
+        "tools_confirmed_dangerous": [],
+        "successful_calls": []
+      },
+      "standards": {
+        "cwe": "CWE-250",
+        "owasp_llm": null,
+        "owasp_api": "API4",
+        "asvs": [
+          "V4.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+          "base_score": 6.5,
+          "severity": "MEDIUM"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-10-28T17:28:43.642706Z",
+      "execution_time_ms": null
+    },
     {
       "detector_id": "MCP-2024-CE-001",
       "detector_name": "Credential Exposure Detector",
@@ -91,7 +209,7 @@
             "severity": "CRITICAL",
             "is_critical": true
           },
-          "timestamp": "2025-10-22T22:26:56.033253Z"
+          "timestamp": "2025-10-28T17:28:43.649705Z"
         }
       ],
       "proof_of_concepts": [
@@ -124,7 +242,7 @@
           },
           "success": true,
           "impact_demonstrated": "Retrieved 4 secrets (passwords, api_keys, connection_strings) from internal://credentials. Samples: passwords=[sk-a1b...i9j0, super_...d123]; api_keys=[sk-a1b...i9j0]; connection_strings=[dbuser...tion]",
-          "timestamp": "2025-10-22T22:26:56.033278Z"
+          "timestamp": "2025-10-28T17:28:43.649705Z"
         }
       ],
       "evidence": {
@@ -174,7 +292,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-10-22T22:26:56.018088Z",
+      "timestamp": "2025-10-28T17:28:43.644705Z",
       "execution_time_ms": null
     },
     {
@@ -199,7 +317,7 @@
         "cvss": null
       },
       "remediation": "No issues found",
-      "timestamp": "2025-10-22T22:26:56.033468Z",
+      "timestamp": "2025-10-28T17:28:43.649705Z",
       "execution_time_ms": 0.0
     },
     {
@@ -219,7 +337,7 @@
             "reason": "Sensitive resources exposed",
             "count": 1
           },
-          "timestamp": "2025-10-22T22:26:56.037958Z"
+          "timestamp": "2025-10-28T17:28:44.271754Z"
         },
         {
           "type": "sensitive_exposure",
@@ -229,7 +347,7 @@
             "content_length": 300,
             "detection_type": "sensitive_data"
           },
-          "timestamp": "2025-10-22T22:26:56.042911Z"
+          "timestamp": "2025-10-28T17:28:44.880361Z"
         }
       ],
       "proof_of_concepts": [
@@ -250,7 +368,7 @@
           },
           "success": true,
           "impact_demonstrated": "Accessed sensitive resource 'internal://credentials' without authentication. Contains: passwords",
-          "timestamp": "2025-10-22T22:26:56.047517Z"
+          "timestamp": "2025-10-28T17:28:45.490979Z"
         }
       ],
       "evidence": {
@@ -277,7 +395,7 @@
         }
       },
       "remediation": "Implement input validation and sanitization on resource URIs and parameters. Restrict access to sensitive resources using authentication and authorization. Do not expose internal resource paths directly to clients.",
-      "timestamp": "2025-10-22T22:26:56.047593Z",
+      "timestamp": "2025-10-28T17:28:45.490979Z",
       "execution_time_ms": null
     },
     {
@@ -311,17 +429,17 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-10-22T22:26:56.047664Z",
+      "timestamp": "2025-10-28T17:28:45.490979Z",
       "execution_time_ms": null
     }
   ],
   "threat_model": null,
   "summary": {
-    "present": 2,
-    "absent": 2,
+    "present": 3,
+    "absent": 3,
     "unknown": 0,
     "not_applicable": 0
   },
-  "audit_log_path": "captures\\audit_e5f1adaf-a175-4c76-bf13-ed355108ef31.jsonl",
+  "audit_log_path": "captures\\audit_e38e7d98-936a-4748-bd46-6e76571e9330.jsonl",
   "framework_version": "0.2.0"
 }

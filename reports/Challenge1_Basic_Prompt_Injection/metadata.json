@@ -1,12 +1,12 @@
 {
-  "assessment_id": "e5f1adaf-a175-4c76-bf13-ed355108ef31",
+  "assessment_id": "e38e7d98-936a-4748-bd46-6e76571e9330",
   "target": "Challenge 1 - Basic Prompt Injection",
-  "started_at": "2025-10-22T22:26:55.086272+00:00",
-  "completed_at": "2025-10-22T22:26:56.659634+00:00",
+  "started_at": "2025-10-28T17:28:43.066149+00:00",
+  "completed_at": "2025-10-28T17:28:45.695523+00:00",
   "framework_version": "0.2.0",
   "summary": {
-    "present": 2,
-    "absent": 2,
+    "present": 3,
+    "absent": 3,
     "unknown": 0,
     "not_applicable": 0
   }

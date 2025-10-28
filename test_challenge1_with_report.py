@@ -28,7 +28,7 @@ async def main():
     scope = ScopeConfig(
         target="http://localhost:9001/sse",
         transport="sse",
-        allowed_prefixes=["internal://", "/"],  # Allow access to internal resources
+        allowed_prefixes=["internal://", "notes://", "/"],  # Allow access to internal and notes resources
         blocked_paths=[],  # Don't block anything for testing
     )
 

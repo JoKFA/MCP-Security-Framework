@@ -8,19 +8,67 @@ Server:       Challenge 1 - Basic Prompt Injection
 Version:      1.16.0
 Transport:    sse
 Exposure:     LOCAL
-Assessment:   e5f1adaf-a175-4c76-bf13-ed355108ef31
-Duration:     1.57s
+Assessment:   e38e7d98-936a-4748-bd46-6e76571e9330
+Duration:     2.63s
 
 SUMMARY
 ────────────────────────────────────────────────────────────────────────────────
-Detectors Run:      4
-  ✗ Vulnerabilities:  2
-  ✓ Passed:          2
+Detectors Run:      6
+  ✗ Vulnerabilities:  3
+  ✓ Passed:          3
   ? Unknown:         0
   - Not Applicable:   0
 
 VULNERABILITIES DETECTED
 ────────────────────────────────────────────────────────────────────────────────
+
+
+================================================================================
+FINDING: Active Prompt Injection Confirmation
+================================================================================
+
+Detector ID:     MCP-2024-ACTIVE-PI-001
+Severity:        HIGH
+Confidence:      98%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-74
+  OWASP LLM:     LLM01
+  OWASP API:     API8:2023
+  CVSS Score:    7.5/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N
+
+Signals Detected: 1
+  1. [reflection]
+     True
+     resource_uri: notes://{user_id}
+     parameter: user_id
+     canary: MCPSF_INJECT_3874c4e425542f24
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: ACTIVE_INJECTION_TEST
+  Target:        notes://{user_id}
+  Success:       YES
+  Timestamp:     2025-10-28 17:28:43 UTC
+
+  Impact:
+    CONFIRMED VULNERABILITY: Server reflects unsanitized input. Injected canary 'MCPSF_INJECT_3874c4e425542f24' appears in response. This proves the server does not validate/sanitize parameter values.
+
+  Attack Payload:
+    method: read_resource
+    uri: notes://MCPSF_INJECT_3874c4e425542f24
+    canary_injected: MCPSF_INJECT_3874c4e425542f24
+    parameter: user_id
+
+  Server Response:
+    canary_found: True
+    response_preview: No notes found for user: MCPSF_INJECT_3874c4e425542f24
+    vulnerable: True
+
+--------------------------------------------------------------------------------
 
 
 ================================================================================
@@ -52,7 +100,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: CREDENTIAL_EXPOSURE
   Target:        internal://credentials
   Success:       YES
-  Timestamp:     2025-10-22 22:26:56 UTC
+  Timestamp:     2025-10-28 17:28:43 UTC
 
   Impact:
     Retrieved 4 secrets (passwords, api_keys, connection_strings) from internal://credentials. Samples: passwords=[sk-a1b...i9j0, super_...d123]; api_keys=[sk-a1b...i9j0]; connection_strings=[dbuser...tion]
@@ -111,7 +159,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: UNAUTHORIZED_ACCESS
   Target:        internal://credentials
   Success:       YES
-  Timestamp:     2025-10-22 22:26:56 UTC
+  Timestamp:     2025-10-28 17:28:45 UTC
 
   Impact:
     Accessed sensitive resource 'internal://credentials' without authentication. Contains: passwords
@@ -141,6 +189,6 @@ REMEDIATION:
   - Do not expose internal resource paths directly to clients.
 
 ────────────────────────────────────────────────────────────────────────────────
-Report generated: 2025-10-22T15:26:56.662812
+Report generated: 2025-10-28T10:28:45.697523
 Framework version: 0.2.0
 ================================================================================

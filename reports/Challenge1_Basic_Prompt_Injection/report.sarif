@@ -12,6 +12,57 @@
           "semanticVersion": "0.2.0",
           "rules": [
             {
+              "id": "MCP-2024-ACTIVE-PI-001",
+              "name": "Active Prompt Injection Confirmation",
+              "shortDescription": {
+                "text": "Active Prompt Injection Confirmation"
+              },
+              "fullDescription": {
+                "text": "Active Prompt Injection Confirmation detector"
+              },
+              "help": {
+                "text": "No remediation guidance available."
+              },
+              "properties": {
+                "confidence": 0.98,
+                "precision": "high",
+                "security-severity": "7.5",
+                "tags": [
+                  "external/cwe/CWE-74",
+                  "external/owasp-llm/LLM01",
+                  "external/owasp-api/API8:2023"
+                ]
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            },
+            {
+              "id": "MCP-2024-ACTIVE-TA-001",
+              "name": "Active Tool Abuse Confirmation",
+              "shortDescription": {
+                "text": "Active Tool Abuse Confirmation"
+              },
+              "fullDescription": {
+                "text": "Active Tool Abuse Confirmation detector"
+              },
+              "help": {
+                "text": "No remediation guidance available."
+              },
+              "properties": {
+                "confidence": 0.9,
+                "precision": "high",
+                "security-severity": "6.5",
+                "tags": [
+                  "external/cwe/CWE-250",
+                  "external/owasp-api/API4"
+                ]
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              }
+            },
+            {
               "id": "MCP-2024-CE-001",
               "name": "Credential Exposure Detector",
               "shortDescription": {
@@ -115,8 +166,8 @@
       "invocations": [
         {
           "executionSuccessful": true,
-          "startTimeUtc": "2025-10-22T22:26:55.086272+00:00",
-          "endTimeUtc": "2025-10-22T22:26:56.659634+00:00",
+          "startTimeUtc": "2025-10-28T17:28:43.066149+00:00",
+          "endTimeUtc": "2025-10-28T17:28:45.695523+00:00",
           "workingDirectory": {
             "uri": "file:///"
           },
@@ -126,6 +177,7 @@
               "transport": "sse",
               "allowed_prefixes": [
                 "internal://",
+                "notes://",
                 "/"
               ],
               "blocked_paths": [],
@@ -172,6 +224,71 @@
         }
       ],
       "results": [
+        {
+          "ruleId": "MCP-2024-ACTIVE-PI-001",
+          "message": {
+            "text": "Active Prompt Injection Confirmation: reflection detected"
+          },
+          "level": "error",
+          "properties": {
+            "signal_type": "reflection",
+            "confidence": 0.98
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "notes://{user_id}"
+                },
+                "region": {
+                  "startLine": 1,
+                  "snippet": {
+                    "text": "{'resource_uri': 'notes://{user_id}', 'parameter': 'user_id', 'canary': 'MCPSF_INJECT_3874c4e425542f24', 'attack_type': 'injection_test', 'vulnerable': True, 'proof': \"Canary 'MCPSF_INJECT_3874c4e425542f24' reflected in server response\"}"
+                  }
+                }
+              }
+            }
+          ],
+          "codeFlows": [
+            {
+              "message": {
+                "text": "CONFIRMED VULNERABILITY: Server reflects unsanitized input. Injected canary 'MCPSF_INJECT_3874c4e425542f24' appears in response. This proves the server does not validate/sanitize parameter values."
+              },
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "message": {
+                          "text": "Attack: active_injection_test"
+                        },
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "notes://{user_id}"
+                          }
+                        }
+                      },
+                      "state": {
+                        "payload": {
+                          "method": "read_resource",
+                          "uri": "notes://MCPSF_INJECT_3874c4e425542f24",
+                          "canary_injected": "MCPSF_INJECT_3874c4e425542f24",
+                          "parameter": "user_id"
+                        },
+                        "response": {
+                          "canary_found": true,
+                          "response_preview": "No notes found for user: MCPSF_INJECT_3874c4e425542f24",
+                          "vulnerable": true
+                        },
+                        "success": true
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
         {
           "ruleId": "MCP-2024-CE-001",
           "message": {
@@ -388,7 +505,7 @@
         }
       ],
       "properties": {
-        "assessment_id": "e5f1adaf-a175-4c76-bf13-ed355108ef31",
+        "assessment_id": "e38e7d98-936a-4748-bd46-6e76571e9330",
         "target_server": "Challenge 1 - Basic Prompt Injection",
         "target_version": "1.16.0",
         "transport": "sse",

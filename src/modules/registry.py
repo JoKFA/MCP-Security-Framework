@@ -31,10 +31,11 @@ class DetectorRegistry:
 
     def load_detectors(self, detectors_path: str = None) -> None:
         """
-        Load all detector modules from detectors directory.
+        Load all detector modules from passive_detectors and active_detectors directories.
 
         Args:
-            detectors_path: Path to detectors directory (default: src/modules/detectors)
+            detectors_path: Path to detectors directory (default: src/modules/detectors - for backward compat)
+                            Note: New structure uses passive_detectors/ and active_detectors/
 
         Raises:
             ImportError: If module import fails
@@ -43,22 +44,40 @@ class DetectorRegistry:
         if self._loaded:
             return  # Already loaded
 
-        if detectors_path is None:
-            # Default: src/modules/detectors relative to this file
-            registry_dir = Path(__file__).parent
-            detectors_path = str(registry_dir / "detectors")
+        # Load from new structure: passive_detectors first, then active_detectors
+        registry_dir = Path(__file__).parent
+        
+        # Phase 1: Load passive detectors first
+        print("Loading PASSIVE detectors...")
+        self._load_detector_directory("src.modules.passive_detectors", registry_dir / "passive_detectors")
+        
+        # Phase 2: Load active detectors (if directory exists)
+        print("Loading ACTIVE detectors...")
+        active_dir = registry_dir / "active_detectors"
+        if active_dir.exists():
+            self._load_detector_directory("src.modules.active_detectors", active_dir)
+        else:
+            print("No active_detectors directory found. Skipping active detectors.")
 
-        detectors_dir = Path(detectors_path)
+        self._loaded = True
+
+    def _load_detector_directory(self, package_name: str, detectors_dir: Path) -> None:
+        """
+        Load detectors from a specific directory.
+        
+        Args:
+            package_name: Full module path (e.g., "src.modules.passive_detectors")
+            detectors_dir: Directory path to scan
+        """
         if not detectors_dir.exists():
-            raise ValueError(f"Detectors directory not found: {detectors_path}")
-
-        # Discover and import all Python modules in detectors/
-        package_name = "src.modules.detectors"
+            print(f"Warning: Detectors directory not found: {detectors_dir}")
+            return
 
         try:
             package = importlib.import_module(package_name)
         except ImportError as e:
-            raise ImportError(f"Failed to import detectors package: {e}")
+            print(f"Warning: Failed to import {package_name}: {e}")
+            return
 
         # Iterate through all modules in the package
         for importer, module_name, is_pkg in pkgutil.iter_modules(
@@ -100,15 +119,14 @@ class DetectorRegistry:
                         continue
 
                     self._detectors[detector_id] = obj
-                    print(f"Loaded detector: {detector_id} ({instance.metadata.name})")
+                    detector_type = "PASSIVE" if "passive" in package_name else "ACTIVE"
+                    print(f"Loaded [{detector_type}] detector: {detector_id} ({instance.metadata.name})")
 
                 except Exception as e:
                     print(
                         f"Warning: Failed to instantiate {name} from {module_name}: {e}"
                     )
                     continue
-
-        self._loaded = True
 
     def get_detector(self, detector_id: str) -> Detector:
         """

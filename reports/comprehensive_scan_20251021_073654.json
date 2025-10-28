@@ -1,0 +1,125 @@
+{
+  "target": "http://localhost:9001/sse",
+  "timestamp": "2025-10-21T07:36:54.483581",
+  "test_type": "Comprehensive Security Scan",
+  "framework_version": "0.2.0",
+  "summary": {
+    "total_modules": 3,
+    "successful_modules": 3,
+    "failed_modules": 0,
+    "total_findings": 2,
+    "risk_rating": "CRITICAL",
+    "severity_breakdown": {
+      "CRITICAL": 1,
+      "MEDIUM": 1
+    }
+  },
+  "findings": [
+    {
+      "type": "Credential Exposure",
+      "severity": "CRITICAL",
+      "resource": "internal://credentials",
+      "description": "Sensitive credentials found in resource 'get_credentials'. Found 4 potential secrets including passwords, api_keys, connection_strings.",
+      "evidence": "\n            SYSTEM CREDENTIALS\n            ------------------\n            Admin Username: admin_user\n            Admin Password: super_secret_password123\n            API Key: sk-a1b2c3d4e5f6g7h8i9j0\n            Database Connection String: postgresql://dbuser:dbpass@localhost/production\n            \n",
+      "attack_vector": "Direct resource access: internal://credentials",
+      "attack_chain": [
+        "1. Attacker enumerates available resources",
+        "2. Attacker identifies sensitive resource by URI pattern",
+        "3. Attacker reads resource content",
+        "4. Attacker extracts credentials and sensitive data"
+      ],
+      "impact": "Exposure of 4 sensitive credentials including passwords, API keys, and connection strings. Complete compromise of authentication systems.",
+      "remediation": "Implement proper access controls on sensitive resources. Use authentication and authorization. Store credentials in secure vaults, not in plain text.",
+      "metadata": {
+        "secrets_found": {
+          "passwords": [
+            "super_secret_password123",
+            "sk-a1b2c3d4e5f6g7h8i9j0"
+          ],
+          "api_keys": [
+            "sk-a1b2c3d4e5f6g7h8i9j0"
+          ],
+          "tokens": [],
+          "connection_strings": [
+            "dbuser:dbpass@localhost/production"
+          ],
+          "private_keys": [],
+          "database_urls": []
+        },
+        "total_secrets": 4,
+        "resource_name": "get_credentials",
+        "resource_description": "Internal system credentials - DO NOT SHARE",
+        "module": "credential_exposure"
+      }
+    },
+    {
+      "type": "Potentially Dangerous Tool",
+      "severity": "MEDIUM",
+      "resource": "tool://get_user_info",
+      "description": "Tool 'get_user_info' contains potentially dangerous keywords ('format') in name or description. This could indicate system-level access capabilities.",
+      "evidence": "Tool Name: get_user_info\nDescription: Get information about a user",
+      "attack_vector": "Tool call: get_user_info",
+      "attack_chain": [
+        "1. Attacker enumerates available tools",
+        "2. Attacker identifies potentially dangerous tool",
+        "3. Attacker analyzes tool capabilities",
+        "4. Attacker attempts to exploit tool functionality"
+      ],
+      "impact": "Potential for system-level access or destructive operations through tool usage.",
+      "remediation": "Review tool permissions and capabilities. Implement proper access controls and input validation for all tools.",
+      "metadata": {
+        "tool_name": "get_user_info",
+        "tool_description": "Get information about a user",
+        "dangerous_keyword": "format",
+        "input_schema": {
+          "properties": {
+            "username": {
+              "title": "Username",
+              "type": "string"
+            }
+          },
+          "required": [
+            "username"
+          ],
+          "title": "get_user_infoArguments",
+          "type": "object"
+        },
+        "module": "tool_enumeration"
+      }
+    }
+  ],
+  "module_results": {
+    "credential_exposure": {
+      "success": true,
+      "findings_count": 1,
+      "error_message": null,
+      "metadata": {
+        "resources_scanned": 1,
+        "sensitive_resources_found": 1,
+        "total_findings": 1
+      }
+    },
+    "prompt_injection": {
+      "success": true,
+      "findings_count": 0,
+      "error_message": null,
+      "metadata": {
+        "resources_scanned": 1,
+        "parameterized_resources": 0,
+        "total_findings": 0
+      }
+    },
+    "tool_enumeration": {
+      "success": true,
+      "findings_count": 1,
+      "error_message": null,
+      "metadata": {
+        "tools_enumerated": 1,
+        "tools_analyzed": [
+          "get_user_info"
+        ],
+        "total_findings": 1
+      }
+    }
+  }
+}

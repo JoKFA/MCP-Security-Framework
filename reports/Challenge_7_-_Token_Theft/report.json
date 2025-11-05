@@ -1,7 +1,7 @@
 {
-  "assessment_id": "0df3ee14-f01a-44ca-9930-28a1b4ef66c0",
-  "started_at": "2025-11-05T21:07:49.104325Z",
-  "completed_at": "2025-11-05T21:08:00.422082Z",
+  "assessment_id": "e5bab056-662c-4e21-a990-20201d6885b3",
+  "started_at": "2025-11-05T21:44:57.769539Z",
+  "completed_at": "2025-11-05T21:45:10.125689Z",
   "scope": {
     "target": "http://localhost:9007/sse",
     "transport": null,
@@ -68,7 +68,7 @@
     "auth_type": "none",
     "exposure": "local",
     "metadata": {},
-    "profiled_at": "2025-11-05T21:07:50.002355Z"
+    "profiled_at": "2025-11-05T21:44:58.670712Z"
   },
   "results": [
     {
@@ -101,7 +101,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:50.022270Z",
+      "timestamp": "2025-11-05T21:44:58.694032Z",
       "execution_time_ms": null
     },
     {
@@ -138,7 +138,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:50.029002Z",
+      "timestamp": "2025-11-05T21:44:58.702589Z",
       "execution_time_ms": null
     },
     {
@@ -175,7 +175,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:50.035107Z",
+      "timestamp": "2025-11-05T21:44:58.708436Z",
       "execution_time_ms": null
     },
     {
@@ -200,7 +200,7 @@
         "cvss": null
       },
       "remediation": "No issues found",
-      "timestamp": "2025-11-05T21:07:50.040544Z",
+      "timestamp": "2025-11-05T21:44:58.714035Z",
       "execution_time_ms": 0.0
     },
     {
@@ -223,7 +223,7 @@
             "unrestricted_params": [],
             "reason": "High risk score (80%)"
           },
-          "timestamp": "2025-11-05T21:07:50.046628Z"
+          "timestamp": "2025-11-05T21:44:58.721099Z"
         },
         {
           "type": "schema_overpermissive",
@@ -237,7 +237,7 @@
             "unrestricted_params": [],
             "reason": "High risk score (80%)"
           },
-          "timestamp": "2025-11-05T21:07:50.046841Z"
+          "timestamp": "2025-11-05T21:44:58.721321Z"
         }
       ],
       "proof_of_concepts": [
@@ -258,7 +258,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'authenticate' has excessive permissions (risk: 80%). Capabilities: credential_access. Unrestricted params: 0. Potential for: elevated privileges.",
-          "timestamp": "2025-11-05T21:07:50.046864Z"
+          "timestamp": "2025-11-05T21:44:58.721345Z"
         },
         {
           "target": "verify_token",
@@ -277,7 +277,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'verify_token' has excessive permissions (risk: 80%). Capabilities: credential_access. Unrestricted params: 0. Potential for: elevated privileges.",
-          "timestamp": "2025-11-05T21:07:50.046874Z"
+          "timestamp": "2025-11-05T21:44:58.721356Z"
         }
       ],
       "evidence": {
@@ -341,7 +341,7 @@
         }
       },
       "remediation": "Apply principle of least privilege: (1) Restrict tool parameters to specific allowed values/paths, (2) Implement path validation and sanitization, (3) Split multi-capability tools into focused tools, (4) Add explicit access control checks, (5) Document and justify any high-risk capabilities.",
-      "timestamp": "2025-11-05T21:07:50.040593Z",
+      "timestamp": "2025-11-05T21:44:58.714118Z",
       "execution_time_ms": null
     },
     {
@@ -380,7 +380,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:50.047024Z",
+      "timestamp": "2025-11-05T21:44:58.721528Z",
       "execution_time_ms": null
     },
     {
@@ -401,7 +401,7 @@
             ],
             "total_secrets": 1
           },
-          "timestamp": "2025-11-05T21:07:51.732010Z"
+          "timestamp": "2025-11-05T21:45:00.396120Z"
         }
       ],
       "proof_of_concepts": [
@@ -425,7 +425,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'verify_token' exposes 1 secret(s) in responses. Types: tokens. Samples: tokens=[test]. Credentials are stored/transmitted insecurely, enabling theft.",
-          "timestamp": "2025-11-05T21:07:51.738419Z"
+          "timestamp": "2025-11-05T21:45:00.402435Z"
         }
       ],
       "evidence": {
@@ -461,7 +461,58 @@
         }
       },
       "remediation": "Secure credential storage: (1) Never return raw tokens/keys in responses, (2) Use secure credential storage (environment variables, key vaults), (3) Implement token redaction in tool outputs, (4) Use short-lived tokens, (5) Rotate credentials regularly, (6) Log credential access for auditing.",
-      "timestamp": "2025-11-05T21:07:50.672187Z",
+      "timestamp": "2025-11-05T21:44:59.342927Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-PA-001",
+      "detector_name": "Privilege Abuse Detector",
+      "detector_version": "1.1.0",
+      "status": "ABSENT",
+      "confidence": 0.8,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "mode": "aggressive",
+        "threshold": 0.45,
+        "tools_analyzed": 2,
+        "analysis": [
+          {
+            "tool_name": "authenticate",
+            "detected_capabilities": [
+              "credential"
+            ],
+            "score": 0.0,
+            "flagged": false
+          },
+          {
+            "tool_name": "verify_token",
+            "detected_capabilities": [
+              "credential"
+            ],
+            "score": 0.0,
+            "flagged": false
+          }
+        ]
+      },
+      "standards": {
+        "cwe": "CWE-250",
+        "owasp_llm": null,
+        "owasp_api": "API4",
+        "asvs": [
+          "V4.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+          "base_score": 6.5,
+          "severity": "MEDIUM"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T21:45:00.402586Z",
       "execution_time_ms": null
     },
     {
@@ -495,7 +546,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:52.351398Z",
+      "timestamp": "2025-11-05T21:45:01.229836Z",
       "execution_time_ms": null
     },
     {
@@ -511,6 +562,7 @@
         "tools_analyzed": 2,
         "tools_called": 10,
         "changed_tools": [],
+        "response_changes": [],
         "call_failures": [],
         "mode": "aggressive"
       },
@@ -530,7 +582,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:52.351476Z",
+      "timestamp": "2025-11-05T21:45:01.229913Z",
       "execution_time_ms": null
     },
     {
@@ -564,7 +616,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:59.359602Z",
+      "timestamp": "2025-11-05T21:45:08.631759Z",
       "execution_time_ms": null
     },
     {
@@ -601,7 +653,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:59.365563Z",
+      "timestamp": "2025-11-05T21:45:08.637402Z",
       "execution_time_ms": null
     },
     {
@@ -636,17 +688,98 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:08:00.202989Z",
+      "timestamp": "2025-11-05T21:45:09.070136Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-UA-001",
+      "detector_name": "Unauthenticated Access Detector",
+      "detector_version": "1.1.0",
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "affected_resources": [],
+      "signals": [
+        {
+          "type": "auth_mismatch",
+          "value": true,
+          "context": {
+            "tools_accessible": true,
+            "resources_accessible": true,
+            "resources_supported": true,
+            "vulnerability": "unauthenticated_access",
+            "severity": "CRITICAL"
+          },
+          "timestamp": "2025-11-05T21:45:10.125551Z"
+        }
+      ],
+      "proof_of_concepts": [
+        {
+          "target": "MCP Server",
+          "attack_type": "unauthenticated_access_test",
+          "payload": {
+            "operations": [
+              "list_tools",
+              "list_resources"
+            ],
+            "authenticated": false
+          },
+          "response": {
+            "tools_count": 2,
+            "resources_count": 0,
+            "tool_samples": [
+              "authenticate",
+              "verify_token"
+            ],
+            "resource_samples": [],
+            "vulnerable": true
+          },
+          "success": true,
+          "impact_demonstrated": "Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.",
+          "timestamp": "2025-11-05T21:45:10.125564Z"
+        }
+      ],
+      "evidence": {
+        "mode": "aggressive",
+        "tools_accessible": true,
+        "resources_accessible": true,
+        "resources_supported": true,
+        "auth_required": false,
+        "errors": {},
+        "tool_samples": [
+          "authenticate",
+          "verify_token"
+        ],
+        "tool_count": 2,
+        "resource_samples": [],
+        "resource_count": 0
+      },
+      "standards": {
+        "cwe": "CWE-284",
+        "owasp_llm": null,
+        "owasp_api": "API1",
+        "asvs": [
+          "V1.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "base_score": 10.0,
+          "severity": "CRITICAL"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T21:45:09.692523Z",
       "execution_time_ms": null
     }
   ],
   "threat_model": null,
   "summary": {
-    "present": 2,
-    "absent": 10,
+    "present": 3,
+    "absent": 11,
     "unknown": 0,
     "not_applicable": 0
   },
-  "audit_log_path": "captures\\audit_0df3ee14-f01a-44ca-9930-28a1b4ef66c0.jsonl",
+  "audit_log_path": "captures\\audit_e5bab056-662c-4e21-a990-20201d6885b3.jsonl",
   "framework_version": "0.2.0"
 }

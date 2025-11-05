@@ -189,6 +189,31 @@
               }
             },
             {
+              "id": "MCP-2024-PA-001",
+              "name": "Privilege Abuse Detector",
+              "shortDescription": {
+                "text": "Privilege Abuse Detector"
+              },
+              "fullDescription": {
+                "text": "Privilege Abuse Detector detector"
+              },
+              "help": {
+                "text": "No remediation guidance available."
+              },
+              "properties": {
+                "confidence": 0.78,
+                "precision": "medium",
+                "security-severity": "6.5",
+                "tags": [
+                  "external/cwe/CWE-250",
+                  "external/owasp-api/API4"
+                ]
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              }
+            },
+            {
               "id": "MCP-2024-PI-001",
               "name": "Prompt Injection via Resource Parameters",
               "shortDescription": {
@@ -316,6 +341,31 @@
               "defaultConfiguration": {
                 "level": "error"
               }
+            },
+            {
+              "id": "MCP-2024-UA-001",
+              "name": "Unauthenticated Access Detector",
+              "shortDescription": {
+                "text": "Unauthenticated Access Detector"
+              },
+              "fullDescription": {
+                "text": "Unauthenticated Access Detector detector"
+              },
+              "help": {
+                "text": "No remediation guidance available."
+              },
+              "properties": {
+                "confidence": 0.95,
+                "precision": "high",
+                "security-severity": "10.0",
+                "tags": [
+                  "external/cwe/CWE-284",
+                  "external/owasp-api/API1"
+                ]
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
             }
           ]
         }
@@ -323,8 +373,8 @@
       "invocations": [
         {
           "executionSuccessful": true,
-          "startTimeUtc": "2025-11-05T21:07:21.295729+00:00",
-          "endTimeUtc": "2025-11-05T21:07:34.314135+00:00",
+          "startTimeUtc": "2025-11-05T21:44:27.733341+00:00",
+          "endTimeUtc": "2025-11-05T21:44:41.956947+00:00",
           "workingDirectory": {
             "uri": "file:///"
           },
@@ -690,6 +740,234 @@
           ]
         },
         {
+          "ruleId": "MCP-2024-PA-001",
+          "message": {
+            "text": "Privilege Abuse Detector: schema_overpermissive detected"
+          },
+          "level": "warning",
+          "properties": {
+            "signal_type": "schema_overpermissive",
+            "confidence": 0.78
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "get_user_role"
+                },
+                "region": {
+                  "startLine": 1,
+                  "snippet": {
+                    "text": "{'tool_name': 'get_user_role', 'unexpected_capabilities': ['command_execution'], 'purpose': 'read_only', 'mode': 'aggressive', 'score': 0.45}"
+                  }
+                }
+              }
+            }
+          ],
+          "codeFlows": [
+            {
+              "message": {
+                "text": "Tool 'get_user_role' exposes command_execution capabilities despite its declared purpose, enabling privilege abuse."
+              },
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "message": {
+                          "text": "Attack: privilege_mismatch_detection"
+                        },
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "get_user_role"
+                          }
+                        }
+                      },
+                      "state": {
+                        "payload": {
+                          "detected_capabilities": [
+                            "command_execution"
+                          ],
+                          "purpose": "read_only"
+                        },
+                        "response": {
+                          "reasons": [
+                            "command execution not expected for Read-only information retrieval",
+                            "Command execution available despite non-administrative purpose"
+                          ],
+                          "detected_capabilities": {
+                            "command_execution": [
+                              "text:\\bsystem\\b"
+                            ]
+                          }
+                        },
+                        "success": true
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "message": {
+                "text": "Tool 'get_user_roles' exposes command_execution capabilities despite its declared purpose, enabling privilege abuse."
+              },
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "message": {
+                          "text": "Attack: privilege_mismatch_detection"
+                        },
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "get_user_roles"
+                          }
+                        }
+                      },
+                      "state": {
+                        "payload": {
+                          "detected_capabilities": [
+                            "command_execution"
+                          ],
+                          "purpose": "read_only"
+                        },
+                        "response": {
+                          "reasons": [
+                            "command execution not expected for Read-only information retrieval",
+                            "Command execution available despite non-administrative purpose"
+                          ],
+                          "detected_capabilities": {
+                            "command_execution": [
+                              "text:\\bsystem\\b"
+                            ]
+                          }
+                        },
+                        "success": true
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "MCP-2024-PA-001",
+          "message": {
+            "text": "Privilege Abuse Detector: schema_overpermissive detected"
+          },
+          "level": "warning",
+          "properties": {
+            "signal_type": "schema_overpermissive",
+            "confidence": 0.78
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "get_user_roles"
+                },
+                "region": {
+                  "startLine": 1,
+                  "snippet": {
+                    "text": "{'tool_name': 'get_user_roles', 'unexpected_capabilities': ['command_execution'], 'purpose': 'read_only', 'mode': 'aggressive', 'score': 0.45}"
+                  }
+                }
+              }
+            }
+          ],
+          "codeFlows": [
+            {
+              "message": {
+                "text": "Tool 'get_user_role' exposes command_execution capabilities despite its declared purpose, enabling privilege abuse."
+              },
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "message": {
+                          "text": "Attack: privilege_mismatch_detection"
+                        },
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "get_user_role"
+                          }
+                        }
+                      },
+                      "state": {
+                        "payload": {
+                          "detected_capabilities": [
+                            "command_execution"
+                          ],
+                          "purpose": "read_only"
+                        },
+                        "response": {
+                          "reasons": [
+                            "command execution not expected for Read-only information retrieval",
+                            "Command execution available despite non-administrative purpose"
+                          ],
+                          "detected_capabilities": {
+                            "command_execution": [
+                              "text:\\bsystem\\b"
+                            ]
+                          }
+                        },
+                        "success": true
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "message": {
+                "text": "Tool 'get_user_roles' exposes command_execution capabilities despite its declared purpose, enabling privilege abuse."
+              },
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "message": {
+                          "text": "Attack: privilege_mismatch_detection"
+                        },
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "get_user_roles"
+                          }
+                        }
+                      },
+                      "state": {
+                        "payload": {
+                          "detected_capabilities": [
+                            "command_execution"
+                          ],
+                          "purpose": "read_only"
+                        },
+                        "response": {
+                          "reasons": [
+                            "command execution not expected for Read-only information retrieval",
+                            "Command execution available despite non-administrative purpose"
+                          ],
+                          "detected_capabilities": {
+                            "command_execution": [
+                              "text:\\bsystem\\b"
+                            ]
+                          }
+                        },
+                        "success": true
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
           "ruleId": "MCP-2024-TE-001",
           "message": {
             "text": "Tool contains potentially dangerous keyword 'system' indicating system-level access"
@@ -928,11 +1206,67 @@
               ]
             }
           ]
+        },
+        {
+          "ruleId": "MCP-2024-UA-001",
+          "message": {
+            "text": "Unauthenticated Access Detector: auth_mismatch detected"
+          },
+          "level": "error",
+          "properties": {
+            "signal_type": "auth_mismatch",
+            "confidence": 0.95
+          },
+          "codeFlows": [
+            {
+              "message": {
+                "text": "Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients."
+              },
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "message": {
+                          "text": "Attack: unauthenticated_access_test"
+                        },
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "MCP Server"
+                          }
+                        }
+                      },
+                      "state": {
+                        "payload": {
+                          "operations": [
+                            "list_tools",
+                            "list_resources"
+                          ],
+                          "authenticated": false
+                        },
+                        "response": {
+                          "tools_count": 2,
+                          "resources_count": 0,
+                          "tool_samples": [
+                            "get_user_role",
+                            "get_user_roles"
+                          ],
+                          "resource_samples": [],
+                          "vulnerable": true
+                        },
+                        "success": true
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ],
       "artifacts": [],
       "properties": {
-        "assessment_id": "24f1b0cc-b44b-4ae9-8006-ff57be22f4cd",
+        "assessment_id": "214b12f8-c58d-4b3a-bc1d-2e16ba8352e1",
         "target_server": "Challenge 5 - Tool Shadowing",
         "target_version": "1.16.0",
         "transport": "sse",

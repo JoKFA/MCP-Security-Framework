@@ -8,14 +8,14 @@ Server:       Challenge 8 - Malicious Code Execution
 Version:      1.16.0
 Transport:    sse
 Exposure:     LOCAL
-Assessment:   9fdf44d9-e23a-4012-a725-b81a69c2ae1c
-Duration:     11.28s
+Assessment:   63abb966-2f35-420b-ab20-9f72ff9e23b8
+Duration:     12.55s
 
 SUMMARY
 ────────────────────────────────────────────────────────────────────────────────
-Detectors Run:      12
-  ✗ Vulnerabilities:  3
-  ✓ Passed:          9
+Detectors Run:      14
+  ✗ Vulnerabilities:  4
+  ✓ Passed:          10
   ? Unknown:         0
   - Not Applicable:   0
 
@@ -51,7 +51,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: CODE_EXECUTION
   Target:        generate_code_example
   Success:       YES
-  Timestamp:     2025-11-05 21:08:04 UTC
+  Timestamp:     2025-11-05 21:45:14 UTC
 
   Impact:
     Tool 'generate_code_example' executes arbitrary code via parameter(s): . No sandboxing detected. Risk score: 80%. Attacker can execute malicious code, access files, exfiltrate data, or compromise the system.
@@ -101,7 +101,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: EXCESSIVE_PERMISSIONS
   Target:        generate_code_example
   Success:       YES
-  Timestamp:     2025-11-05 21:08:04 UTC
+  Timestamp:     2025-11-05 21:45:14 UTC
 
   Impact:
     Tool 'generate_code_example' has excessive permissions (risk: 90%). Capabilities: code_execution. Unrestricted params: 0. Potential for: arbitrary code execution.
@@ -150,7 +150,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: TOOL_ABUSE
   Target:        evaluate_expression
   Success:       YES
-  Timestamp:     2025-11-05 21:08:13 UTC
+  Timestamp:     2025-11-05 21:45:24 UTC
 
   Impact:
     Successfully called dangerous tool 'evaluate_expression' (contains keyword 'eval')
@@ -165,7 +165,54 @@ PoC #1: TOOL_ABUSE
 
 --------------------------------------------------------------------------------
 
+
+================================================================================
+FINDING: Unauthenticated Access Detector
+================================================================================
+
+Detector ID:     MCP-2024-UA-001
+Severity:        CRITICAL
+Confidence:      95%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-284
+  OWASP API:     API1
+  CVSS Score:    10.0/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+
+Signals Detected: 1
+  1. [auth_mismatch]
+     True
+     tools_accessible: True
+     resources_accessible: True
+     resources_supported: True
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: UNAUTHENTICATED_ACCESS_TEST
+  Target:        MCP Server
+  Success:       YES
+  Timestamp:     2025-11-05 21:45:25 UTC
+
+  Impact:
+    Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.
+
+  Attack Payload:
+    operations: ['list_tools', 'list_resources']
+    authenticated: False
+
+  Server Response:
+    tools_count: 2
+    resources_count: 0
+    tool_samples: ['evaluate_expression', 'generate_code_example']
+    resource_samples: []
+    vulnerable: True
+
+--------------------------------------------------------------------------------
+
 ────────────────────────────────────────────────────────────────────────────────
-Report generated: 2025-11-05T13:08:14.827241
+Report generated: 2025-11-05T13:45:25.795838
 Framework version: 0.2.0
 ================================================================================

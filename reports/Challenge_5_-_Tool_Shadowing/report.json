@@ -1,7 +1,7 @@
 {
-  "assessment_id": "24f1b0cc-b44b-4ae9-8006-ff57be22f4cd",
-  "started_at": "2025-11-05T21:07:21.295729Z",
-  "completed_at": "2025-11-05T21:07:34.314135Z",
+  "assessment_id": "214b12f8-c58d-4b3a-bc1d-2e16ba8352e1",
+  "started_at": "2025-11-05T21:44:27.733341Z",
+  "completed_at": "2025-11-05T21:44:41.956947Z",
   "scope": {
     "target": "http://localhost:9005/sse",
     "transport": null,
@@ -68,7 +68,7 @@
     "auth_type": "none",
     "exposure": "local",
     "metadata": {},
-    "profiled_at": "2025-11-05T21:07:22.200074Z"
+    "profiled_at": "2025-11-05T21:44:28.622703Z"
   },
   "results": [
     {
@@ -101,7 +101,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:22.220134Z",
+      "timestamp": "2025-11-05T21:44:28.650054Z",
       "execution_time_ms": null
     },
     {
@@ -138,7 +138,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:22.228599Z",
+      "timestamp": "2025-11-05T21:44:28.660353Z",
       "execution_time_ms": null
     },
     {
@@ -196,7 +196,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:22.234813Z",
+      "timestamp": "2025-11-05T21:44:28.666805Z",
       "execution_time_ms": null
     },
     {
@@ -221,7 +221,7 @@
         "cvss": null
       },
       "remediation": "No issues found",
-      "timestamp": "2025-11-05T21:07:22.240714Z",
+      "timestamp": "2025-11-05T21:44:28.672957Z",
       "execution_time_ms": 0.0
     },
     {
@@ -244,7 +244,7 @@
             "unrestricted_params": [],
             "reason": "High risk score (80%)"
           },
-          "timestamp": "2025-11-05T21:07:22.247074Z"
+          "timestamp": "2025-11-05T21:44:28.680435Z"
         },
         {
           "type": "schema_overpermissive",
@@ -258,7 +258,7 @@
             "unrestricted_params": [],
             "reason": "High risk score (80%)"
           },
-          "timestamp": "2025-11-05T21:07:22.247270Z"
+          "timestamp": "2025-11-05T21:44:28.680631Z"
         }
       ],
       "proof_of_concepts": [
@@ -279,7 +279,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'get_user_role' has excessive permissions (risk: 80%). Capabilities: system_commands. Unrestricted params: 0. Potential for: system command execution.",
-          "timestamp": "2025-11-05T21:07:22.247297Z"
+          "timestamp": "2025-11-05T21:44:28.680657Z"
         },
         {
           "target": "get_user_roles",
@@ -298,7 +298,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'get_user_roles' has excessive permissions (risk: 80%). Capabilities: system_commands. Unrestricted params: 0. Potential for: system command execution.",
-          "timestamp": "2025-11-05T21:07:22.247307Z"
+          "timestamp": "2025-11-05T21:44:28.680668Z"
         }
       ],
       "evidence": {
@@ -362,7 +362,7 @@
         }
       },
       "remediation": "Apply principle of least privilege: (1) Restrict tool parameters to specific allowed values/paths, (2) Implement path validation and sanitization, (3) Split multi-capability tools into focused tools, (4) Add explicit access control checks, (5) Document and justify any high-risk capabilities.",
-      "timestamp": "2025-11-05T21:07:22.240767Z",
+      "timestamp": "2025-11-05T21:44:28.673010Z",
       "execution_time_ms": null
     },
     {
@@ -384,7 +384,7 @@
               "canary_trigger"
             ]
           },
-          "timestamp": "2025-11-05T21:07:23.301526Z"
+          "timestamp": "2025-11-05T21:44:29.741679Z"
         },
         {
           "type": "sensitive_exposure",
@@ -397,7 +397,7 @@
               "canary_trigger"
             ]
           },
-          "timestamp": "2025-11-05T21:07:23.929665Z"
+          "timestamp": "2025-11-05T21:44:30.379291Z"
         }
       ],
       "proof_of_concepts": [
@@ -416,7 +416,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'get_user_role' executed canary instructions, confirming indirect injection impact.",
-          "timestamp": "2025-11-05T21:07:23.929683Z"
+          "timestamp": "2025-11-05T21:44:30.379309Z"
         }
       ],
       "evidence": {
@@ -461,7 +461,7 @@
         }
       },
       "remediation": "Prevent indirect injection: (1) Sanitize all external data before presenting to LLM, (2) Clearly mark untrusted content, (3) Use structured output formats (JSON) instead of freeform text, (4) Implement content filtering for injection patterns, (5) Validate data sources and implement allowlists.",
-      "timestamp": "2025-11-05T21:07:22.247468Z",
+      "timestamp": "2025-11-05T21:44:28.680866Z",
       "execution_time_ms": null
     },
     {
@@ -497,7 +497,162 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:23.929837Z",
+      "timestamp": "2025-11-05T21:44:30.379458Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-PA-001",
+      "detector_name": "Privilege Abuse Detector",
+      "detector_version": "1.1.0",
+      "status": "PRESENT",
+      "confidence": 0.78,
+      "affected_resources": [],
+      "signals": [
+        {
+          "type": "schema_overpermissive",
+          "value": true,
+          "context": {
+            "tool_name": "get_user_role",
+            "unexpected_capabilities": [
+              "command_execution"
+            ],
+            "purpose": "read_only",
+            "mode": "aggressive",
+            "score": 0.45
+          },
+          "timestamp": "2025-11-05T21:44:31.827959Z"
+        },
+        {
+          "type": "schema_overpermissive",
+          "value": true,
+          "context": {
+            "tool_name": "get_user_roles",
+            "unexpected_capabilities": [
+              "command_execution"
+            ],
+            "purpose": "read_only",
+            "mode": "aggressive",
+            "score": 0.45
+          },
+          "timestamp": "2025-11-05T21:44:31.828128Z"
+        }
+      ],
+      "proof_of_concepts": [
+        {
+          "target": "get_user_role",
+          "attack_type": "privilege_mismatch_detection",
+          "payload": {
+            "detected_capabilities": [
+              "command_execution"
+            ],
+            "purpose": "read_only"
+          },
+          "response": {
+            "reasons": [
+              "command execution not expected for Read-only information retrieval",
+              "Command execution available despite non-administrative purpose"
+            ],
+            "detected_capabilities": {
+              "command_execution": [
+                "text:\\bsystem\\b"
+              ]
+            }
+          },
+          "success": true,
+          "impact_demonstrated": "Tool 'get_user_role' exposes command_execution capabilities despite its declared purpose, enabling privilege abuse.",
+          "timestamp": "2025-11-05T21:44:31.828142Z"
+        },
+        {
+          "target": "get_user_roles",
+          "attack_type": "privilege_mismatch_detection",
+          "payload": {
+            "detected_capabilities": [
+              "command_execution"
+            ],
+            "purpose": "read_only"
+          },
+          "response": {
+            "reasons": [
+              "command execution not expected for Read-only information retrieval",
+              "Command execution available despite non-administrative purpose"
+            ],
+            "detected_capabilities": {
+              "command_execution": [
+                "text:\\bsystem\\b"
+              ]
+            }
+          },
+          "success": true,
+          "impact_demonstrated": "Tool 'get_user_roles' exposes command_execution capabilities despite its declared purpose, enabling privilege abuse.",
+          "timestamp": "2025-11-05T21:44:31.828149Z"
+        }
+      ],
+      "evidence": {
+        "mode": "aggressive",
+        "threshold": 0.45,
+        "tools_analyzed": 2,
+        "analysis": [
+          {
+            "tool_name": "get_user_role",
+            "detected_capabilities": [
+              "command_execution"
+            ],
+            "score": 0.45,
+            "flagged": true,
+            "unexpected_capabilities": [
+              "command_execution"
+            ],
+            "purpose": "read_only"
+          },
+          {
+            "tool_name": "get_user_roles",
+            "detected_capabilities": [
+              "command_execution"
+            ],
+            "score": 0.45,
+            "flagged": true,
+            "unexpected_capabilities": [
+              "command_execution"
+            ],
+            "purpose": "read_only"
+          }
+        ],
+        "flagged_tools": [
+          {
+            "tool_name": "get_user_role",
+            "unexpected_capabilities": [
+              "command_execution"
+            ],
+            "score": 0.45,
+            "purpose": "read_only"
+          },
+          {
+            "tool_name": "get_user_roles",
+            "unexpected_capabilities": [
+              "command_execution"
+            ],
+            "score": 0.45,
+            "purpose": "read_only"
+          }
+        ]
+      },
+      "standards": {
+        "cwe": "CWE-250",
+        "owasp_llm": null,
+        "owasp_api": "API4",
+        "asvs": [
+          "V4.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+          "base_score": 6.5,
+          "severity": "MEDIUM"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T21:44:31.612264Z",
       "execution_time_ms": null
     },
     {
@@ -531,7 +686,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:25.398516Z",
+      "timestamp": "2025-11-05T21:44:32.044657Z",
       "execution_time_ms": null
     },
     {
@@ -547,6 +702,7 @@
         "tools_analyzed": 2,
         "tools_called": 10,
         "changed_tools": [],
+        "response_changes": [],
         "call_failures": [],
         "mode": "aggressive"
       },
@@ -566,7 +722,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:25.398593Z",
+      "timestamp": "2025-11-05T21:44:32.044730Z",
       "execution_time_ms": null
     },
     {
@@ -588,7 +744,7 @@
             "tool_description": "Get the role of a user in the system\n\nArgs:\n    username: The username to check\n",
             "keyword": "system"
           },
-          "timestamp": "2025-11-05T21:07:32.825462Z"
+          "timestamp": "2025-11-05T21:44:39.444577Z"
         },
         {
           "type": "schema_overpermissive",
@@ -601,7 +757,7 @@
             "tool_description": "Get the roles of a user in the system\n\nArgs:\n    username: The username to check\n",
             "keyword": "system"
           },
-          "timestamp": "2025-11-05T21:07:32.825483Z"
+          "timestamp": "2025-11-05T21:44:39.444605Z"
         }
       ],
       "proof_of_concepts": [
@@ -618,7 +774,7 @@
           },
           "success": true,
           "impact_demonstrated": "Successfully called dangerous tool 'get_user_role' (contains keyword 'system')",
-          "timestamp": "2025-11-05T21:07:33.038104Z"
+          "timestamp": "2025-11-05T21:44:39.660547Z"
         },
         {
           "target": "get_user_roles",
@@ -633,7 +789,7 @@
           },
           "success": true,
           "impact_demonstrated": "Successfully called dangerous tool 'get_user_roles' (contains keyword 'system')",
-          "timestamp": "2025-11-05T21:07:33.256372Z"
+          "timestamp": "2025-11-05T21:44:40.281225Z"
         }
       ],
       "evidence": {
@@ -671,7 +827,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:32.816957Z",
+      "timestamp": "2025-11-05T21:44:39.439268Z",
       "execution_time_ms": null
     },
     {
@@ -708,7 +864,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:33.256517Z",
+      "timestamp": "2025-11-05T21:44:40.281374Z",
       "execution_time_ms": null
     },
     {
@@ -728,7 +884,7 @@
             "tool_name_2": "get_user_roles",
             "similarity": 0.96
           },
-          "timestamp": "2025-11-05T21:07:34.313574Z"
+          "timestamp": "2025-11-05T21:44:41.337397Z"
         }
       ],
       "proof_of_concepts": [
@@ -746,7 +902,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tools 'get_user_role' and 'get_user_roles' are 96% similar. This enables typosquatting attacks where users/LLMs accidentally call the malicious lookalike instead of the legitimate tool.",
-          "timestamp": "2025-11-05T21:07:34.314048Z"
+          "timestamp": "2025-11-05T21:44:41.337872Z"
         }
       ],
       "evidence": {
@@ -778,17 +934,98 @@
         }
       },
       "remediation": "Prevent tool shadowing: (1) Enforce unique tool names across all connected MCP servers, (2) Use namespacing (e.g., server_name.tool_name), (3) Implement tool identity verification, (4) Warn users when multiple tools have similar names, (5) Maintain a whitelist of trusted tool sources.",
-      "timestamp": "2025-11-05T21:07:34.095715Z",
+      "timestamp": "2025-11-05T21:44:40.714817Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-UA-001",
+      "detector_name": "Unauthenticated Access Detector",
+      "detector_version": "1.1.0",
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "affected_resources": [],
+      "signals": [
+        {
+          "type": "auth_mismatch",
+          "value": true,
+          "context": {
+            "tools_accessible": true,
+            "resources_accessible": true,
+            "resources_supported": true,
+            "vulnerability": "unauthenticated_access",
+            "severity": "CRITICAL"
+          },
+          "timestamp": "2025-11-05T21:44:41.956848Z"
+        }
+      ],
+      "proof_of_concepts": [
+        {
+          "target": "MCP Server",
+          "attack_type": "unauthenticated_access_test",
+          "payload": {
+            "operations": [
+              "list_tools",
+              "list_resources"
+            ],
+            "authenticated": false
+          },
+          "response": {
+            "tools_count": 2,
+            "resources_count": 0,
+            "tool_samples": [
+              "get_user_role",
+              "get_user_roles"
+            ],
+            "resource_samples": [],
+            "vulnerable": true
+          },
+          "success": true,
+          "impact_demonstrated": "Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.",
+          "timestamp": "2025-11-05T21:44:41.956861Z"
+        }
+      ],
+      "evidence": {
+        "mode": "aggressive",
+        "tools_accessible": true,
+        "resources_accessible": true,
+        "resources_supported": true,
+        "auth_required": false,
+        "errors": {},
+        "tool_samples": [
+          "get_user_role",
+          "get_user_roles"
+        ],
+        "tool_count": 2,
+        "resource_samples": [],
+        "resource_count": 0
+      },
+      "standards": {
+        "cwe": "CWE-284",
+        "owasp_llm": null,
+        "owasp_api": "API1",
+        "asvs": [
+          "V1.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "base_score": 10.0,
+          "severity": "CRITICAL"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T21:44:41.338021Z",
       "execution_time_ms": null
     }
   ],
   "threat_model": null,
   "summary": {
-    "present": 4,
+    "present": 6,
     "absent": 8,
     "unknown": 0,
     "not_applicable": 0
   },
-  "audit_log_path": "captures\\audit_24f1b0cc-b44b-4ae9-8006-ff57be22f4cd.jsonl",
+  "audit_log_path": "captures\\audit_214b12f8-c58d-4b3a-bc1d-2e16ba8352e1.jsonl",
   "framework_version": "0.2.0"
 }

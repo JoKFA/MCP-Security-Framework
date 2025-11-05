@@ -8,14 +8,14 @@ Server:       Challenge 9 - Remote Access Control
 Version:      1.16.0
 Transport:    sse
 Exposure:     LOCAL
-Assessment:   9837b8c6-75bf-4bd8-bd5c-94aaa559084b
-Duration:     14.68s
+Assessment:   2406fa98-910e-44cd-a875-78cfac14f4ac
+Duration:     15.92s
 
 SUMMARY
 ────────────────────────────────────────────────────────────────────────────────
-Detectors Run:      12
-  ✗ Vulnerabilities:  5
-  ✓ Passed:          7
+Detectors Run:      14
+  ✗ Vulnerabilities:  6
+  ✓ Passed:          8
   ? Unknown:         0
   - Not Applicable:   0
 
@@ -52,7 +52,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: CODE_EXECUTION
   Target:        remote_access
   Success:       YES
-  Timestamp:     2025-11-05 21:08:18 UTC
+  Timestamp:     2025-11-05 21:45:29 UTC
 
   Impact:
     Tool 'remote_access' executes arbitrary code via parameter(s): command. No sandboxing detected. Risk score: 100%. Attacker can execute malicious code, access files, exfiltrate data, or compromise the system.
@@ -79,7 +79,7 @@ FINDING: Command Injection Detector
 
 Detector ID:     MCP-2024-CI-001
 Severity:        CRITICAL
-Confidence:      81%
+Confidence:      90%
 Status:          ✗ PRESENT
 
 Standards Mapping:
@@ -93,7 +93,7 @@ Signals Detected: 1
   1. [schema_overpermissive]
      True
      tool_name: remote_access
-     risk_score: 0.6
+     risk_score: 0.85
      injection_params: ['command']
 
 PROOF OF CONCEPT: 1 exploit(s) demonstrated
@@ -102,18 +102,18 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: COMMAND_INJECTION_PASSIVE
   Target:        remote_access
   Success:       NO
-  Timestamp:     2025-11-05 21:08:20 UTC
+  Timestamp:     2025-11-05 21:45:31 UTC
 
   Impact:
-    Tool 'remote_access' exposes unrestricted command parameters (command) with indicators: Parameter 'command' maps user input into command execution, Parameter 'command' lacks input restrictions, No validation indicators detected.
+    Tool 'remote_access' exposes unrestricted command parameters (command) with indicators: Parameter 'command' maps user input into command execution, Parameter 'command' lacks input restrictions, Injection parameter(s) accept unrestricted free-form text, No validation indicators detected.
 
   Attack Payload:
     tool_name: remote_access
     vulnerable_params: ['command']
-    risk_reasons: ["Parameter 'command' maps user input into command execution", "Parameter 'command' lacks input restrictions", 'No validation indicators detected']
+    risk_reasons: ["Parameter 'command' maps user input into command execution", "Parameter 'command' lacks input restrictions", 'Injection parameter(s) accept unrestricted free-form text', 'No validation indicators detected']
 
   Server Response:
-    risk_score: 0.6
+    risk_score: 0.85
     has_validation: False
 
 --------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: REMOTE_ACCESS
   Target:        remote_access
   Success:       YES
-  Timestamp:     2025-11-05 21:08:21 UTC
+  Timestamp:     2025-11-05 21:45:32 UTC
 
   Impact:
     Tool 'remote_access' executed admin command with placeholder token, confirming insufficient access controls.
@@ -200,7 +200,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: INDIRECT_INJECTION_CANARY
   Target:        remote_access
   Success:       YES
-  Timestamp:     2025-11-05 21:08:22 UTC
+  Timestamp:     2025-11-05 21:45:33 UTC
 
   Impact:
     Tool 'remote_access' executed canary instructions, confirming indirect injection impact.
@@ -262,7 +262,7 @@ PROOF OF CONCEPT: 2 exploit(s) demonstrated
 PoC #1: TOOL_ABUSE
   Target:        remote_access
   Success:       YES
-  Timestamp:     2025-11-05 21:08:31 UTC
+  Timestamp:     2025-11-05 21:45:42 UTC
 
   Impact:
     Successfully called dangerous tool 'remote_access' (contains keyword 'execute')
@@ -278,7 +278,7 @@ PoC #1: TOOL_ABUSE
 PoC #2: TOOL_ABUSE
   Target:        remote_access
   Success:       YES
-  Timestamp:     2025-11-05 21:08:31 UTC
+  Timestamp:     2025-11-05 21:45:43 UTC
 
   Impact:
     Successfully called dangerous tool 'remote_access' (contains keyword 'command')
@@ -293,7 +293,54 @@ PoC #2: TOOL_ABUSE
 
 --------------------------------------------------------------------------------
 
+
+================================================================================
+FINDING: Unauthenticated Access Detector
+================================================================================
+
+Detector ID:     MCP-2024-UA-001
+Severity:        CRITICAL
+Confidence:      95%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-284
+  OWASP API:     API1
+  CVSS Score:    10.0/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+
+Signals Detected: 1
+  1. [auth_mismatch]
+     True
+     tools_accessible: True
+     resources_accessible: True
+     resources_supported: True
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: UNAUTHENTICATED_ACCESS_TEST
+  Target:        MCP Server
+  Success:       YES
+  Timestamp:     2025-11-05 21:45:44 UTC
+
+  Impact:
+    Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.
+
+  Attack Payload:
+    operations: ['list_tools', 'list_resources']
+    authenticated: False
+
+  Server Response:
+    tools_count: 2
+    resources_count: 0
+    tool_samples: ['remote_access', 'manage_permissions']
+    resource_samples: []
+    vulnerable: True
+
+--------------------------------------------------------------------------------
+
 ────────────────────────────────────────────────────────────────────────────────
-Report generated: 2025-11-05T13:08:32.600096
+Report generated: 2025-11-05T13:45:44.822312
 Framework version: 0.2.0
 ================================================================================

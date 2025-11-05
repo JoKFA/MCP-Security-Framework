@@ -8,14 +8,14 @@ Server:       Challenge 1 - Basic Prompt Injection
 Version:      1.16.0
 Transport:    sse
 Exposure:     LOCAL
-Assessment:   86593378-fbc7-417d-bf58-e41d47a45b17
-Duration:     9.62s
+Assessment:   92d105fc-3de4-4af8-a353-f5a32259f087
+Duration:     10.47s
 
 SUMMARY
 ────────────────────────────────────────────────────────────────────────────────
-Detectors Run:      12
-  ✗ Vulnerabilities:  3
-  ✓ Passed:          9
+Detectors Run:      14
+  ✗ Vulnerabilities:  4
+  ✓ Passed:          10
   ? Unknown:         0
   - Not Applicable:   0
 
@@ -52,7 +52,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: CREDENTIAL_EXPOSURE
   Target:        internal://credentials
   Success:       YES
-  Timestamp:     2025-11-05 21:06:28 UTC
+  Timestamp:     2025-11-05 21:43:29 UTC
 
   Impact:
     Retrieved 4 secrets (passwords, api_keys, connection_strings) from internal://credentials. Samples: passwords=[super_...d123, sk-a1b...i9j0]; api_keys=[sk-a1b...i9j0]; connection_strings=[dbuser...tion]
@@ -105,7 +105,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: INDIRECT_INJECTION_CANARY
   Target:        get_user_info
   Success:       YES
-  Timestamp:     2025-11-05 21:06:30 UTC
+  Timestamp:     2025-11-05 21:43:31 UTC
 
   Impact:
     Tool 'get_user_info' executed canary instructions, confirming indirect injection impact.
@@ -159,7 +159,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: UNAUTHORIZED_ACCESS
   Target:        internal://credentials
   Success:       YES
-  Timestamp:     2025-11-05 21:06:31 UTC
+  Timestamp:     2025-11-05 21:43:33 UTC
 
   Impact:
     Accessed sensitive resource 'internal://credentials' without authentication. Contains: passwords
@@ -188,7 +188,54 @@ REMEDIATION:
   - Restrict access to sensitive resources using authentication and authorization.
   - Do not expose internal resource paths directly to clients.
 
+
+================================================================================
+FINDING: Unauthenticated Access Detector
+================================================================================
+
+Detector ID:     MCP-2024-UA-001
+Severity:        CRITICAL
+Confidence:      95%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-284
+  OWASP API:     API1
+  CVSS Score:    10.0/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+
+Signals Detected: 1
+  1. [auth_mismatch]
+     True
+     tools_accessible: True
+     resources_accessible: True
+     resources_supported: True
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: UNAUTHENTICATED_ACCESS_TEST
+  Target:        MCP Server
+  Success:       YES
+  Timestamp:     2025-11-05 21:43:39 UTC
+
+  Impact:
+    Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.
+
+  Attack Payload:
+    operations: ['list_tools', 'list_resources']
+    authenticated: False
+
+  Server Response:
+    tools_count: 1
+    resources_count: 1
+    tool_samples: ['get_user_info']
+    resource_samples: ['internal://credentials']
+    vulnerable: True
+
+--------------------------------------------------------------------------------
+
 ────────────────────────────────────────────────────────────────────────────────
-Report generated: 2025-11-05T13:06:37.126712
+Report generated: 2025-11-05T13:43:39.494407
 Framework version: 0.2.0
 ================================================================================

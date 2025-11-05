@@ -1,7 +1,7 @@
 {
-  "assessment_id": "abe198ce-9357-4e90-8e36-21959d72f95e",
-  "started_at": "2025-11-05T21:06:57.537605Z",
-  "completed_at": "2025-11-05T21:07:07.162523Z",
+  "assessment_id": "5a7d7cef-02a4-4bd5-b2b2-832289c5d95c",
+  "started_at": "2025-11-05T21:44:01.813711Z",
+  "completed_at": "2025-11-05T21:44:12.502508Z",
   "scope": {
     "target": "http://localhost:9003/sse",
     "transport": null,
@@ -68,7 +68,7 @@
     "auth_type": "none",
     "exposure": "local",
     "metadata": {},
-    "profiled_at": "2025-11-05T21:06:58.440369Z"
+    "profiled_at": "2025-11-05T21:44:02.720945Z"
   },
   "results": [
     {
@@ -101,7 +101,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:06:58.460881Z",
+      "timestamp": "2025-11-05T21:44:02.745392Z",
       "execution_time_ms": null
     },
     {
@@ -138,7 +138,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:06:58.468186Z",
+      "timestamp": "2025-11-05T21:44:02.753689Z",
       "execution_time_ms": null
     },
     {
@@ -175,7 +175,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:06:58.474224Z",
+      "timestamp": "2025-11-05T21:44:02.759158Z",
       "execution_time_ms": null
     },
     {
@@ -200,7 +200,7 @@
         "cvss": null
       },
       "remediation": "No issues found",
-      "timestamp": "2025-11-05T21:06:58.479719Z",
+      "timestamp": "2025-11-05T21:44:02.764494Z",
       "execution_time_ms": 0.0
     },
     {
@@ -230,7 +230,7 @@
             ],
             "reason": "2 high-risk capabilities combined; Unrestricted parameters (1) with high-risk capabilities"
           },
-          "timestamp": "2025-11-05T21:06:58.486031Z"
+          "timestamp": "2025-11-05T21:44:02.770621Z"
         }
       ],
       "proof_of_concepts": [
@@ -247,7 +247,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'file_manager' granted file access to 'C:\\Windows\\System32\\drivers\\etc\\hosts' without additional authorization.",
-          "timestamp": "2025-11-05T21:06:59.545471Z"
+          "timestamp": "2025-11-05T21:44:03.825525Z"
         }
       ],
       "evidence": {
@@ -318,7 +318,7 @@
         }
       },
       "remediation": "Apply principle of least privilege: (1) Restrict tool parameters to specific allowed values/paths, (2) Implement path validation and sanitization, (3) Split multi-capability tools into focused tools, (4) Add explicit access control checks, (5) Document and justify any high-risk capabilities.",
-      "timestamp": "2025-11-05T21:06:58.479771Z",
+      "timestamp": "2025-11-05T21:44:02.764546Z",
       "execution_time_ms": null
     },
     {
@@ -340,7 +340,7 @@
               "canary_trigger"
             ]
           },
-          "timestamp": "2025-11-05T21:07:00.806939Z"
+          "timestamp": "2025-11-05T21:44:05.282848Z"
         }
       ],
       "proof_of_concepts": [
@@ -360,7 +360,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'file_manager' executed canary instructions, confirming indirect injection impact.",
-          "timestamp": "2025-11-05T21:07:00.806957Z"
+          "timestamp": "2025-11-05T21:44:05.282867Z"
         }
       ],
       "evidence": {
@@ -399,7 +399,7 @@
         }
       },
       "remediation": "Prevent indirect injection: (1) Sanitize all external data before presenting to LLM, (2) Clearly mark untrusted content, (3) Use structured output formats (JSON) instead of freeform text, (4) Implement content filtering for injection patterns, (5) Validate data sources and implement allowlists.",
-      "timestamp": "2025-11-05T21:06:59.545628Z",
+      "timestamp": "2025-11-05T21:44:03.825676Z",
       "execution_time_ms": null
     },
     {
@@ -435,7 +435,117 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:00.807112Z",
+      "timestamp": "2025-11-05T21:44:05.283016Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-PA-001",
+      "detector_name": "Privilege Abuse Detector",
+      "detector_version": "1.1.0",
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "affected_resources": [],
+      "signals": [
+        {
+          "type": "schema_overpermissive",
+          "value": true,
+          "context": {
+            "tool_name": "file_manager",
+            "unexpected_capabilities": [
+              "filesystem_delete",
+              "filesystem_write"
+            ],
+            "purpose": "read_only",
+            "mode": "aggressive",
+            "score": 0.9
+          },
+          "timestamp": "2025-11-05T21:44:06.130793Z"
+        }
+      ],
+      "proof_of_concepts": [
+        {
+          "target": "file_manager",
+          "attack_type": "privilege_mismatch_detection",
+          "payload": {
+            "detected_capabilities": [
+              "filesystem_delete",
+              "filesystem_write"
+            ],
+            "purpose": "read_only"
+          },
+          "response": {
+            "reasons": [
+              "filesystem delete not expected for Read-only information retrieval",
+              "filesystem write not expected for Read-only information retrieval",
+              "Tool can both write and delete files, implying wide filesystem control"
+            ],
+            "detected_capabilities": {
+              "filesystem_delete": [
+                "text:\\bdelete\\b"
+              ],
+              "filesystem_read": [
+                "schema:path"
+              ],
+              "filesystem_write": [
+                "schema:path"
+              ]
+            }
+          },
+          "success": true,
+          "impact_demonstrated": "Tool 'file_manager' exposes filesystem_delete, filesystem_write capabilities despite its declared purpose, enabling privilege abuse.",
+          "timestamp": "2025-11-05T21:44:06.130810Z"
+        }
+      ],
+      "evidence": {
+        "mode": "aggressive",
+        "threshold": 0.45,
+        "tools_analyzed": 1,
+        "analysis": [
+          {
+            "tool_name": "file_manager",
+            "detected_capabilities": [
+              "filesystem_delete",
+              "filesystem_read",
+              "filesystem_write"
+            ],
+            "score": 0.9,
+            "flagged": true,
+            "unexpected_capabilities": [
+              "filesystem_delete",
+              "filesystem_write"
+            ],
+            "purpose": "read_only"
+          }
+        ],
+        "flagged_tools": [
+          {
+            "tool_name": "file_manager",
+            "unexpected_capabilities": [
+              "filesystem_delete",
+              "filesystem_write"
+            ],
+            "score": 0.9,
+            "purpose": "read_only"
+          }
+        ]
+      },
+      "standards": {
+        "cwe": "CWE-250",
+        "owasp_llm": null,
+        "owasp_api": "API4",
+        "asvs": [
+          "V4.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+          "base_score": 6.5,
+          "severity": "MEDIUM"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T21:44:06.125527Z",
       "execution_time_ms": null
     },
     {
@@ -469,7 +579,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:01.851451Z",
+      "timestamp": "2025-11-05T21:44:06.745046Z",
       "execution_time_ms": null
     },
     {
@@ -485,6 +595,7 @@
         "tools_analyzed": 1,
         "tools_called": 5,
         "changed_tools": [],
+        "response_changes": [],
         "call_failures": [],
         "mode": "aggressive"
       },
@@ -504,7 +615,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:01.851529Z",
+      "timestamp": "2025-11-05T21:44:06.745132Z",
       "execution_time_ms": null
     },
     {
@@ -526,7 +637,7 @@
             "tool_description": "File manager tool that can read, write, and delete files\n\nArgs:\n    action: The action to perform (read, write, delete)\n    path: The file path to operate on\n",
             "keyword": "delete"
           },
-          "timestamp": "2025-11-05T21:07:06.093690Z"
+          "timestamp": "2025-11-05T21:44:10.605669Z"
         }
       ],
       "proof_of_concepts": [
@@ -543,7 +654,7 @@
           },
           "success": true,
           "impact_demonstrated": "Successfully called dangerous tool 'file_manager' (contains keyword 'delete')",
-          "timestamp": "2025-11-05T21:07:06.311698Z"
+          "timestamp": "2025-11-05T21:44:10.823239Z"
         }
       ],
       "evidence": {
@@ -576,7 +687,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:06.088605Z",
+      "timestamp": "2025-11-05T21:44:10.399759Z",
       "execution_time_ms": null
     },
     {
@@ -613,7 +724,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:06.311848Z",
+      "timestamp": "2025-11-05T21:44:10.823415Z",
       "execution_time_ms": null
     },
     {
@@ -648,17 +759,96 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:07.154175Z",
+      "timestamp": "2025-11-05T21:44:11.452701Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-UA-001",
+      "detector_name": "Unauthenticated Access Detector",
+      "detector_version": "1.1.0",
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "affected_resources": [],
+      "signals": [
+        {
+          "type": "auth_mismatch",
+          "value": true,
+          "context": {
+            "tools_accessible": true,
+            "resources_accessible": true,
+            "resources_supported": true,
+            "vulnerability": "unauthenticated_access",
+            "severity": "CRITICAL"
+          },
+          "timestamp": "2025-11-05T21:44:12.502409Z"
+        }
+      ],
+      "proof_of_concepts": [
+        {
+          "target": "MCP Server",
+          "attack_type": "unauthenticated_access_test",
+          "payload": {
+            "operations": [
+              "list_tools",
+              "list_resources"
+            ],
+            "authenticated": false
+          },
+          "response": {
+            "tools_count": 1,
+            "resources_count": 0,
+            "tool_samples": [
+              "file_manager"
+            ],
+            "resource_samples": [],
+            "vulnerable": true
+          },
+          "success": true,
+          "impact_demonstrated": "Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.",
+          "timestamp": "2025-11-05T21:44:12.502423Z"
+        }
+      ],
+      "evidence": {
+        "mode": "aggressive",
+        "tools_accessible": true,
+        "resources_accessible": true,
+        "resources_supported": true,
+        "auth_required": false,
+        "errors": {},
+        "tool_samples": [
+          "file_manager"
+        ],
+        "tool_count": 1,
+        "resource_samples": [],
+        "resource_count": 0
+      },
+      "standards": {
+        "cwe": "CWE-284",
+        "owasp_llm": null,
+        "owasp_api": "API1",
+        "asvs": [
+          "V1.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "base_score": 10.0,
+          "severity": "CRITICAL"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T21:44:12.067478Z",
       "execution_time_ms": null
     }
   ],
   "threat_model": null,
   "summary": {
-    "present": 3,
+    "present": 5,
     "absent": 9,
     "unknown": 0,
     "not_applicable": 0
   },
-  "audit_log_path": "captures\\audit_abe198ce-9357-4e90-8e36-21959d72f95e.jsonl",
+  "audit_log_path": "captures\\audit_5a7d7cef-02a4-4bd5-b2b2-832289c5d95c.jsonl",
   "framework_version": "0.2.0"
 }

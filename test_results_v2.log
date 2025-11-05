@@ -1,0 +1,1107 @@
+﻿==========================================
+  Testing All DV-MCP Challenges (PowerShell)
+  Mode: AGGRESSIVE (Active Testing)
+==========================================
+
+
+==========================================
+Testing Challenge_1_Basic_Prompt_Injection (port 9001)
+==========================================
+
+╔════════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║           MCP Security Framework (mcpsf) v0.2.0                    ║
+║           Professional Security Testing for MCP Servers            ║
+║                                                                    ║
+╚════════════════════════════════════════════════════════════════════╝
+
+
+[*] Target: http://localhost:9001/sse
+[*] Transport: sse
+[*] Running all detectors
+
+[*] Initializing assessment engine...
+[*] Starting assessment (this may take 1-3 minutes)...
+
+Loaded detector: MCP-2024-CEX-001 (Code Execution Detector)
+Loaded detector: MCP-2024-CI-001 (Command Injection Detector)
+Loaded detector: MCP-2024-CE-001 (Credential Exposure Detector)
+Loaded detector: MCP-2024-DUMMY-001 (Dummy Detector)
+Loaded detector: MCP-2024-EP-001 (Excessive Permissions Detector)
+Loaded detector: MCP-2024-II-001 (Indirect Prompt Injection Detector)
+Loaded detector: MCP-2024-IS-001 (Insecure Token Storage Detector)
+Loaded detector: MCP-2024-PA-001 (Privilege Abuse Detector)
+Loaded detector: MCP-2024-PI-001 (Prompt Injection via Resource Parameters)
+Loaded detector: MCP-2024-RUG-001 (Tool Behavior Monitor (Rug Pull Detector))
+Loaded detector: MCP-2024-TE-001 (Tool Enumeration Analyzer)
+Loaded detector: MCP-2024-TP-001 (Tool Poisoning Detector)
+Loaded detector: MCP-2024-TS-001 (Tool Shadowing Detector)
+Loaded detector: MCP-2024-UA-001 (Unauthenticated Access Detector)
+Running detector: MCP-2024-CE-001 (Credential Exposure Detector)
+  Status: PRESENT (confidence: 0.95)
+Running detector: MCP-2024-CEX-001 (Code Execution Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-CI-001 (Command Injection Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-DUMMY-001 (Dummy Detector)
+  Status: ABSENT (confidence: 1.00)
+Running detector: MCP-2024-EP-001 (Excessive Permissions Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-II-001 (Indirect Prompt Injection Detector)
+  Status: PRESENT (confidence: 0.97)
+Running detector: MCP-2024-IS-001 (Insecure Token Storage Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-PA-001 (Privilege Abuse Detector)
+  Status: ABSENT (confidence: 0.80)
+Running detector: MCP-2024-PI-001 (Prompt Injection via Resource Parameters)
+  Status: PRESENT (confidence: 0.95)
+Running detector: MCP-2024-RUG-001 (Tool Behavior Monitor (Rug Pull Detector))
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-TE-001 (Tool Enumeration Analyzer)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-TP-001 (Tool Poisoning Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-TS-001 (Tool Shadowing Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-UA-001 (Unauthenticated Access Detector)
+  Status: PRESENT (confidence: 0.95)
+
+[*] Generating assessment reports...
+[*] Output directory: reports\Challenge_1_-_Basic_Prompt_Injection
+
+======================================================================
+  ASSESSMENT COMPLETE
+======================================================================
+
+[+] Server: Challenge 1 - Basic Prompt Injection
+[+] Version: 1.16.0
+[+] Protocol: 2025-06-18
+[+] Transport: sse
+
+[RESULTS]
+  Detectors run:        14
+  Vulnerabilities:      4
+  Passed:               10
+  Unknown:              0
+  Not Applicable:       0
+
+[!] VULNERABILITIES DETECTED:
+
+  [HIGH] Credential Exposure Detector
+      ID: MCP-2024-CE-001
+      Confidence: 95%
+      PoCs: 1
+
+  [HIGH] Indirect Prompt Injection Detector
+      ID: MCP-2024-II-001
+      Confidence: 97%
+      PoCs: 1
+
+  [HIGH] Prompt Injection via Resource Parameters
+      ID: MCP-2024-PI-001
+      Confidence: 95%
+      Affected: internal://credentials
+      PoCs: 1
+
+  [CRITICAL] Unauthenticated Access Detector
+      ID: MCP-2024-UA-001
+      Confidence: 95%
+      PoCs: 1
+
+[+] Reports saved to: reports\Challenge_1_-_Basic_Prompt_Injection
+    - audit.jsonl
+    - metadata.json
+    - report.json
+    - report.sarif
+    - report.txt
+
+[+] Assessment ID: 92d105fc-3de4-4af8-a353-f5a32259f087
+[+] Duration: 10.47s
+
+[!] Exiting with code 1 (vulnerabilities found)
+[DETECTED] Challenge_1_Basic_Prompt_Injection
+
+==========================================
+Testing Challenge_2_Tool_Poisoning (port 9002)
+==========================================
+
+╔════════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║           MCP Security Framework (mcpsf) v0.2.0                    ║
+║           Professional Security Testing for MCP Servers            ║
+║                                                                    ║
+╚════════════════════════════════════════════════════════════════════╝
+
+
+[*] Target: http://localhost:9002/sse
+[*] Transport: sse
+[*] Running all detectors
+
+[*] Initializing assessment engine...
+[*] Starting assessment (this may take 1-3 minutes)...
+
+Loaded detector: MCP-2024-CEX-001 (Code Execution Detector)
+Loaded detector: MCP-2024-CI-001 (Command Injection Detector)
+Loaded detector: MCP-2024-CE-001 (Credential Exposure Detector)
+Loaded detector: MCP-2024-DUMMY-001 (Dummy Detector)
+Loaded detector: MCP-2024-EP-001 (Excessive Permissions Detector)
+Loaded detector: MCP-2024-II-001 (Indirect Prompt Injection Detector)
+Loaded detector: MCP-2024-IS-001 (Insecure Token Storage Detector)
+Loaded detector: MCP-2024-PA-001 (Privilege Abuse Detector)
+Loaded detector: MCP-2024-PI-001 (Prompt Injection via Resource Parameters)
+Loaded detector: MCP-2024-RUG-001 (Tool Behavior Monitor (Rug Pull Detector))
+Loaded detector: MCP-2024-TE-001 (Tool Enumeration Analyzer)
+Loaded detector: MCP-2024-TP-001 (Tool Poisoning Detector)
+Loaded detector: MCP-2024-TS-001 (Tool Shadowing Detector)
+Loaded detector: MCP-2024-UA-001 (Unauthenticated Access Detector)
+Running detector: MCP-2024-CE-001 (Credential Exposure Detector)
+  Status: ABSENT (confidence: 0.00)
+Running detector: MCP-2024-CEX-001 (Code Execution Detector)
+  Status: PRESENT (confidence: 0.90)
+Running detector: MCP-2024-CI-001 (Command Injection Detector)
+  Status: PRESENT (confidence: 0.98)
+Running detector: MCP-2024-DUMMY-001 (Dummy Detector)
+  Status: ABSENT (confidence: 1.00)
+Running detector: MCP-2024-EP-001 (Excessive Permissions Detector)
+  Status: PRESENT (confidence: 0.90)
+Running detector: MCP-2024-II-001 (Indirect Prompt Injection Detector)
+  Status: PRESENT (confidence: 0.97)
+Running detector: MCP-2024-IS-001 (Insecure Token Storage Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-PA-001 (Privilege Abuse Detector)
+  Status: PRESENT (confidence: 0.78)
+Running detector: MCP-2024-PI-001 (Prompt Injection via Resource Parameters)
+  Status: ABSENT (confidence: 0.80)
+Running detector: MCP-2024-RUG-001 (Tool Behavior Monitor (Rug Pull Detector))
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-TE-001 (Tool Enumeration Analyzer)
+  Status: PRESENT (confidence: 0.90)
+Running detector: MCP-2024-TP-001 (Tool Poisoning Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-TS-001 (Tool Shadowing Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-UA-001 (Unauthenticated Access Detector)
+  Status: PRESENT (confidence: 0.95)
+
+[*] Generating assessment reports...
+[*] Output directory: reports\Challenge_2_-_Tool_Poisoning
+
+======================================================================
+  ASSESSMENT COMPLETE
+======================================================================
+
+[+] Server: Challenge 2 - Tool Poisoning
+[+] Version: 1.16.0
+[+] Protocol: 2025-06-18
+[+] Transport: sse
+
+[RESULTS]
+  Detectors run:        14
+  Vulnerabilities:      7
+  Passed:               7
+  Unknown:              0
+  Not Applicable:       0
+
+[!] VULNERABILITIES DETECTED:
+
+  [CRITICAL] Code Execution Detector
+      ID: MCP-2024-CEX-001
+      Confidence: 90%
+      PoCs: 1
+
+  [CRITICAL] Command Injection Detector
+      ID: MCP-2024-CI-001
+      Confidence: 98%
+      PoCs: 1
+
+  [CRITICAL] Excessive Permissions Detector
+      ID: MCP-2024-EP-001
+      Confidence: 90%
+      PoCs: 2
+
+  [HIGH] Indirect Prompt Injection Detector
+      ID: MCP-2024-II-001
+      Confidence: 97%
+      PoCs: 1
+
+  [MEDIUM] Privilege Abuse Detector
+      ID: MCP-2024-PA-001
+      Confidence: 78%
+      PoCs: 1
+
+  [MEDIUM] Tool Enumeration Analyzer
+      ID: MCP-2024-TE-001
+      Confidence: 90%
+      PoCs: 2
+
+  [CRITICAL] Unauthenticated Access Detector
+      ID: MCP-2024-UA-001
+      Confidence: 95%
+      PoCs: 1
+
+[+] Reports saved to: reports\Challenge_2_-_Tool_Poisoning
+    - audit.jsonl
+    - metadata.json
+    - report.json
+    - report.sarif
+    - report.txt
+
+[+] Assessment ID: d0767036-97f0-4281-935f-6c4df7349313
+[+] Duration: 15.97s
+
+[!] Exiting with code 1 (vulnerabilities found)
+[DETECTED] Challenge_2_Tool_Poisoning
+
+==========================================
+Testing Challenge_3_Excessive_Permissions (port 9003)
+==========================================
+
+╔════════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║           MCP Security Framework (mcpsf) v0.2.0                    ║
+║           Professional Security Testing for MCP Servers            ║
+║                                                                    ║
+╚════════════════════════════════════════════════════════════════════╝
+
+
+[*] Target: http://localhost:9003/sse
+[*] Transport: sse
+[*] Running all detectors
+
+[*] Initializing assessment engine...
+[*] Starting assessment (this may take 1-3 minutes)...
+
+Loaded detector: MCP-2024-CEX-001 (Code Execution Detector)
+Loaded detector: MCP-2024-CI-001 (Command Injection Detector)
+Loaded detector: MCP-2024-CE-001 (Credential Exposure Detector)
+Loaded detector: MCP-2024-DUMMY-001 (Dummy Detector)
+Loaded detector: MCP-2024-EP-001 (Excessive Permissions Detector)
+Loaded detector: MCP-2024-II-001 (Indirect Prompt Injection Detector)
+Loaded detector: MCP-2024-IS-001 (Insecure Token Storage Detector)
+Loaded detector: MCP-2024-PA-001 (Privilege Abuse Detector)
+Loaded detector: MCP-2024-PI-001 (Prompt Injection via Resource Parameters)
+Loaded detector: MCP-2024-RUG-001 (Tool Behavior Monitor (Rug Pull Detector))
+Loaded detector: MCP-2024-TE-001 (Tool Enumeration Analyzer)
+Loaded detector: MCP-2024-TP-001 (Tool Poisoning Detector)
+Loaded detector: MCP-2024-TS-001 (Tool Shadowing Detector)
+Loaded detector: MCP-2024-UA-001 (Unauthenticated Access Detector)
+Running detector: MCP-2024-CE-001 (Credential Exposure Detector)
+  Status: ABSENT (confidence: 0.00)
+Running detector: MCP-2024-CEX-001 (Code Execution Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-CI-001 (Command Injection Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-DUMMY-001 (Dummy Detector)
+  Status: ABSENT (confidence: 1.00)
+Running detector: MCP-2024-EP-001 (Excessive Permissions Detector)
+  Status: PRESENT (confidence: 0.97)
+Running detector: MCP-2024-II-001 (Indirect Prompt Injection Detector)
+  Status: PRESENT (confidence: 0.97)
+Running detector: MCP-2024-IS-001 (Insecure Token Storage Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-PA-001 (Privilege Abuse Detector)
+  Status: PRESENT (confidence: 0.95)
+Running detector: MCP-2024-PI-001 (Prompt Injection via Resource Parameters)
+  Status: ABSENT (confidence: 0.80)
+Running detector: MCP-2024-RUG-001 (Tool Behavior Monitor (Rug Pull Detector))
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-TE-001 (Tool Enumeration Analyzer)
+  Status: PRESENT (confidence: 0.90)
+Running detector: MCP-2024-TP-001 (Tool Poisoning Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-TS-001 (Tool Shadowing Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-UA-001 (Unauthenticated Access Detector)
+  Status: PRESENT (confidence: 0.95)
+
+[*] Generating assessment reports...
+[*] Output directory: reports\Challenge_3_-_Excessive_Permission_Scope
+
+======================================================================
+  ASSESSMENT COMPLETE
+======================================================================
+
+[+] Server: Challenge 3 - Excessive Permission Scope
+[+] Version: 1.16.0
+[+] Protocol: 2025-06-18
+[+] Transport: sse
+
+[RESULTS]
+  Detectors run:        14
+  Vulnerabilities:      5
+  Passed:               9
+  Unknown:              0
+  Not Applicable:       0
+
+[!] VULNERABILITIES DETECTED:
+
+  [CRITICAL] Excessive Permissions Detector
+      ID: MCP-2024-EP-001
+      Confidence: 97%
+      PoCs: 1
+
+  [HIGH] Indirect Prompt Injection Detector
+      ID: MCP-2024-II-001
+      Confidence: 97%
+      PoCs: 1
+
+  [MEDIUM] Privilege Abuse Detector
+      ID: MCP-2024-PA-001
+      Confidence: 95%
+      PoCs: 1
+
+  [MEDIUM] Tool Enumeration Analyzer
+      ID: MCP-2024-TE-001
+      Confidence: 90%
+      PoCs: 1
+
+  [CRITICAL] Unauthenticated Access Detector
+      ID: MCP-2024-UA-001
+      Confidence: 95%
+      PoCs: 1
+
+[+] Reports saved to: reports\Challenge_3_-_Excessive_Permission_Scope
+    - audit.jsonl
+    - metadata.json
+    - report.json
+    - report.sarif
+    - report.txt
+
+[+] Assessment ID: 5a7d7cef-02a4-4bd5-b2b2-832289c5d95c
+[+] Duration: 10.69s
+
+[!] Exiting with code 1 (vulnerabilities found)
+[DETECTED] Challenge_3_Excessive_Permissions
+
+==========================================
+Testing Challenge_4_Rug_Pull_Attack (port 9004)
+==========================================
+
+╔════════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║           MCP Security Framework (mcpsf) v0.2.0                    ║
+║           Professional Security Testing for MCP Servers            ║
+║                                                                    ║
+╚════════════════════════════════════════════════════════════════════╝
+
+
+[*] Target: http://localhost:9004/sse
+[*] Transport: sse
+[*] Running all detectors
+
+[*] Initializing assessment engine...
+[*] Starting assessment (this may take 1-3 minutes)...
+
+Loaded detector: MCP-2024-CEX-001 (Code Execution Detector)
+Loaded detector: MCP-2024-CI-001 (Command Injection Detector)
+Loaded detector: MCP-2024-CE-001 (Credential Exposure Detector)
+Loaded detector: MCP-2024-DUMMY-001 (Dummy Detector)
+Loaded detector: MCP-2024-EP-001 (Excessive Permissions Detector)
+Loaded detector: MCP-2024-II-001 (Indirect Prompt Injection Detector)
+Loaded detector: MCP-2024-IS-001 (Insecure Token Storage Detector)
+Loaded detector: MCP-2024-PA-001 (Privilege Abuse Detector)
+Loaded detector: MCP-2024-PI-001 (Prompt Injection via Resource Parameters)
+Loaded detector: MCP-2024-RUG-001 (Tool Behavior Monitor (Rug Pull Detector))
+Loaded detector: MCP-2024-TE-001 (Tool Enumeration Analyzer)
+Loaded detector: MCP-2024-TP-001 (Tool Poisoning Detector)
+Loaded detector: MCP-2024-TS-001 (Tool Shadowing Detector)
+Loaded detector: MCP-2024-UA-001 (Unauthenticated Access Detector)
+Running detector: MCP-2024-CE-001 (Credential Exposure Detector)
+  Status: ABSENT (confidence: 0.00)
+Running detector: MCP-2024-CEX-001 (Code Execution Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-CI-001 (Command Injection Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-DUMMY-001 (Dummy Detector)
+  Status: ABSENT (confidence: 1.00)
+Running detector: MCP-2024-EP-001 (Excessive Permissions Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-II-001 (Indirect Prompt Injection Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-IS-001 (Insecure Token Storage Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-PA-001 (Privilege Abuse Detector)
+  Status: ABSENT (confidence: 0.80)
+Running detector: MCP-2024-PI-001 (Prompt Injection via Resource Parameters)
+  Status: ABSENT (confidence: 0.80)
+Running detector: MCP-2024-RUG-001 (Tool Behavior Monitor (Rug Pull Detector))
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-TE-001 (Tool Enumeration Analyzer)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-TP-001 (Tool Poisoning Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-TS-001 (Tool Shadowing Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-UA-001 (Unauthenticated Access Detector)
+  Status: PRESENT (confidence: 0.95)
+
+[*] Generating assessment reports...
+[*] Output directory: reports\Challenge_4_-_Rug_Pull_Attack
+
+======================================================================
+  ASSESSMENT COMPLETE
+======================================================================
+
+[+] Server: Challenge 4 - Rug Pull Attack
+[+] Version: 1.16.0
+[+] Protocol: 2025-06-18
+[+] Transport: sse
+
+[RESULTS]
+  Detectors run:        14
+  Vulnerabilities:      1
+  Passed:               13
+  Unknown:              0
+  Not Applicable:       0
+
+[!] VULNERABILITIES DETECTED:
+
+  [CRITICAL] Unauthenticated Access Detector
+      ID: MCP-2024-UA-001
+      Confidence: 95%
+      PoCs: 1
+
+[+] Reports saved to: reports\Challenge_4_-_Rug_Pull_Attack
+    - audit.jsonl
+    - metadata.json
+    - report.json
+    - report.sarif
+    - report.txt
+
+[+] Assessment ID: 636ab057-c6c5-4017-b5e6-34ef569bb785
+[+] Duration: 9.00s
+
+[!] Exiting with code 1 (vulnerabilities found)
+[DETECTED] Challenge_4_Rug_Pull_Attack
+
+==========================================
+Testing Challenge_5_Tool_Shadowing (port 9005)
+==========================================
+
+╔════════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║           MCP Security Framework (mcpsf) v0.2.0                    ║
+║           Professional Security Testing for MCP Servers            ║
+║                                                                    ║
+╚════════════════════════════════════════════════════════════════════╝
+
+
+[*] Target: http://localhost:9005/sse
+[*] Transport: sse
+[*] Running all detectors
+
+[*] Initializing assessment engine...
+[*] Starting assessment (this may take 1-3 minutes)...
+
+Loaded detector: MCP-2024-CEX-001 (Code Execution Detector)
+Loaded detector: MCP-2024-CI-001 (Command Injection Detector)
+Loaded detector: MCP-2024-CE-001 (Credential Exposure Detector)
+Loaded detector: MCP-2024-DUMMY-001 (Dummy Detector)
+Loaded detector: MCP-2024-EP-001 (Excessive Permissions Detector)
+Loaded detector: MCP-2024-II-001 (Indirect Prompt Injection Detector)
+Loaded detector: MCP-2024-IS-001 (Insecure Token Storage Detector)
+Loaded detector: MCP-2024-PA-001 (Privilege Abuse Detector)
+Loaded detector: MCP-2024-PI-001 (Prompt Injection via Resource Parameters)
+Loaded detector: MCP-2024-RUG-001 (Tool Behavior Monitor (Rug Pull Detector))
+Loaded detector: MCP-2024-TE-001 (Tool Enumeration Analyzer)
+Loaded detector: MCP-2024-TP-001 (Tool Poisoning Detector)
+Loaded detector: MCP-2024-TS-001 (Tool Shadowing Detector)
+Loaded detector: MCP-2024-UA-001 (Unauthenticated Access Detector)
+Running detector: MCP-2024-CE-001 (Credential Exposure Detector)
+  Status: ABSENT (confidence: 0.00)
+Running detector: MCP-2024-CEX-001 (Code Execution Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-CI-001 (Command Injection Detector)
+  Status: ABSENT (confidence: 0.70)
+Running detector: MCP-2024-DUMMY-001 (Dummy Detector)
+  Status: ABSENT (confidence: 1.00)
+Running detector: MCP-2024-EP-001 (Excessive Permissions Detector)
+  Status: PRESENT (confidence: 0.80)
+Running detector: MCP-2024-II-001 (Indirect Prompt Injection Detector)
+  Status: PRESENT (confidence: 0.97)
+Running detector: MCP-2024-IS-001 (Insecure Token Storage Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-PA-001 (Privilege Abuse Detector)
+  Status: PRESENT (confidence: 0.78)
+Running detector: MCP-2024-PI-001 (Prompt Injection via Resource Parameters)
+  Status: ABSENT (confidence: 0.80)
+Running detector: MCP-2024-RUG-001 (Tool Behavior Monitor (Rug Pull Detector))
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-TE-001 (Tool Enumeration Analyzer)
+  Status: PRESENT (confidence: 0.90)
+Running detector: MCP-2024-TP-001 (Tool Poisoning Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-TS-001 (Tool Shadowing Detector)
+  Status: PRESENT (confidence: 0.80)
+Running detector: MCP-2024-UA-001 (Unauthenticated Access Detector)
+  Status: PRESENT (confidence: 0.95)
+
+[*] Generating assessment reports...
+[*] Output directory: reports\Challenge_5_-_Tool_Shadowing
+
+======================================================================
+  ASSESSMENT COMPLETE
+======================================================================
+
+[+] Server: Challenge 5 - Tool Shadowing
+[+] Version: 1.16.0
+[+] Protocol: 2025-06-18
+[+] Transport: sse
+
+[RESULTS]
+  Detectors run:        14
+  Vulnerabilities:      6
+  Passed:               8
+  Unknown:              0
+  Not Applicable:       0
+
+[!] VULNERABILITIES DETECTED:
+
+  [CRITICAL] Excessive Permissions Detector
+      ID: MCP-2024-EP-001
+      Confidence: 80%
+      PoCs: 2
+
+  [HIGH] Indirect Prompt Injection Detector
+      ID: MCP-2024-II-001
+      Confidence: 97%
+      PoCs: 1
+
+  [MEDIUM] Privilege Abuse Detector
+      ID: MCP-2024-PA-001
+      Confidence: 78%
+      PoCs: 2
+
+  [MEDIUM] Tool Enumeration Analyzer
+      ID: MCP-2024-TE-001
+      Confidence: 90%
+      PoCs: 2
+
+  [HIGH] Tool Shadowing Detector
+      ID: MCP-2024-TS-001
+      Confidence: 80%
+      PoCs: 1
+
+  [CRITICAL] Unauthenticated Access Detector
+      ID: MCP-2024-UA-001
+      Confidence: 95%
+      PoCs: 1
+
+[+] Reports saved to: reports\Challenge_5_-_Tool_Shadowing
+    - audit.jsonl
+    - metadata.json
+    - report.json
+    - report.sarif
+    - report.txt
+
+[+] Assessment ID: 214b12f8-c58d-4b3a-bc1d-2e16ba8352e1
+[+] Duration: 14.22s
+
+[!] Exiting with code 1 (vulnerabilities found)
+[DETECTED] Challenge_5_Tool_Shadowing
+
+==========================================
+Testing Challenge_6_Indirect_Prompt_Injection (port 9006)
+==========================================
+
+╔════════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║           MCP Security Framework (mcpsf) v0.2.0                    ║
+║           Professional Security Testing for MCP Servers            ║
+║                                                                    ║
+╚════════════════════════════════════════════════════════════════════╝
+
+
+[*] Target: http://localhost:9006/sse
+[*] Transport: sse
+[*] Running all detectors
+
+[*] Initializing assessment engine...
+[*] Starting assessment (this may take 1-3 minutes)...
+
+Loaded detector: MCP-2024-CEX-001 (Code Execution Detector)
+Loaded detector: MCP-2024-CI-001 (Command Injection Detector)
+Loaded detector: MCP-2024-CE-001 (Credential Exposure Detector)
+Loaded detector: MCP-2024-DUMMY-001 (Dummy Detector)
+Loaded detector: MCP-2024-EP-001 (Excessive Permissions Detector)
+Loaded detector: MCP-2024-II-001 (Indirect Prompt Injection Detector)
+Loaded detector: MCP-2024-IS-001 (Insecure Token Storage Detector)
+Loaded detector: MCP-2024-PA-001 (Privilege Abuse Detector)
+Loaded detector: MCP-2024-PI-001 (Prompt Injection via Resource Parameters)
+Loaded detector: MCP-2024-RUG-001 (Tool Behavior Monitor (Rug Pull Detector))
+Loaded detector: MCP-2024-TE-001 (Tool Enumeration Analyzer)
+Loaded detector: MCP-2024-TP-001 (Tool Poisoning Detector)
+Loaded detector: MCP-2024-TS-001 (Tool Shadowing Detector)
+Loaded detector: MCP-2024-UA-001 (Unauthenticated Access Detector)
+Running detector: MCP-2024-CE-001 (Credential Exposure Detector)
+  Status: ABSENT (confidence: 0.00)
+Running detector: MCP-2024-CEX-001 (Code Execution Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-CI-001 (Command Injection Detector)
+  Status: ABSENT (confidence: 0.70)
+Running detector: MCP-2024-DUMMY-001 (Dummy Detector)
+  Status: ABSENT (confidence: 1.00)
+Running detector: MCP-2024-EP-001 (Excessive Permissions Detector)
+  Status: PRESENT (confidence: 0.85)
+Running detector: MCP-2024-II-001 (Indirect Prompt Injection Detector)
+  Status: PRESENT (confidence: 0.97)
+Running detector: MCP-2024-IS-001 (Insecure Token Storage Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-PA-001 (Privilege Abuse Detector)
+  Status: PRESENT (confidence: 0.78)
+Running detector: MCP-2024-PI-001 (Prompt Injection via Resource Parameters)
+  Status: ABSENT (confidence: 0.80)
+Running detector: MCP-2024-RUG-001 (Tool Behavior Monitor (Rug Pull Detector))
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-TE-001 (Tool Enumeration Analyzer)
+  Status: PRESENT (confidence: 0.90)
+Running detector: MCP-2024-TP-001 (Tool Poisoning Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-TS-001 (Tool Shadowing Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-UA-001 (Unauthenticated Access Detector)
+  Status: PRESENT (confidence: 0.95)
+
+[*] Generating assessment reports...
+[*] Output directory: reports\Challenge_6_-_Indirect_Prompt_Injection
+
+======================================================================
+  ASSESSMENT COMPLETE
+======================================================================
+
+[+] Server: Challenge 6 - Indirect Prompt Injection
+[+] Version: 1.16.0
+[+] Protocol: 2025-06-18
+[+] Transport: sse
+
+[RESULTS]
+  Detectors run:        14
+  Vulnerabilities:      5
+  Passed:               9
+  Unknown:              0
+  Not Applicable:       0
+
+[!] VULNERABILITIES DETECTED:
+
+  [CRITICAL] Excessive Permissions Detector
+      ID: MCP-2024-EP-001
+      Confidence: 85%
+      PoCs: 1
+
+  [HIGH] Indirect Prompt Injection Detector
+      ID: MCP-2024-II-001
+      Confidence: 97%
+      PoCs: 1
+
+  [MEDIUM] Privilege Abuse Detector
+      ID: MCP-2024-PA-001
+      Confidence: 78%
+      PoCs: 1
+
+  [MEDIUM] Tool Enumeration Analyzer
+      ID: MCP-2024-TE-001
+      Confidence: 90%
+      PoCs: 1
+
+  [CRITICAL] Unauthenticated Access Detector
+      ID: MCP-2024-UA-001
+      Confidence: 95%
+      PoCs: 1
+
+[+] Reports saved to: reports\Challenge_6_-_Indirect_Prompt_Injection
+    - audit.jsonl
+    - metadata.json
+    - report.json
+    - report.sarif
+    - report.txt
+
+[+] Assessment ID: 72d32b7e-7580-4753-8e69-f1564550c322
+[+] Duration: 9.59s
+
+[!] Exiting with code 1 (vulnerabilities found)
+[DETECTED] Challenge_6_Indirect_Prompt_Injection
+
+==========================================
+Testing Challenge_7_Token_Theft (port 9007)
+==========================================
+
+╔════════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║           MCP Security Framework (mcpsf) v0.2.0                    ║
+║           Professional Security Testing for MCP Servers            ║
+║                                                                    ║
+╚════════════════════════════════════════════════════════════════════╝
+
+
+[*] Target: http://localhost:9007/sse
+[*] Transport: sse
+[*] Running all detectors
+
+[*] Initializing assessment engine...
+[*] Starting assessment (this may take 1-3 minutes)...
+
+Loaded detector: MCP-2024-CEX-001 (Code Execution Detector)
+Loaded detector: MCP-2024-CI-001 (Command Injection Detector)
+Loaded detector: MCP-2024-CE-001 (Credential Exposure Detector)
+Loaded detector: MCP-2024-DUMMY-001 (Dummy Detector)
+Loaded detector: MCP-2024-EP-001 (Excessive Permissions Detector)
+Loaded detector: MCP-2024-II-001 (Indirect Prompt Injection Detector)
+Loaded detector: MCP-2024-IS-001 (Insecure Token Storage Detector)
+Loaded detector: MCP-2024-PA-001 (Privilege Abuse Detector)
+Loaded detector: MCP-2024-PI-001 (Prompt Injection via Resource Parameters)
+Loaded detector: MCP-2024-RUG-001 (Tool Behavior Monitor (Rug Pull Detector))
+Loaded detector: MCP-2024-TE-001 (Tool Enumeration Analyzer)
+Loaded detector: MCP-2024-TP-001 (Tool Poisoning Detector)
+Loaded detector: MCP-2024-TS-001 (Tool Shadowing Detector)
+Loaded detector: MCP-2024-UA-001 (Unauthenticated Access Detector)
+Running detector: MCP-2024-CE-001 (Credential Exposure Detector)
+  Status: ABSENT (confidence: 0.00)
+Running detector: MCP-2024-CEX-001 (Code Execution Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-CI-001 (Command Injection Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-DUMMY-001 (Dummy Detector)
+  Status: ABSENT (confidence: 1.00)
+Running detector: MCP-2024-EP-001 (Excessive Permissions Detector)
+  Status: PRESENT (confidence: 0.80)
+Running detector: MCP-2024-II-001 (Indirect Prompt Injection Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-IS-001 (Insecure Token Storage Detector)
+  Status: PRESENT (confidence: 0.90)
+Running detector: MCP-2024-PA-001 (Privilege Abuse Detector)
+  Status: ABSENT (confidence: 0.80)
+Running detector: MCP-2024-PI-001 (Prompt Injection via Resource Parameters)
+  Status: ABSENT (confidence: 0.80)
+Running detector: MCP-2024-RUG-001 (Tool Behavior Monitor (Rug Pull Detector))
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-TE-001 (Tool Enumeration Analyzer)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-TP-001 (Tool Poisoning Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-TS-001 (Tool Shadowing Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-UA-001 (Unauthenticated Access Detector)
+  Status: PRESENT (confidence: 0.95)
+
+[*] Generating assessment reports...
+[*] Output directory: reports\Challenge_7_-_Token_Theft
+
+======================================================================
+  ASSESSMENT COMPLETE
+======================================================================
+
+[+] Server: Challenge 7 - Token Theft
+[+] Version: 1.16.0
+[+] Protocol: 2025-06-18
+[+] Transport: sse
+
+[RESULTS]
+  Detectors run:        14
+  Vulnerabilities:      3
+  Passed:               11
+  Unknown:              0
+  Not Applicable:       0
+
+[!] VULNERABILITIES DETECTED:
+
+  [CRITICAL] Excessive Permissions Detector
+      ID: MCP-2024-EP-001
+      Confidence: 80%
+      PoCs: 2
+
+  [HIGH] Insecure Token Storage Detector
+      ID: MCP-2024-IS-001
+      Confidence: 90%
+      PoCs: 1
+
+  [CRITICAL] Unauthenticated Access Detector
+      ID: MCP-2024-UA-001
+      Confidence: 95%
+      PoCs: 1
+
+[+] Reports saved to: reports\Challenge_7_-_Token_Theft
+    - audit.jsonl
+    - metadata.json
+    - report.json
+    - report.sarif
+    - report.txt
+
+[+] Assessment ID: e5bab056-662c-4e21-a990-20201d6885b3
+[+] Duration: 12.36s
+
+[!] Exiting with code 1 (vulnerabilities found)
+[DETECTED] Challenge_7_Token_Theft
+
+==========================================
+Testing Challenge_8_Malicious_Code_Execution (port 9008)
+==========================================
+
+╔════════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║           MCP Security Framework (mcpsf) v0.2.0                    ║
+║           Professional Security Testing for MCP Servers            ║
+║                                                                    ║
+╚════════════════════════════════════════════════════════════════════╝
+
+
+[*] Target: http://localhost:9008/sse
+[*] Transport: sse
+[*] Running all detectors
+
+[*] Initializing assessment engine...
+[*] Starting assessment (this may take 1-3 minutes)...
+
+Loaded detector: MCP-2024-CEX-001 (Code Execution Detector)
+Loaded detector: MCP-2024-CI-001 (Command Injection Detector)
+Loaded detector: MCP-2024-CE-001 (Credential Exposure Detector)
+Loaded detector: MCP-2024-DUMMY-001 (Dummy Detector)
+Loaded detector: MCP-2024-EP-001 (Excessive Permissions Detector)
+Loaded detector: MCP-2024-II-001 (Indirect Prompt Injection Detector)
+Loaded detector: MCP-2024-IS-001 (Insecure Token Storage Detector)
+Loaded detector: MCP-2024-PA-001 (Privilege Abuse Detector)
+Loaded detector: MCP-2024-PI-001 (Prompt Injection via Resource Parameters)
+Loaded detector: MCP-2024-RUG-001 (Tool Behavior Monitor (Rug Pull Detector))
+Loaded detector: MCP-2024-TE-001 (Tool Enumeration Analyzer)
+Loaded detector: MCP-2024-TP-001 (Tool Poisoning Detector)
+Loaded detector: MCP-2024-TS-001 (Tool Shadowing Detector)
+Loaded detector: MCP-2024-UA-001 (Unauthenticated Access Detector)
+Running detector: MCP-2024-CE-001 (Credential Exposure Detector)
+  Status: ABSENT (confidence: 0.00)
+Running detector: MCP-2024-CEX-001 (Code Execution Detector)
+  Status: PRESENT (confidence: 0.90)
+Running detector: MCP-2024-CI-001 (Command Injection Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-DUMMY-001 (Dummy Detector)
+  Status: ABSENT (confidence: 1.00)
+Running detector: MCP-2024-EP-001 (Excessive Permissions Detector)
+  Status: PRESENT (confidence: 0.90)
+Running detector: MCP-2024-II-001 (Indirect Prompt Injection Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-IS-001 (Insecure Token Storage Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-PA-001 (Privilege Abuse Detector)
+  Status: ABSENT (confidence: 0.80)
+Running detector: MCP-2024-PI-001 (Prompt Injection via Resource Parameters)
+  Status: ABSENT (confidence: 0.80)
+Running detector: MCP-2024-RUG-001 (Tool Behavior Monitor (Rug Pull Detector))
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-TE-001 (Tool Enumeration Analyzer)
+  Status: PRESENT (confidence: 0.90)
+Running detector: MCP-2024-TP-001 (Tool Poisoning Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-TS-001 (Tool Shadowing Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-UA-001 (Unauthenticated Access Detector)
+  Status: PRESENT (confidence: 0.95)
+
+[*] Generating assessment reports...
+[*] Output directory: reports\Challenge_8_-_Malicious_Code_Execution
+
+======================================================================
+  ASSESSMENT COMPLETE
+======================================================================
+
+[+] Server: Challenge 8 - Malicious Code Execution
+[+] Version: 1.16.0
+[+] Protocol: 2025-06-18
+[+] Transport: sse
+
+[RESULTS]
+  Detectors run:        14
+  Vulnerabilities:      4
+  Passed:               10
+  Unknown:              0
+  Not Applicable:       0
+
+[!] VULNERABILITIES DETECTED:
+
+  [CRITICAL] Code Execution Detector
+      ID: MCP-2024-CEX-001
+      Confidence: 90%
+      PoCs: 1
+
+  [CRITICAL] Excessive Permissions Detector
+      ID: MCP-2024-EP-001
+      Confidence: 90%
+      PoCs: 1
+
+  [MEDIUM] Tool Enumeration Analyzer
+      ID: MCP-2024-TE-001
+      Confidence: 90%
+      PoCs: 1
+
+  [CRITICAL] Unauthenticated Access Detector
+      ID: MCP-2024-UA-001
+      Confidence: 95%
+      PoCs: 1
+
+[+] Reports saved to: reports\Challenge_8_-_Malicious_Code_Execution
+    - audit.jsonl
+    - metadata.json
+    - report.json
+    - report.sarif
+    - report.txt
+
+[+] Assessment ID: 63abb966-2f35-420b-ab20-9f72ff9e23b8
+[+] Duration: 12.55s
+
+[!] Exiting with code 1 (vulnerabilities found)
+[DETECTED] Challenge_8_Malicious_Code_Execution
+
+==========================================
+Testing Challenge_9_Remote_Access_Control (port 9009)
+==========================================
+
+╔════════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║           MCP Security Framework (mcpsf) v0.2.0                    ║
+║           Professional Security Testing for MCP Servers            ║
+║                                                                    ║
+╚════════════════════════════════════════════════════════════════════╝
+
+
+[*] Target: http://localhost:9009/sse
+[*] Transport: sse
+[*] Running all detectors
+
+[*] Initializing assessment engine...
+[*] Starting assessment (this may take 1-3 minutes)...
+
+Loaded detector: MCP-2024-CEX-001 (Code Execution Detector)
+Loaded detector: MCP-2024-CI-001 (Command Injection Detector)
+Loaded detector: MCP-2024-CE-001 (Credential Exposure Detector)
+Loaded detector: MCP-2024-DUMMY-001 (Dummy Detector)
+Loaded detector: MCP-2024-EP-001 (Excessive Permissions Detector)
+Loaded detector: MCP-2024-II-001 (Indirect Prompt Injection Detector)
+Loaded detector: MCP-2024-IS-001 (Insecure Token Storage Detector)
+Loaded detector: MCP-2024-PA-001 (Privilege Abuse Detector)
+Loaded detector: MCP-2024-PI-001 (Prompt Injection via Resource Parameters)
+Loaded detector: MCP-2024-RUG-001 (Tool Behavior Monitor (Rug Pull Detector))
+Loaded detector: MCP-2024-TE-001 (Tool Enumeration Analyzer)
+Loaded detector: MCP-2024-TP-001 (Tool Poisoning Detector)
+Loaded detector: MCP-2024-TS-001 (Tool Shadowing Detector)
+Loaded detector: MCP-2024-UA-001 (Unauthenticated Access Detector)
+Running detector: MCP-2024-CE-001 (Credential Exposure Detector)
+  Status: ABSENT (confidence: 0.00)
+Running detector: MCP-2024-CEX-001 (Code Execution Detector)
+  Status: PRESENT (confidence: 0.90)
+Running detector: MCP-2024-CI-001 (Command Injection Detector)
+  Status: PRESENT (confidence: 0.90)
+Running detector: MCP-2024-DUMMY-001 (Dummy Detector)
+  Status: ABSENT (confidence: 1.00)
+Running detector: MCP-2024-EP-001 (Excessive Permissions Detector)
+  Status: PRESENT (confidence: 0.97)
+Running detector: MCP-2024-II-001 (Indirect Prompt Injection Detector)
+  Status: PRESENT (confidence: 0.97)
+Running detector: MCP-2024-IS-001 (Insecure Token Storage Detector)
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-PA-001 (Privilege Abuse Detector)
+  Status: ABSENT (confidence: 0.80)
+Running detector: MCP-2024-PI-001 (Prompt Injection via Resource Parameters)
+  Status: ABSENT (confidence: 0.80)
+Running detector: MCP-2024-RUG-001 (Tool Behavior Monitor (Rug Pull Detector))
+  Status: ABSENT (confidence: 0.85)
+Running detector: MCP-2024-TE-001 (Tool Enumeration Analyzer)
+  Status: PRESENT (confidence: 0.90)
+Running detector: MCP-2024-TP-001 (Tool Poisoning Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-TS-001 (Tool Shadowing Detector)
+  Status: ABSENT (confidence: 0.90)
+Running detector: MCP-2024-UA-001 (Unauthenticated Access Detector)
+  Status: PRESENT (confidence: 0.95)
+
+[*] Generating assessment reports...
+[*] Output directory: reports\Challenge_9_-_Remote_Access_Control
+
+======================================================================
+  ASSESSMENT COMPLETE
+======================================================================
+
+[+] Server: Challenge 9 - Remote Access Control
+[+] Version: 1.16.0
+[+] Protocol: 2025-06-18
+[+] Transport: sse
+
+[RESULTS]
+  Detectors run:        14
+  Vulnerabilities:      6
+  Passed:               8
+  Unknown:              0
+  Not Applicable:       0
+
+[!] VULNERABILITIES DETECTED:
+
+  [CRITICAL] Code Execution Detector
+      ID: MCP-2024-CEX-001
+      Confidence: 90%
+      PoCs: 1
+
+  [CRITICAL] Command Injection Detector
+      ID: MCP-2024-CI-001
+      Confidence: 90%
+      PoCs: 1
+
+  [CRITICAL] Excessive Permissions Detector
+      ID: MCP-2024-EP-001
+      Confidence: 97%
+      PoCs: 1
+
+  [HIGH] Indirect Prompt Injection Detector
+      ID: MCP-2024-II-001
+      Confidence: 97%
+      PoCs: 1
+
+  [MEDIUM] Tool Enumeration Analyzer
+      ID: MCP-2024-TE-001
+      Confidence: 90%
+      PoCs: 2
+
+  [CRITICAL] Unauthenticated Access Detector
+      ID: MCP-2024-UA-001
+      Confidence: 95%
+      PoCs: 1
+
+[+] Reports saved to: reports\Challenge_9_-_Remote_Access_Control
+    - audit.jsonl
+    - metadata.json
+    - report.json
+    - report.sarif
+    - report.txt
+
+[+] Assessment ID: 2406fa98-910e-44cd-a875-78cfac14f4ac
+[+] Duration: 15.92s
+
+[!] Exiting with code 1 (vulnerabilities found)
+[DETECTED] Challenge_9_Remote_Access_Control
+
+==========================================
+Testing Challenge_10_Multi_Vector_Attack (port 9010)
+==========================================
+
+╔════════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║           MCP Security Framework (mcpsf) v0.2.0                    ║
+║           Professional Security Testing for MCP Servers            ║
+║                                                                    ║
+╚════════════════════════════════════════════════════════════════════╝
+
+
+[*] Target: http://localhost:9010/sse
+[*] Transport: sse
+[*] Running all detectors
+
+[*] Initializing assessment engine...
+[*] Starting assessment (this may take 1-3 minutes)...
+
+
+[!] Assessment failed with error:
+    TestRunnerError: Assessment failed: unhandled errors in a TaskGroup (1 sub-exception)
+[DETECTED] Challenge_10_Multi_Vector_Attack
+
+==========================================
+  TEST SUMMARY
+==========================================
+Total Challenges: 10
+Vulnerabilities Detected: 10
+Detection Rate: 100%
+

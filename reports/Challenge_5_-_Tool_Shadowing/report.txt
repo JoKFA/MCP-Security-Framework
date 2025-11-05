@@ -8,13 +8,13 @@ Server:       Challenge 5 - Tool Shadowing
 Version:      1.16.0
 Transport:    sse
 Exposure:     LOCAL
-Assessment:   24f1b0cc-b44b-4ae9-8006-ff57be22f4cd
-Duration:     13.02s
+Assessment:   214b12f8-c58d-4b3a-bc1d-2e16ba8352e1
+Duration:     14.22s
 
 SUMMARY
 ────────────────────────────────────────────────────────────────────────────────
-Detectors Run:      12
-  ✗ Vulnerabilities:  4
+Detectors Run:      14
+  ✗ Vulnerabilities:  6
   ✓ Passed:          8
   ? Unknown:         0
   - Not Applicable:   0
@@ -57,7 +57,7 @@ PROOF OF CONCEPT: 2 exploit(s) demonstrated
 PoC #1: EXCESSIVE_PERMISSIONS
   Target:        get_user_role
   Success:       YES
-  Timestamp:     2025-11-05 21:07:22 UTC
+  Timestamp:     2025-11-05 21:44:28 UTC
 
   Impact:
     Tool 'get_user_role' has excessive permissions (risk: 80%). Capabilities: system_commands. Unrestricted params: 0. Potential for: system command execution.
@@ -75,7 +75,7 @@ PoC #1: EXCESSIVE_PERMISSIONS
 PoC #2: EXCESSIVE_PERMISSIONS
   Target:        get_user_roles
   Success:       YES
-  Timestamp:     2025-11-05 21:07:22 UTC
+  Timestamp:     2025-11-05 21:44:28 UTC
 
   Impact:
     Tool 'get_user_roles' has excessive permissions (risk: 80%). Capabilities: system_commands. Unrestricted params: 0. Potential for: system command execution.
@@ -130,7 +130,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: INDIRECT_INJECTION_CANARY
   Target:        get_user_role
   Success:       YES
-  Timestamp:     2025-11-05 21:07:23 UTC
+  Timestamp:     2025-11-05 21:44:30 UTC
 
   Impact:
     Tool 'get_user_role' executed canary instructions, confirming indirect injection impact.
@@ -147,6 +147,71 @@ PoC #1: INDIRECT_INJECTION_CANARY
 
 REMEDIATION:
   - Prevent indirect injection: (1) Sanitize all external data before presenting to LLM, (2) Clearly mark untrusted content, (3) Use structured output formats (JSON) instead of freeform text, (4) Implement content filtering for injection patterns, (5) Validate data sources and implement allowlists.
+
+
+================================================================================
+FINDING: Privilege Abuse Detector
+================================================================================
+
+Detector ID:     MCP-2024-PA-001
+Severity:        MEDIUM
+Confidence:      78%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-250
+  OWASP API:     API4
+  CVSS Score:    6.5/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L
+
+Signals Detected: 2
+  1. [schema_overpermissive]
+     True
+     tool_name: get_user_role
+     unexpected_capabilities: ['command_execution']
+     purpose: read_only
+  2. [schema_overpermissive]
+     True
+     tool_name: get_user_roles
+     unexpected_capabilities: ['command_execution']
+     purpose: read_only
+
+PROOF OF CONCEPT: 2 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: PRIVILEGE_MISMATCH_DETECTION
+  Target:        get_user_role
+  Success:       YES
+  Timestamp:     2025-11-05 21:44:31 UTC
+
+  Impact:
+    Tool 'get_user_role' exposes command_execution capabilities despite its declared purpose, enabling privilege abuse.
+
+  Attack Payload:
+    detected_capabilities: ['command_execution']
+    purpose: read_only
+
+  Server Response:
+    reasons: ['command execution not expected for Read-only information retrieval', 'Command execution available despite non-administrative purpose']
+    detected_capabilities: {'command_execution': ['text:\\bsystem\\b']}
+
+PoC #2: PRIVILEGE_MISMATCH_DETECTION
+  Target:        get_user_roles
+  Success:       YES
+  Timestamp:     2025-11-05 21:44:31 UTC
+
+  Impact:
+    Tool 'get_user_roles' exposes command_execution capabilities despite its declared purpose, enabling privilege abuse.
+
+  Attack Payload:
+    detected_capabilities: ['command_execution']
+    purpose: read_only
+
+  Server Response:
+    reasons: ['command execution not expected for Read-only information retrieval', 'Command execution available despite non-administrative purpose']
+    detected_capabilities: {'command_execution': ['text:\\bsystem\\b']}
+
+--------------------------------------------------------------------------------
 
 
 ================================================================================
@@ -182,7 +247,7 @@ PROOF OF CONCEPT: 2 exploit(s) demonstrated
 PoC #1: TOOL_ABUSE
   Target:        get_user_role
   Success:       YES
-  Timestamp:     2025-11-05 21:07:33 UTC
+  Timestamp:     2025-11-05 21:44:39 UTC
 
   Impact:
     Successfully called dangerous tool 'get_user_role' (contains keyword 'system')
@@ -198,7 +263,7 @@ PoC #1: TOOL_ABUSE
 PoC #2: TOOL_ABUSE
   Target:        get_user_roles
   Success:       YES
-  Timestamp:     2025-11-05 21:07:33 UTC
+  Timestamp:     2025-11-05 21:44:40 UTC
 
   Impact:
     Successfully called dangerous tool 'get_user_roles' (contains keyword 'system')
@@ -243,7 +308,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: TYPOSQUATTING
   Target:        get_user_role vs get_user_roles
   Success:       YES
-  Timestamp:     2025-11-05 21:07:34 UTC
+  Timestamp:     2025-11-05 21:44:41 UTC
 
   Impact:
     Tools 'get_user_role' and 'get_user_roles' are 96% similar. This enables typosquatting attacks where users/LLMs accidentally call the malicious lookalike instead of the legitimate tool.
@@ -262,7 +327,54 @@ PoC #1: TYPOSQUATTING
 REMEDIATION:
   - Prevent tool shadowing: (1) Enforce unique tool names across all connected MCP servers, (2) Use namespacing (e.g., server_name.tool_name), (3) Implement tool identity verification, (4) Warn users when multiple tools have similar names, (5) Maintain a whitelist of trusted tool sources.
 
+
+================================================================================
+FINDING: Unauthenticated Access Detector
+================================================================================
+
+Detector ID:     MCP-2024-UA-001
+Severity:        CRITICAL
+Confidence:      95%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-284
+  OWASP API:     API1
+  CVSS Score:    10.0/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+
+Signals Detected: 1
+  1. [auth_mismatch]
+     True
+     tools_accessible: True
+     resources_accessible: True
+     resources_supported: True
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: UNAUTHENTICATED_ACCESS_TEST
+  Target:        MCP Server
+  Success:       YES
+  Timestamp:     2025-11-05 21:44:41 UTC
+
+  Impact:
+    Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.
+
+  Attack Payload:
+    operations: ['list_tools', 'list_resources']
+    authenticated: False
+
+  Server Response:
+    tools_count: 2
+    resources_count: 0
+    tool_samples: ['get_user_role', 'get_user_roles']
+    resource_samples: []
+    vulnerable: True
+
+--------------------------------------------------------------------------------
+
 ────────────────────────────────────────────────────────────────────────────────
-Report generated: 2025-11-05T13:07:34.319132
+Report generated: 2025-11-05T13:44:41.962213
 Framework version: 0.2.0
 ================================================================================

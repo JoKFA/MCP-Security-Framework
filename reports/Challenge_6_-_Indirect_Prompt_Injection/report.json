@@ -1,7 +1,7 @@
 {
-  "assessment_id": "c9ad2cdf-6e8a-4f55-8ccb-4f26c5679513",
-  "started_at": "2025-11-05T21:07:37.402558Z",
-  "completed_at": "2025-11-05T21:07:45.963643Z",
+  "assessment_id": "72d32b7e-7580-4753-8e69-f1564550c322",
+  "started_at": "2025-11-05T21:44:45.077044Z",
+  "completed_at": "2025-11-05T21:44:54.664949Z",
   "scope": {
     "target": "http://localhost:9006/sse",
     "transport": null,
@@ -68,7 +68,7 @@
     "auth_type": "none",
     "exposure": "local",
     "metadata": {},
-    "profiled_at": "2025-11-05T21:07:38.289526Z"
+    "profiled_at": "2025-11-05T21:44:45.972578Z"
   },
   "results": [
     {
@@ -101,7 +101,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:38.308756Z",
+      "timestamp": "2025-11-05T21:44:45.995400Z",
       "execution_time_ms": null
     },
     {
@@ -138,7 +138,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:38.315395Z",
+      "timestamp": "2025-11-05T21:44:46.003386Z",
       "execution_time_ms": null
     },
     {
@@ -186,7 +186,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:38.320837Z",
+      "timestamp": "2025-11-05T21:44:46.008801Z",
       "execution_time_ms": null
     },
     {
@@ -211,7 +211,7 @@
         "cvss": null
       },
       "remediation": "No issues found",
-      "timestamp": "2025-11-05T21:07:38.326054Z",
+      "timestamp": "2025-11-05T21:44:46.014175Z",
       "execution_time_ms": 0.0
     },
     {
@@ -234,7 +234,7 @@
             "unrestricted_params": [],
             "reason": "High risk score (85%)"
           },
-          "timestamp": "2025-11-05T21:07:38.331931Z"
+          "timestamp": "2025-11-05T21:44:46.020127Z"
         }
       ],
       "proof_of_concepts": [
@@ -255,7 +255,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'process_document' has excessive permissions (risk: 85%). Capabilities: system_commands. Unrestricted params: 0. Potential for: system command execution.",
-          "timestamp": "2025-11-05T21:07:38.331964Z"
+          "timestamp": "2025-11-05T21:44:46.020161Z"
         }
       ],
       "evidence": {
@@ -303,7 +303,7 @@
         }
       },
       "remediation": "Apply principle of least privilege: (1) Restrict tool parameters to specific allowed values/paths, (2) Implement path validation and sanitization, (3) Split multi-capability tools into focused tools, (4) Add explicit access control checks, (5) Document and justify any high-risk capabilities.",
-      "timestamp": "2025-11-05T21:07:38.326102Z",
+      "timestamp": "2025-11-05T21:44:46.014227Z",
       "execution_time_ms": null
     },
     {
@@ -325,7 +325,7 @@
               "canary_trigger"
             ]
           },
-          "timestamp": "2025-11-05T21:07:39.396882Z"
+          "timestamp": "2025-11-05T21:44:47.073623Z"
         }
       ],
       "proof_of_concepts": [
@@ -344,7 +344,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'process_document' executed canary instructions, confirming indirect injection impact.",
-          "timestamp": "2025-11-05T21:07:39.396899Z"
+          "timestamp": "2025-11-05T21:44:47.073640Z"
         }
       ],
       "evidence": {
@@ -382,7 +382,7 @@
         }
       },
       "remediation": "Prevent indirect injection: (1) Sanitize all external data before presenting to LLM, (2) Clearly mark untrusted content, (3) Use structured output formats (JSON) instead of freeform text, (4) Implement content filtering for injection patterns, (5) Validate data sources and implement allowlists.",
-      "timestamp": "2025-11-05T21:07:38.332115Z",
+      "timestamp": "2025-11-05T21:44:46.020332Z",
       "execution_time_ms": null
     },
     {
@@ -418,7 +418,103 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:39.397053Z",
+      "timestamp": "2025-11-05T21:44:47.073785Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-PA-001",
+      "detector_name": "Privilege Abuse Detector",
+      "detector_version": "1.1.0",
+      "status": "PRESENT",
+      "confidence": 0.78,
+      "affected_resources": [],
+      "signals": [
+        {
+          "type": "schema_overpermissive",
+          "value": true,
+          "context": {
+            "tool_name": "process_document",
+            "unexpected_capabilities": [
+              "command_execution"
+            ],
+            "purpose": "file_management",
+            "mode": "aggressive",
+            "score": 0.45
+          },
+          "timestamp": "2025-11-05T21:44:48.310754Z"
+        }
+      ],
+      "proof_of_concepts": [
+        {
+          "target": "process_document",
+          "attack_type": "privilege_mismatch_detection",
+          "payload": {
+            "detected_capabilities": [
+              "command_execution"
+            ],
+            "purpose": "file_management"
+          },
+          "response": {
+            "reasons": [
+              "command execution not expected for File manager / document handling"
+            ],
+            "detected_capabilities": {
+              "command_execution": [
+                "text:\\bprocess\\b"
+              ]
+            }
+          },
+          "success": true,
+          "impact_demonstrated": "Tool 'process_document' exposes command_execution capabilities despite its declared purpose, enabling privilege abuse.",
+          "timestamp": "2025-11-05T21:44:48.310771Z"
+        }
+      ],
+      "evidence": {
+        "mode": "aggressive",
+        "threshold": 0.45,
+        "tools_analyzed": 1,
+        "analysis": [
+          {
+            "tool_name": "process_document",
+            "detected_capabilities": [
+              "command_execution"
+            ],
+            "score": 0.45,
+            "flagged": true,
+            "unexpected_capabilities": [
+              "command_execution"
+            ],
+            "purpose": "file_management"
+          }
+        ],
+        "flagged_tools": [
+          {
+            "tool_name": "process_document",
+            "unexpected_capabilities": [
+              "command_execution"
+            ],
+            "score": 0.45,
+            "purpose": "file_management"
+          }
+        ]
+      },
+      "standards": {
+        "cwe": "CWE-250",
+        "owasp_llm": null,
+        "owasp_api": "API4",
+        "asvs": [
+          "V4.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+          "base_score": 6.5,
+          "severity": "MEDIUM"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T21:44:47.697226Z",
       "execution_time_ms": null
     },
     {
@@ -452,7 +548,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:40.651330Z",
+      "timestamp": "2025-11-05T21:44:48.527805Z",
       "execution_time_ms": null
     },
     {
@@ -468,6 +564,7 @@
         "tools_analyzed": 1,
         "tools_called": 5,
         "changed_tools": [],
+        "response_changes": [],
         "call_failures": [],
         "mode": "aggressive"
       },
@@ -487,7 +584,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:40.651407Z",
+      "timestamp": "2025-11-05T21:44:48.527879Z",
       "execution_time_ms": null
     },
     {
@@ -509,7 +606,7 @@
             "tool_description": "Process a document and extract key information\n\nArgs:\n    document_text: The text content of the document to process\n",
             "keyword": "process"
           },
-          "timestamp": "2025-11-05T21:07:44.498807Z"
+          "timestamp": "2025-11-05T21:44:52.375489Z"
         }
       ],
       "proof_of_concepts": [
@@ -526,7 +623,7 @@
           },
           "success": true,
           "impact_demonstrated": "Successfully called dangerous tool 'process_document' (contains keyword 'process')",
-          "timestamp": "2025-11-05T21:07:44.718054Z"
+          "timestamp": "2025-11-05T21:44:52.994020Z"
         }
       ],
       "evidence": {
@@ -559,7 +656,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:44.278207Z",
+      "timestamp": "2025-11-05T21:44:52.370466Z",
       "execution_time_ms": null
     },
     {
@@ -596,7 +693,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:44.718215Z",
+      "timestamp": "2025-11-05T21:44:52.994161Z",
       "execution_time_ms": null
     },
     {
@@ -631,17 +728,96 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:07:45.347224Z",
+      "timestamp": "2025-11-05T21:44:53.428148Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-UA-001",
+      "detector_name": "Unauthenticated Access Detector",
+      "detector_version": "1.1.0",
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "affected_resources": [],
+      "signals": [
+        {
+          "type": "auth_mismatch",
+          "value": true,
+          "context": {
+            "tools_accessible": true,
+            "resources_accessible": true,
+            "resources_supported": true,
+            "vulnerability": "unauthenticated_access",
+            "severity": "CRITICAL"
+          },
+          "timestamp": "2025-11-05T21:44:54.664848Z"
+        }
+      ],
+      "proof_of_concepts": [
+        {
+          "target": "MCP Server",
+          "attack_type": "unauthenticated_access_test",
+          "payload": {
+            "operations": [
+              "list_tools",
+              "list_resources"
+            ],
+            "authenticated": false
+          },
+          "response": {
+            "tools_count": 1,
+            "resources_count": 0,
+            "tool_samples": [
+              "process_document"
+            ],
+            "resource_samples": [],
+            "vulnerable": true
+          },
+          "success": true,
+          "impact_demonstrated": "Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.",
+          "timestamp": "2025-11-05T21:44:54.664862Z"
+        }
+      ],
+      "evidence": {
+        "mode": "aggressive",
+        "tools_accessible": true,
+        "resources_accessible": true,
+        "resources_supported": true,
+        "auth_required": false,
+        "errors": {},
+        "tool_samples": [
+          "process_document"
+        ],
+        "tool_count": 1,
+        "resource_samples": [],
+        "resource_count": 0
+      },
+      "standards": {
+        "cwe": "CWE-284",
+        "owasp_llm": null,
+        "owasp_api": "API1",
+        "asvs": [
+          "V1.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "base_score": 10.0,
+          "severity": "CRITICAL"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T21:44:54.046072Z",
       "execution_time_ms": null
     }
   ],
   "threat_model": null,
   "summary": {
-    "present": 3,
+    "present": 5,
     "absent": 9,
     "unknown": 0,
     "not_applicable": 0
   },
-  "audit_log_path": "captures\\audit_c9ad2cdf-6e8a-4f55-8ccb-4f26c5679513.jsonl",
+  "audit_log_path": "captures\\audit_72d32b7e-7580-4753-8e69-f1564550c322.jsonl",
   "framework_version": "0.2.0"
 }

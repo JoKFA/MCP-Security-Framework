@@ -1,7 +1,7 @@
 {
-  "assessment_id": "9fdf44d9-e23a-4012-a725-b81a69c2ae1c",
-  "started_at": "2025-11-05T21:08:03.544662Z",
-  "completed_at": "2025-11-05T21:08:14.822392Z",
+  "assessment_id": "63abb966-2f35-420b-ab20-9f72ff9e23b8",
+  "started_at": "2025-11-05T21:45:13.238323Z",
+  "completed_at": "2025-11-05T21:45:25.790152Z",
   "scope": {
     "target": "http://localhost:9008/sse",
     "transport": null,
@@ -68,7 +68,7 @@
     "auth_type": "none",
     "exposure": "local",
     "metadata": {},
-    "profiled_at": "2025-11-05T21:08:04.455603Z"
+    "profiled_at": "2025-11-05T21:45:14.127957Z"
   },
   "results": [
     {
@@ -101,7 +101,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:08:04.476512Z",
+      "timestamp": "2025-11-05T21:45:14.150273Z",
       "execution_time_ms": null
     },
     {
@@ -121,7 +121,7 @@
             "dangerous_params": [],
             "has_sandbox": false
           },
-          "timestamp": "2025-11-05T21:08:04.489971Z"
+          "timestamp": "2025-11-05T21:45:14.164352Z"
         }
       ],
       "proof_of_concepts": [
@@ -140,7 +140,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'generate_code_example' executes arbitrary code via parameter(s): . No sandboxing detected. Risk score: 80%. Attacker can execute malicious code, access files, exfiltrate data, or compromise the system.",
-          "timestamp": "2025-11-05T21:08:04.489994Z"
+          "timestamp": "2025-11-05T21:45:14.164373Z"
         }
       ],
       "evidence": {
@@ -175,7 +175,7 @@
         }
       },
       "remediation": "Secure code execution: (1) Implement strict sandboxing (containers, VMs), (2) Whitelist allowed operations/modules, (3) Set resource limits (CPU, memory, time), (4) Disable dangerous functions (file I/O, network, exec), (5) Validate and sanitize all code inputs, (6) Log all executions for audit.",
-      "timestamp": "2025-11-05T21:08:04.484380Z",
+      "timestamp": "2025-11-05T21:45:14.158593Z",
       "execution_time_ms": null
     },
     {
@@ -212,7 +212,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:08:04.490129Z",
+      "timestamp": "2025-11-05T21:45:14.164548Z",
       "execution_time_ms": null
     },
     {
@@ -237,7 +237,7 @@
         "cvss": null
       },
       "remediation": "No issues found",
-      "timestamp": "2025-11-05T21:08:04.495567Z",
+      "timestamp": "2025-11-05T21:45:14.170157Z",
       "execution_time_ms": 0.0
     },
     {
@@ -260,7 +260,7 @@
             "unrestricted_params": [],
             "reason": "High risk score (90%)"
           },
-          "timestamp": "2025-11-05T21:08:04.502669Z"
+          "timestamp": "2025-11-05T21:45:14.177678Z"
         }
       ],
       "proof_of_concepts": [
@@ -281,7 +281,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'generate_code_example' has excessive permissions (risk: 90%). Capabilities: code_execution. Unrestricted params: 0. Potential for: arbitrary code execution.",
-          "timestamp": "2025-11-05T21:08:04.502694Z"
+          "timestamp": "2025-11-05T21:45:14.177715Z"
         }
       ],
       "evidence": {
@@ -329,7 +329,7 @@
         }
       },
       "remediation": "Apply principle of least privilege: (1) Restrict tool parameters to specific allowed values/paths, (2) Implement path validation and sanitization, (3) Split multi-capability tools into focused tools, (4) Add explicit access control checks, (5) Document and justify any high-risk capabilities.",
-      "timestamp": "2025-11-05T21:08:04.495614Z",
+      "timestamp": "2025-11-05T21:45:14.170207Z",
       "execution_time_ms": null
     },
     {
@@ -368,7 +368,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:08:04.502850Z",
+      "timestamp": "2025-11-05T21:45:14.177881Z",
       "execution_time_ms": null
     },
     {
@@ -404,7 +404,54 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:08:05.122487Z",
+      "timestamp": "2025-11-05T21:45:14.798311Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-PA-001",
+      "detector_name": "Privilege Abuse Detector",
+      "detector_version": "1.1.0",
+      "status": "ABSENT",
+      "confidence": 0.8,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "mode": "aggressive",
+        "threshold": 0.45,
+        "tools_analyzed": 2,
+        "analysis": [
+          {
+            "tool_name": "evaluate_expression",
+            "detected_capabilities": [],
+            "score": 0.0,
+            "flagged": false
+          },
+          {
+            "tool_name": "generate_code_example",
+            "detected_capabilities": [],
+            "score": 0.0,
+            "flagged": false
+          }
+        ]
+      },
+      "standards": {
+        "cwe": "CWE-250",
+        "owasp_llm": null,
+        "owasp_api": "API4",
+        "asvs": [
+          "V4.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+          "base_score": 6.5,
+          "severity": "MEDIUM"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T21:45:15.856042Z",
       "execution_time_ms": null
     },
     {
@@ -438,7 +485,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:08:06.187332Z",
+      "timestamp": "2025-11-05T21:45:16.478076Z",
       "execution_time_ms": null
     },
     {
@@ -454,6 +501,7 @@
         "tools_analyzed": 2,
         "tools_called": 10,
         "changed_tools": [],
+        "response_changes": [],
         "call_failures": [],
         "mode": "aggressive"
       },
@@ -473,7 +521,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:08:06.187407Z",
+      "timestamp": "2025-11-05T21:45:16.478154Z",
       "execution_time_ms": null
     },
     {
@@ -495,7 +543,7 @@
             "tool_description": "Evaluate a mathematical expression and return the result\n\nArgs:\n    expression: The mathematical expression to evaluate (e.g., \"2 + 2 * 3\")\n",
             "keyword": "eval"
           },
-          "timestamp": "2025-11-05T21:08:13.763689Z"
+          "timestamp": "2025-11-05T21:45:23.497590Z"
         }
       ],
       "proof_of_concepts": [
@@ -512,7 +560,7 @@
           },
           "success": true,
           "impact_demonstrated": "Successfully called dangerous tool 'evaluate_expression' (contains keyword 'eval')",
-          "timestamp": "2025-11-05T21:08:13.979305Z"
+          "timestamp": "2025-11-05T21:45:24.115185Z"
         }
       ],
       "evidence": {
@@ -545,7 +593,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:08:13.758341Z",
+      "timestamp": "2025-11-05T21:45:23.492390Z",
       "execution_time_ms": null
     },
     {
@@ -582,7 +630,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:08:13.979455Z",
+      "timestamp": "2025-11-05T21:45:24.115326Z",
       "execution_time_ms": null
     },
     {
@@ -617,17 +665,98 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:08:14.817300Z",
+      "timestamp": "2025-11-05T21:45:24.550672Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-UA-001",
+      "detector_name": "Unauthenticated Access Detector",
+      "detector_version": "1.1.0",
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "affected_resources": [],
+      "signals": [
+        {
+          "type": "auth_mismatch",
+          "value": true,
+          "context": {
+            "tools_accessible": true,
+            "resources_accessible": true,
+            "resources_supported": true,
+            "vulnerability": "unauthenticated_access",
+            "severity": "CRITICAL"
+          },
+          "timestamp": "2025-11-05T21:45:25.790056Z"
+        }
+      ],
+      "proof_of_concepts": [
+        {
+          "target": "MCP Server",
+          "attack_type": "unauthenticated_access_test",
+          "payload": {
+            "operations": [
+              "list_tools",
+              "list_resources"
+            ],
+            "authenticated": false
+          },
+          "response": {
+            "tools_count": 2,
+            "resources_count": 0,
+            "tool_samples": [
+              "evaluate_expression",
+              "generate_code_example"
+            ],
+            "resource_samples": [],
+            "vulnerable": true
+          },
+          "success": true,
+          "impact_demonstrated": "Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.",
+          "timestamp": "2025-11-05T21:45:25.790070Z"
+        }
+      ],
+      "evidence": {
+        "mode": "aggressive",
+        "tools_accessible": true,
+        "resources_accessible": true,
+        "resources_supported": true,
+        "auth_required": false,
+        "errors": {},
+        "tool_samples": [
+          "evaluate_expression",
+          "generate_code_example"
+        ],
+        "tool_count": 2,
+        "resource_samples": [],
+        "resource_count": 0
+      },
+      "standards": {
+        "cwe": "CWE-284",
+        "owasp_llm": null,
+        "owasp_api": "API1",
+        "asvs": [
+          "V1.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "base_score": 10.0,
+          "severity": "CRITICAL"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T21:45:25.171480Z",
       "execution_time_ms": null
     }
   ],
   "threat_model": null,
   "summary": {
-    "present": 3,
-    "absent": 9,
+    "present": 4,
+    "absent": 10,
     "unknown": 0,
     "not_applicable": 0
   },
-  "audit_log_path": "captures\\audit_9fdf44d9-e23a-4012-a725-b81a69c2ae1c.jsonl",
+  "audit_log_path": "captures\\audit_63abb966-2f35-420b-ab20-9f72ff9e23b8.jsonl",
   "framework_version": "0.2.0"
 }

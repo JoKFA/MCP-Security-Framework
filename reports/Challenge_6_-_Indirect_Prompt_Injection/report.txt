@@ -8,13 +8,13 @@ Server:       Challenge 6 - Indirect Prompt Injection
 Version:      1.16.0
 Transport:    sse
 Exposure:     LOCAL
-Assessment:   c9ad2cdf-6e8a-4f55-8ccb-4f26c5679513
-Duration:     8.56s
+Assessment:   72d32b7e-7580-4753-8e69-f1564550c322
+Duration:     9.59s
 
 SUMMARY
 ────────────────────────────────────────────────────────────────────────────────
-Detectors Run:      12
-  ✗ Vulnerabilities:  3
+Detectors Run:      14
+  ✗ Vulnerabilities:  5
   ✓ Passed:          9
   ? Unknown:         0
   - Not Applicable:   0
@@ -52,7 +52,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: EXCESSIVE_PERMISSIONS
   Target:        process_document
   Success:       YES
-  Timestamp:     2025-11-05 21:07:38 UTC
+  Timestamp:     2025-11-05 21:44:46 UTC
 
   Impact:
     Tool 'process_document' has excessive permissions (risk: 85%). Capabilities: system_commands. Unrestricted params: 0. Potential for: system command execution.
@@ -102,7 +102,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: INDIRECT_INJECTION_CANARY
   Target:        process_document
   Success:       YES
-  Timestamp:     2025-11-05 21:07:39 UTC
+  Timestamp:     2025-11-05 21:44:47 UTC
 
   Impact:
     Tool 'process_document' executed canary instructions, confirming indirect injection impact.
@@ -119,6 +119,50 @@ PoC #1: INDIRECT_INJECTION_CANARY
 
 REMEDIATION:
   - Prevent indirect injection: (1) Sanitize all external data before presenting to LLM, (2) Clearly mark untrusted content, (3) Use structured output formats (JSON) instead of freeform text, (4) Implement content filtering for injection patterns, (5) Validate data sources and implement allowlists.
+
+
+================================================================================
+FINDING: Privilege Abuse Detector
+================================================================================
+
+Detector ID:     MCP-2024-PA-001
+Severity:        MEDIUM
+Confidence:      78%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-250
+  OWASP API:     API4
+  CVSS Score:    6.5/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L
+
+Signals Detected: 1
+  1. [schema_overpermissive]
+     True
+     tool_name: process_document
+     unexpected_capabilities: ['command_execution']
+     purpose: file_management
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: PRIVILEGE_MISMATCH_DETECTION
+  Target:        process_document
+  Success:       YES
+  Timestamp:     2025-11-05 21:44:48 UTC
+
+  Impact:
+    Tool 'process_document' exposes command_execution capabilities despite its declared purpose, enabling privilege abuse.
+
+  Attack Payload:
+    detected_capabilities: ['command_execution']
+    purpose: file_management
+
+  Server Response:
+    reasons: ['command execution not expected for File manager / document handling']
+    detected_capabilities: {'command_execution': ['text:\\bprocess\\b']}
+
+--------------------------------------------------------------------------------
 
 
 ================================================================================
@@ -149,7 +193,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: TOOL_ABUSE
   Target:        process_document
   Success:       YES
-  Timestamp:     2025-11-05 21:07:44 UTC
+  Timestamp:     2025-11-05 21:44:52 UTC
 
   Impact:
     Successfully called dangerous tool 'process_document' (contains keyword 'process')
@@ -164,7 +208,54 @@ PoC #1: TOOL_ABUSE
 
 --------------------------------------------------------------------------------
 
+
+================================================================================
+FINDING: Unauthenticated Access Detector
+================================================================================
+
+Detector ID:     MCP-2024-UA-001
+Severity:        CRITICAL
+Confidence:      95%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-284
+  OWASP API:     API1
+  CVSS Score:    10.0/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+
+Signals Detected: 1
+  1. [auth_mismatch]
+     True
+     tools_accessible: True
+     resources_accessible: True
+     resources_supported: True
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: UNAUTHENTICATED_ACCESS_TEST
+  Target:        MCP Server
+  Success:       YES
+  Timestamp:     2025-11-05 21:44:54 UTC
+
+  Impact:
+    Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.
+
+  Attack Payload:
+    operations: ['list_tools', 'list_resources']
+    authenticated: False
+
+  Server Response:
+    tools_count: 1
+    resources_count: 0
+    tool_samples: ['process_document']
+    resource_samples: []
+    vulnerable: True
+
+--------------------------------------------------------------------------------
+
 ────────────────────────────────────────────────────────────────────────────────
-Report generated: 2025-11-05T13:07:45.968629
+Report generated: 2025-11-05T13:44:54.670046
 Framework version: 0.2.0
 ================================================================================

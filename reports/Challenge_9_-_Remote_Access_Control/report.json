@@ -1,7 +1,7 @@
 {
-  "assessment_id": "9837b8c6-75bf-4bd8-bd5c-94aaa559084b",
-  "started_at": "2025-11-05T21:08:17.918540Z",
-  "completed_at": "2025-11-05T21:08:32.594904Z",
+  "assessment_id": "2406fa98-910e-44cd-a875-78cfac14f4ac",
+  "started_at": "2025-11-05T21:45:28.900546Z",
+  "completed_at": "2025-11-05T21:45:44.816730Z",
   "scope": {
     "target": "http://localhost:9009/sse",
     "transport": null,
@@ -68,7 +68,7 @@
     "auth_type": "none",
     "exposure": "local",
     "metadata": {},
-    "profiled_at": "2025-11-05T21:08:18.814789Z"
+    "profiled_at": "2025-11-05T21:45:29.795915Z"
   },
   "results": [
     {
@@ -101,7 +101,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:08:18.834591Z",
+      "timestamp": "2025-11-05T21:45:29.818157Z",
       "execution_time_ms": null
     },
     {
@@ -123,7 +123,7 @@
             ],
             "has_sandbox": false
           },
-          "timestamp": "2025-11-05T21:08:18.847307Z"
+          "timestamp": "2025-11-05T21:45:29.830460Z"
         }
       ],
       "proof_of_concepts": [
@@ -144,7 +144,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'remote_access' executes arbitrary code via parameter(s): command. No sandboxing detected. Risk score: 100%. Attacker can execute malicious code, access files, exfiltrate data, or compromise the system.",
-          "timestamp": "2025-11-05T21:08:18.855430Z"
+          "timestamp": "2025-11-05T21:45:29.837703Z"
         }
       ],
       "evidence": {
@@ -181,7 +181,7 @@
         }
       },
       "remediation": "Secure code execution: (1) Implement strict sandboxing (containers, VMs), (2) Whitelist allowed operations/modules, (3) Set resource limits (CPU, memory, time), (4) Disable dangerous functions (file I/O, network, exec), (5) Validate and sanitize all code inputs, (6) Log all executions for audit.",
-      "timestamp": "2025-11-05T21:08:18.841143Z",
+      "timestamp": "2025-11-05T21:45:29.825186Z",
       "execution_time_ms": null
     },
     {
@@ -189,7 +189,7 @@
       "detector_name": "Command Injection Detector",
       "detector_version": "1.0.0",
       "status": "PRESENT",
-      "confidence": 0.8099999999999999,
+      "confidence": 0.8975,
       "affected_resources": [],
       "signals": [
         {
@@ -197,14 +197,14 @@
           "value": true,
           "context": {
             "tool_name": "remote_access",
-            "risk_score": 0.6,
+            "risk_score": 0.85,
             "injection_params": [
               "command"
             ],
             "has_validation": false,
             "mode": "aggressive"
           },
-          "timestamp": "2025-11-05T21:08:18.861498Z"
+          "timestamp": "2025-11-05T21:45:29.844186Z"
         }
       ],
       "proof_of_concepts": [
@@ -219,16 +219,17 @@
             "risk_reasons": [
               "Parameter 'command' maps user input into command execution",
               "Parameter 'command' lacks input restrictions",
+              "Injection parameter(s) accept unrestricted free-form text",
               "No validation indicators detected"
             ]
           },
           "response": {
-            "risk_score": 0.6,
+            "risk_score": 0.85,
             "has_validation": false
           },
           "success": false,
-          "impact_demonstrated": "Tool 'remote_access' exposes unrestricted command parameters (command) with indicators: Parameter 'command' maps user input into command execution, Parameter 'command' lacks input restrictions, No validation indicators detected.",
-          "timestamp": "2025-11-05T21:08:20.548270Z"
+          "impact_demonstrated": "Tool 'remote_access' exposes unrestricted command parameters (command) with indicators: Parameter 'command' maps user input into command execution, Parameter 'command' lacks input restrictions, Injection parameter(s) accept unrestricted free-form text, No validation indicators detected.",
+          "timestamp": "2025-11-05T21:45:31.525283Z"
         }
       ],
       "evidence": {
@@ -236,7 +237,7 @@
         "command_tools": [
           {
             "tool_name": "remote_access",
-            "risk_score": 0.6,
+            "risk_score": 0.85,
             "injection_params": [
               "command"
             ],
@@ -245,6 +246,7 @@
             "risk_reasons": [
               "Parameter 'command' maps user input into command execution",
               "Parameter 'command' lacks input restrictions",
+              "Injection parameter(s) accept unrestricted free-form text",
               "No validation indicators detected"
             ]
           }
@@ -271,7 +273,7 @@
         }
       },
       "remediation": "Prevent command injection: (1) Never pass user input directly to system commands, (2) Use parameterized APIs instead of shell execution, (3) Whitelist allowed inputs, (4) Sanitize input (remove ;|&`$() characters), (5) Use least privilege for execution, (6) Avoid shell interpreters (use exec() family directly).",
-      "timestamp": "2025-11-05T21:08:18.855581Z",
+      "timestamp": "2025-11-05T21:45:29.837858Z",
       "execution_time_ms": null
     },
     {
@@ -296,7 +298,7 @@
         "cvss": null
       },
       "remediation": "No issues found",
-      "timestamp": "2025-11-05T21:08:20.548455Z",
+      "timestamp": "2025-11-05T21:45:31.525478Z",
       "execution_time_ms": 0.0
     },
     {
@@ -328,7 +330,7 @@
             ],
             "reason": "4 high-risk capabilities combined; Unrestricted parameters (1) with high-risk capabilities"
           },
-          "timestamp": "2025-11-05T21:08:20.554676Z"
+          "timestamp": "2025-11-05T21:45:31.532275Z"
         }
       ],
       "proof_of_concepts": [
@@ -345,7 +347,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'remote_access' executed admin command with placeholder token, confirming insufficient access controls.",
-          "timestamp": "2025-11-05T21:08:21.168329Z"
+          "timestamp": "2025-11-05T21:45:32.148877Z"
         }
       ],
       "evidence": {
@@ -422,7 +424,7 @@
         }
       },
       "remediation": "Apply principle of least privilege: (1) Restrict tool parameters to specific allowed values/paths, (2) Implement path validation and sanitization, (3) Split multi-capability tools into focused tools, (4) Add explicit access control checks, (5) Document and justify any high-risk capabilities.",
-      "timestamp": "2025-11-05T21:08:20.548503Z",
+      "timestamp": "2025-11-05T21:45:31.525579Z",
       "execution_time_ms": null
     },
     {
@@ -444,7 +446,7 @@
               "canary_trigger"
             ]
           },
-          "timestamp": "2025-11-05T21:08:22.221559Z"
+          "timestamp": "2025-11-05T21:45:33.213426Z"
         }
       ],
       "proof_of_concepts": [
@@ -464,7 +466,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'remote_access' executed canary instructions, confirming indirect injection impact.",
-          "timestamp": "2025-11-05T21:08:22.221589Z"
+          "timestamp": "2025-11-05T21:45:33.213455Z"
         }
       ],
       "evidence": {
@@ -503,7 +505,7 @@
         }
       },
       "remediation": "Prevent indirect injection: (1) Sanitize all external data before presenting to LLM, (2) Clearly mark untrusted content, (3) Use structured output formats (JSON) instead of freeform text, (4) Implement content filtering for injection patterns, (5) Validate data sources and implement allowlists.",
-      "timestamp": "2025-11-05T21:08:21.168489Z",
+      "timestamp": "2025-11-05T21:45:32.149031Z",
       "execution_time_ms": null
     },
     {
@@ -539,7 +541,60 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:08:22.221735Z",
+      "timestamp": "2025-11-05T21:45:33.213605Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-PA-001",
+      "detector_name": "Privilege Abuse Detector",
+      "detector_version": "1.1.0",
+      "status": "ABSENT",
+      "confidence": 0.8,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "mode": "aggressive",
+        "threshold": 0.45,
+        "tools_analyzed": 2,
+        "analysis": [
+          {
+            "tool_name": "remote_access",
+            "detected_capabilities": [
+              "command_execution",
+              "credential",
+              "database"
+            ],
+            "score": 0.0,
+            "flagged": false
+          },
+          {
+            "tool_name": "manage_permissions",
+            "detected_capabilities": [
+              "admin"
+            ],
+            "score": 0.0,
+            "flagged": false
+          }
+        ]
+      },
+      "standards": {
+        "cwe": "CWE-250",
+        "owasp_llm": null,
+        "owasp_api": "API4",
+        "asvs": [
+          "V4.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+          "base_score": 6.5,
+          "severity": "MEDIUM"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T21:45:34.446955Z",
       "execution_time_ms": null
     },
     {
@@ -573,7 +628,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:08:23.677859Z",
+      "timestamp": "2025-11-05T21:45:34.879757Z",
       "execution_time_ms": null
     },
     {
@@ -589,6 +644,7 @@
         "tools_analyzed": 2,
         "tools_called": 10,
         "changed_tools": [],
+        "response_changes": [],
         "call_failures": [],
         "mode": "aggressive"
       },
@@ -608,7 +664,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:08:23.677935Z",
+      "timestamp": "2025-11-05T21:45:34.879837Z",
       "execution_time_ms": null
     },
     {
@@ -630,7 +686,7 @@
             "tool_description": "Execute a command on a remote system\n\nArgs:\n    system: The remote system to access (e.g., \"database\", \"webserver\", \"fileserver\")\n    command: The command to execute on the remote system\n    auth_token: Optional authentication token for privileged operations\n",
             "keyword": "execute"
           },
-          "timestamp": "2025-11-05T21:08:31.101182Z"
+          "timestamp": "2025-11-05T21:45:42.298772Z"
         },
         {
           "type": "schema_overpermissive",
@@ -643,7 +699,7 @@
             "tool_description": "Execute a command on a remote system\n\nArgs:\n    system: The remote system to access (e.g., \"database\", \"webserver\", \"fileserver\")\n    command: The command to execute on the remote system\n    auth_token: Optional authentication token for privileged operations\n",
             "keyword": "command"
           },
-          "timestamp": "2025-11-05T21:08:31.101195Z"
+          "timestamp": "2025-11-05T21:45:42.298784Z"
         },
         {
           "type": "schema_overpermissive",
@@ -656,7 +712,7 @@
             "tool_description": "Execute a command on a remote system\n\nArgs:\n    system: The remote system to access (e.g., \"database\", \"webserver\", \"fileserver\")\n    command: The command to execute on the remote system\n    auth_token: Optional authentication token for privileged operations\n",
             "keyword": "system"
           },
-          "timestamp": "2025-11-05T21:08:31.101201Z"
+          "timestamp": "2025-11-05T21:45:42.298790Z"
         },
         {
           "type": "schema_overpermissive",
@@ -669,7 +725,7 @@
             "tool_description": "Execute a command on a remote system\n\nArgs:\n    system: The remote system to access (e.g., \"database\", \"webserver\", \"fileserver\")\n    command: The command to execute on the remote system\n    auth_token: Optional authentication token for privileged operations\n",
             "keyword": "exec"
           },
-          "timestamp": "2025-11-05T21:08:31.101205Z"
+          "timestamp": "2025-11-05T21:45:42.298794Z"
         }
       ],
       "proof_of_concepts": [
@@ -686,7 +742,7 @@
           },
           "success": true,
           "impact_demonstrated": "Successfully called dangerous tool 'remote_access' (contains keyword 'execute')",
-          "timestamp": "2025-11-05T21:08:31.317465Z"
+          "timestamp": "2025-11-05T21:45:42.514702Z"
         },
         {
           "target": "remote_access",
@@ -701,7 +757,7 @@
           },
           "success": true,
           "impact_demonstrated": "Successfully called dangerous tool 'remote_access' (contains keyword 'command')",
-          "timestamp": "2025-11-05T21:08:31.536222Z"
+          "timestamp": "2025-11-05T21:45:43.135882Z"
         }
       ],
       "evidence": {
@@ -749,7 +805,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:08:31.095606Z",
+      "timestamp": "2025-11-05T21:45:42.292589Z",
       "execution_time_ms": null
     },
     {
@@ -786,7 +842,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:08:31.536382Z",
+      "timestamp": "2025-11-05T21:45:43.136029Z",
       "execution_time_ms": null
     },
     {
@@ -821,17 +877,98 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:08:32.378226Z",
+      "timestamp": "2025-11-05T21:45:43.572874Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-UA-001",
+      "detector_name": "Unauthenticated Access Detector",
+      "detector_version": "1.1.0",
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "affected_resources": [],
+      "signals": [
+        {
+          "type": "auth_mismatch",
+          "value": true,
+          "context": {
+            "tools_accessible": true,
+            "resources_accessible": true,
+            "resources_supported": true,
+            "vulnerability": "unauthenticated_access",
+            "severity": "CRITICAL"
+          },
+          "timestamp": "2025-11-05T21:45:44.816630Z"
+        }
+      ],
+      "proof_of_concepts": [
+        {
+          "target": "MCP Server",
+          "attack_type": "unauthenticated_access_test",
+          "payload": {
+            "operations": [
+              "list_tools",
+              "list_resources"
+            ],
+            "authenticated": false
+          },
+          "response": {
+            "tools_count": 2,
+            "resources_count": 0,
+            "tool_samples": [
+              "remote_access",
+              "manage_permissions"
+            ],
+            "resource_samples": [],
+            "vulnerable": true
+          },
+          "success": true,
+          "impact_demonstrated": "Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.",
+          "timestamp": "2025-11-05T21:45:44.816644Z"
+        }
+      ],
+      "evidence": {
+        "mode": "aggressive",
+        "tools_accessible": true,
+        "resources_accessible": true,
+        "resources_supported": true,
+        "auth_required": false,
+        "errors": {},
+        "tool_samples": [
+          "remote_access",
+          "manage_permissions"
+        ],
+        "tool_count": 2,
+        "resource_samples": [],
+        "resource_count": 0
+      },
+      "standards": {
+        "cwe": "CWE-284",
+        "owasp_llm": null,
+        "owasp_api": "API1",
+        "asvs": [
+          "V1.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "base_score": 10.0,
+          "severity": "CRITICAL"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T21:45:44.197404Z",
       "execution_time_ms": null
     }
   ],
   "threat_model": null,
   "summary": {
-    "present": 5,
-    "absent": 7,
+    "present": 6,
+    "absent": 8,
     "unknown": 0,
     "not_applicable": 0
   },
-  "audit_log_path": "captures\\audit_9837b8c6-75bf-4bd8-bd5c-94aaa559084b.jsonl",
+  "audit_log_path": "captures\\audit_2406fa98-910e-44cd-a875-78cfac14f4ac.jsonl",
   "framework_version": "0.2.0"
 }

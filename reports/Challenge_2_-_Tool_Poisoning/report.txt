@@ -8,13 +8,13 @@ Server:       Challenge 2 - Tool Poisoning
 Version:      1.16.0
 Transport:    sse
 Exposure:     LOCAL
-Assessment:   f6d2a834-f60b-4c21-9308-93731de39467
-Duration:     14.23s
+Assessment:   d0767036-97f0-4281-935f-6c4df7349313
+Duration:     15.97s
 
 SUMMARY
 ────────────────────────────────────────────────────────────────────────────────
-Detectors Run:      12
-  ✗ Vulnerabilities:  5
+Detectors Run:      14
+  ✗ Vulnerabilities:  7
   ✓ Passed:          7
   ? Unknown:         0
   - Not Applicable:   0
@@ -52,7 +52,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: CODE_EXECUTION
   Target:        execute_command
   Success:       YES
-  Timestamp:     2025-11-05 21:06:41 UTC
+  Timestamp:     2025-11-05 21:43:43 UTC
 
   Impact:
     Tool 'execute_command' executes arbitrary code via parameter(s): command. Limited sandboxing. Risk score: 70%. Attacker can execute malicious code, access files, exfiltrate data, or compromise the system.
@@ -71,6 +71,56 @@ PoC #1: CODE_EXECUTION
 
 REMEDIATION:
   - Secure code execution: (1) Implement strict sandboxing (containers, VMs), (2) Whitelist allowed operations/modules, (3) Set resource limits (CPU, memory, time), (4) Disable dangerous functions (file I/O, network, exec), (5) Validate and sanitize all code inputs, (6) Log all executions for audit.
+
+
+================================================================================
+FINDING: Command Injection Detector
+================================================================================
+
+Detector ID:     MCP-2024-CI-001
+Severity:        CRITICAL
+Confidence:      98%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-78
+  OWASP LLM:     LLM07
+  OWASP API:     API8:2023
+  CVSS Score:    9.8/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H
+
+Signals Detected: 1
+  1. [schema_overpermissive]
+     True
+     tool_name: execute_command
+     risk_score: 0.85
+     injection_params: ['command']
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: COMMAND_INJECTION
+  Target:        execute_command
+  Success:       YES
+  Timestamp:     2025-11-05 21:43:44 UTC
+
+  Impact:
+    Safe payload echoed canary token via tool 'execute_command', confirming command injection through parameter 'command'.
+
+  Attack Payload:
+    tool_name: execute_command
+    payload: 127.0.0.1; echo MCPSF_CMD_POC
+    parameter: command
+
+  Server Response:
+    marker_detected: True
+    response_excerpt: Error: Command '127.0.0.1; echo MCPSF_CMD_POC' is not allowed. Only ls, pwd, whoami, date are permitted.
+
+--------------------------------------------------------------------------------
+
+REMEDIATION:
+  - Prevent command injection: (1) Never pass user input directly to system commands, (2) Use parameterized APIs instead of shell execution, (3) Whitelist allowed inputs, (4) Sanitize input (remove ;
+  - &`$() characters), (5) Use least privilege for execution, (6) Avoid shell interpreters (use exec() family directly).
 
 
 ================================================================================
@@ -107,7 +157,7 @@ PROOF OF CONCEPT: 2 exploit(s) demonstrated
 PoC #1: EXCESSIVE_PERMISSIONS
   Target:        execute_command
   Success:       YES
-  Timestamp:     2025-11-05 21:06:42 UTC
+  Timestamp:     2025-11-05 21:43:45 UTC
 
   Impact:
     Tool 'execute_command' has excessive permissions (risk: 100%). Capabilities: code_execution, system_commands. Unrestricted params: 1. Potential for: arbitrary code execution, system command execution.
@@ -125,7 +175,7 @@ PoC #1: EXCESSIVE_PERMISSIONS
 PoC #2: EXCESSIVE_PERMISSIONS
   Target:        read_file
   Success:       YES
-  Timestamp:     2025-11-05 21:06:42 UTC
+  Timestamp:     2025-11-05 21:43:45 UTC
 
   Impact:
     Tool 'read_file' has excessive permissions (risk: 100%). Capabilities: filesystem_access, system_commands. Unrestricted params: 1. Potential for: system command execution, unrestricted file system access.
@@ -175,7 +225,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: INDIRECT_INJECTION_CANARY
   Target:        read_file
   Success:       YES
-  Timestamp:     2025-11-05 21:06:43 UTC
+  Timestamp:     2025-11-05 21:43:47 UTC
 
   Impact:
     Tool 'read_file' executed canary instructions, confirming indirect injection impact.
@@ -192,6 +242,50 @@ PoC #1: INDIRECT_INJECTION_CANARY
 
 REMEDIATION:
   - Prevent indirect injection: (1) Sanitize all external data before presenting to LLM, (2) Clearly mark untrusted content, (3) Use structured output formats (JSON) instead of freeform text, (4) Implement content filtering for injection patterns, (5) Validate data sources and implement allowlists.
+
+
+================================================================================
+FINDING: Privilege Abuse Detector
+================================================================================
+
+Detector ID:     MCP-2024-PA-001
+Severity:        MEDIUM
+Confidence:      78%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-250
+  OWASP API:     API4
+  CVSS Score:    6.5/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L
+
+Signals Detected: 1
+  1. [schema_overpermissive]
+     True
+     tool_name: read_file
+     unexpected_capabilities: ['command_execution']
+     purpose: read_only
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: PRIVILEGE_MISMATCH_DETECTION
+  Target:        read_file
+  Success:       YES
+  Timestamp:     2025-11-05 21:43:48 UTC
+
+  Impact:
+    Tool 'read_file' exposes command_execution capabilities despite its declared purpose, enabling privilege abuse.
+
+  Attack Payload:
+    detected_capabilities: ['command_execution']
+    purpose: read_only
+
+  Server Response:
+    reasons: ['command execution not expected for Read-only information retrieval', 'Command execution available despite non-administrative purpose']
+    detected_capabilities: {'filesystem_read': ['schema:filename', 'text:\\bread\\b.*\\bfile\\b'], 'command_execution': ['text:\\bsystem\\b']}
+
+--------------------------------------------------------------------------------
 
 
 ================================================================================
@@ -242,7 +336,7 @@ PROOF OF CONCEPT: 2 exploit(s) demonstrated
 PoC #1: TOOL_ABUSE
   Target:        execute_command
   Success:       YES
-  Timestamp:     2025-11-05 21:06:52 UTC
+  Timestamp:     2025-11-05 21:43:56 UTC
 
   Impact:
     Successfully called dangerous tool 'execute_command' (contains keyword 'execute')
@@ -258,7 +352,7 @@ PoC #1: TOOL_ABUSE
 PoC #2: TOOL_ABUSE
   Target:        execute_command
   Success:       YES
-  Timestamp:     2025-11-05 21:06:53 UTC
+  Timestamp:     2025-11-05 21:43:56 UTC
 
   Impact:
     Successfully called dangerous tool 'execute_command' (contains keyword 'command')
@@ -275,32 +369,52 @@ PoC #2: TOOL_ABUSE
 
 
 ================================================================================
-FINDING: Tool Shadowing Detector
+FINDING: Unauthenticated Access Detector
 ================================================================================
 
-Detector ID:     MCP-2024-TS-001
-Severity:        HIGH
-Confidence:      70%
+Detector ID:     MCP-2024-UA-001
+Severity:        CRITICAL
+Confidence:      95%
 Status:          ✗ PRESENT
 
 Standards Mapping:
-  CWE:           CWE-706
-  OWASP LLM:     LLM07
-  OWASP API:     API8:2023
-  CVSS Score:    7.5/10
-  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N
+  CWE:           CWE-284
+  OWASP API:     API1
+  CVSS Score:    10.0/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
 
 Signals Detected: 1
-  1. [schema_overpermissive]
+  1. [auth_mismatch]
      True
-     issue_type: generic_name
-     tool_name: read_file
-     risk: Could shadow legitimate tool with same name
+     tools_accessible: True
+     resources_accessible: True
+     resources_supported: True
 
-REMEDIATION:
-  - Prevent tool shadowing: (1) Enforce unique tool names across all connected MCP servers, (2) Use namespacing (e.g., server_name.tool_name), (3) Implement tool identity verification, (4) Warn users when multiple tools have similar names, (5) Maintain a whitelist of trusted tool sources.
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: UNAUTHENTICATED_ACCESS_TEST
+  Target:        MCP Server
+  Success:       YES
+  Timestamp:     2025-11-05 21:43:58 UTC
+
+  Impact:
+    Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.
+
+  Attack Payload:
+    operations: ['list_tools', 'list_resources']
+    authenticated: False
+
+  Server Response:
+    tools_count: 2
+    resources_count: 0
+    tool_samples: ['execute_command', 'read_file']
+    resource_samples: []
+    vulnerable: True
+
+--------------------------------------------------------------------------------
 
 ────────────────────────────────────────────────────────────────────────────────
-Report generated: 2025-11-05T13:06:54.464276
+Report generated: 2025-11-05T13:43:58.676869
 Framework version: 0.2.0
 ================================================================================

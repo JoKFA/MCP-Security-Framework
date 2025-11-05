@@ -8,14 +8,14 @@ Server:       Challenge 7 - Token Theft
 Version:      1.16.0
 Transport:    sse
 Exposure:     LOCAL
-Assessment:   0df3ee14-f01a-44ca-9930-28a1b4ef66c0
-Duration:     11.32s
+Assessment:   e5bab056-662c-4e21-a990-20201d6885b3
+Duration:     12.36s
 
 SUMMARY
 ────────────────────────────────────────────────────────────────────────────────
-Detectors Run:      12
-  ✗ Vulnerabilities:  2
-  ✓ Passed:          10
+Detectors Run:      14
+  ✗ Vulnerabilities:  3
+  ✓ Passed:          11
   ? Unknown:         0
   - Not Applicable:   0
 
@@ -57,7 +57,7 @@ PROOF OF CONCEPT: 2 exploit(s) demonstrated
 PoC #1: EXCESSIVE_PERMISSIONS
   Target:        authenticate
   Success:       YES
-  Timestamp:     2025-11-05 21:07:50 UTC
+  Timestamp:     2025-11-05 21:44:58 UTC
 
   Impact:
     Tool 'authenticate' has excessive permissions (risk: 80%). Capabilities: credential_access. Unrestricted params: 0. Potential for: elevated privileges.
@@ -75,7 +75,7 @@ PoC #1: EXCESSIVE_PERMISSIONS
 PoC #2: EXCESSIVE_PERMISSIONS
   Target:        verify_token
   Success:       YES
-  Timestamp:     2025-11-05 21:07:50 UTC
+  Timestamp:     2025-11-05 21:44:58 UTC
 
   Impact:
     Tool 'verify_token' has excessive permissions (risk: 80%). Capabilities: credential_access. Unrestricted params: 0. Potential for: elevated privileges.
@@ -125,7 +125,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: INSECURE_STORAGE
   Target:        verify_token
   Success:       YES
-  Timestamp:     2025-11-05 21:07:51 UTC
+  Timestamp:     2025-11-05 21:45:00 UTC
 
   Impact:
     Tool 'verify_token' exposes 1 secret(s) in responses. Types: tokens. Samples: tokens=[test]. Credentials are stored/transmitted insecurely, enabling theft.
@@ -146,7 +146,54 @@ PoC #1: INSECURE_STORAGE
 REMEDIATION:
   - Secure credential storage: (1) Never return raw tokens/keys in responses, (2) Use secure credential storage (environment variables, key vaults), (3) Implement token redaction in tool outputs, (4) Use short-lived tokens, (5) Rotate credentials regularly, (6) Log credential access for auditing.
 
+
+================================================================================
+FINDING: Unauthenticated Access Detector
+================================================================================
+
+Detector ID:     MCP-2024-UA-001
+Severity:        CRITICAL
+Confidence:      95%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-284
+  OWASP API:     API1
+  CVSS Score:    10.0/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+
+Signals Detected: 1
+  1. [auth_mismatch]
+     True
+     tools_accessible: True
+     resources_accessible: True
+     resources_supported: True
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: UNAUTHENTICATED_ACCESS_TEST
+  Target:        MCP Server
+  Success:       YES
+  Timestamp:     2025-11-05 21:45:10 UTC
+
+  Impact:
+    Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.
+
+  Attack Payload:
+    operations: ['list_tools', 'list_resources']
+    authenticated: False
+
+  Server Response:
+    tools_count: 2
+    resources_count: 0
+    tool_samples: ['authenticate', 'verify_token']
+    resource_samples: []
+    vulnerable: True
+
+--------------------------------------------------------------------------------
+
 ────────────────────────────────────────────────────────────────────────────────
-Report generated: 2025-11-05T13:08:00.426997
+Report generated: 2025-11-05T13:45:10.130679
 Framework version: 0.2.0
 ================================================================================

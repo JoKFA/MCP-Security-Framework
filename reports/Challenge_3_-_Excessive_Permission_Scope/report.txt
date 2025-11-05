@@ -8,13 +8,13 @@ Server:       Challenge 3 - Excessive Permission Scope
 Version:      1.16.0
 Transport:    sse
 Exposure:     LOCAL
-Assessment:   abe198ce-9357-4e90-8e36-21959d72f95e
-Duration:     9.62s
+Assessment:   5a7d7cef-02a4-4bd5-b2b2-832289c5d95c
+Duration:     10.69s
 
 SUMMARY
 ────────────────────────────────────────────────────────────────────────────────
-Detectors Run:      12
-  ✗ Vulnerabilities:  3
+Detectors Run:      14
+  ✗ Vulnerabilities:  5
   ✓ Passed:          9
   ? Unknown:         0
   - Not Applicable:   0
@@ -52,7 +52,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: FILESYSTEM_ACCESS
   Target:        file_manager
   Success:       YES
-  Timestamp:     2025-11-05 21:06:59 UTC
+  Timestamp:     2025-11-05 21:44:03 UTC
 
   Impact:
     Tool 'file_manager' granted file access to 'C:\Windows\System32\drivers\etc\hosts' without additional authorization.
@@ -114,7 +114,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: INDIRECT_INJECTION_CANARY
   Target:        file_manager
   Success:       YES
-  Timestamp:     2025-11-05 21:07:00 UTC
+  Timestamp:     2025-11-05 21:44:05 UTC
 
   Impact:
     Tool 'file_manager' executed canary instructions, confirming indirect injection impact.
@@ -131,6 +131,50 @@ PoC #1: INDIRECT_INJECTION_CANARY
 
 REMEDIATION:
   - Prevent indirect injection: (1) Sanitize all external data before presenting to LLM, (2) Clearly mark untrusted content, (3) Use structured output formats (JSON) instead of freeform text, (4) Implement content filtering for injection patterns, (5) Validate data sources and implement allowlists.
+
+
+================================================================================
+FINDING: Privilege Abuse Detector
+================================================================================
+
+Detector ID:     MCP-2024-PA-001
+Severity:        MEDIUM
+Confidence:      95%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-250
+  OWASP API:     API4
+  CVSS Score:    6.5/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L
+
+Signals Detected: 1
+  1. [schema_overpermissive]
+     True
+     tool_name: file_manager
+     unexpected_capabilities: ['filesystem_delete', 'filesystem_write']
+     purpose: read_only
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: PRIVILEGE_MISMATCH_DETECTION
+  Target:        file_manager
+  Success:       YES
+  Timestamp:     2025-11-05 21:44:06 UTC
+
+  Impact:
+    Tool 'file_manager' exposes filesystem_delete, filesystem_write capabilities despite its declared purpose, enabling privilege abuse.
+
+  Attack Payload:
+    detected_capabilities: ['filesystem_delete', 'filesystem_write']
+    purpose: read_only
+
+  Server Response:
+    reasons: ['filesystem delete not expected for Read-only information retrieval', 'filesystem write not expected for Read-only information retrieval', 'Tool can both write and delete files, implying wide filesystem control']
+    detected_capabilities: {'filesystem_delete': ['text:\\bdelete\\b'], 'filesystem_read': ['schema:path'], 'filesystem_write': ['schema:path']}
+
+--------------------------------------------------------------------------------
 
 
 ================================================================================
@@ -161,7 +205,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: TOOL_ABUSE
   Target:        file_manager
   Success:       YES
-  Timestamp:     2025-11-05 21:07:06 UTC
+  Timestamp:     2025-11-05 21:44:10 UTC
 
   Impact:
     Successfully called dangerous tool 'file_manager' (contains keyword 'delete')
@@ -176,7 +220,54 @@ PoC #1: TOOL_ABUSE
 
 --------------------------------------------------------------------------------
 
+
+================================================================================
+FINDING: Unauthenticated Access Detector
+================================================================================
+
+Detector ID:     MCP-2024-UA-001
+Severity:        CRITICAL
+Confidence:      95%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-284
+  OWASP API:     API1
+  CVSS Score:    10.0/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+
+Signals Detected: 1
+  1. [auth_mismatch]
+     True
+     tools_accessible: True
+     resources_accessible: True
+     resources_supported: True
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: UNAUTHENTICATED_ACCESS_TEST
+  Target:        MCP Server
+  Success:       YES
+  Timestamp:     2025-11-05 21:44:12 UTC
+
+  Impact:
+    Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.
+
+  Attack Payload:
+    operations: ['list_tools', 'list_resources']
+    authenticated: False
+
+  Server Response:
+    tools_count: 1
+    resources_count: 0
+    tool_samples: ['file_manager']
+    resource_samples: []
+    vulnerable: True
+
+--------------------------------------------------------------------------------
+
 ────────────────────────────────────────────────────────────────────────────────
-Report generated: 2025-11-05T13:07:07.170712
+Report generated: 2025-11-05T13:44:12.508248
 Framework version: 0.2.0
 ================================================================================

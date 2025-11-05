@@ -1,0 +1,13 @@
+{
+  "assessment_id": "abe198ce-9357-4e90-8e36-21959d72f95e",
+  "target": "Challenge 3 - Excessive Permission Scope",
+  "started_at": "2025-11-05T21:06:57.537605+00:00",
+  "completed_at": "2025-11-05T21:07:07.162523+00:00",
+  "framework_version": "0.2.0",
+  "summary": {
+    "present": 3,
+    "absent": 9,
+    "unknown": 0,
+    "not_applicable": 0
+  }
+}

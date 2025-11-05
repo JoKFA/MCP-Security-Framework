@@ -1,0 +1,13 @@
+{
+  "assessment_id": "0df3ee14-f01a-44ca-9930-28a1b4ef66c0",
+  "target": "Challenge 7 - Token Theft",
+  "started_at": "2025-11-05T21:07:49.104325+00:00",
+  "completed_at": "2025-11-05T21:08:00.422082+00:00",
+  "framework_version": "0.2.0",
+  "summary": {
+    "present": 2,
+    "absent": 10,
+    "unknown": 0,
+    "not_applicable": 0
+  }
+}

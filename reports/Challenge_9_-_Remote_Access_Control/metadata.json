@@ -1,0 +1,13 @@
+{
+  "assessment_id": "9837b8c6-75bf-4bd8-bd5c-94aaa559084b",
+  "target": "Challenge 9 - Remote Access Control",
+  "started_at": "2025-11-05T21:08:17.918540+00:00",
+  "completed_at": "2025-11-05T21:08:32.594904+00:00",
+  "framework_version": "0.2.0",
+  "summary": {
+    "present": 5,
+    "absent": 7,
+    "unknown": 0,
+    "not_applicable": 0
+  }
+}

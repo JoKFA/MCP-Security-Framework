@@ -1,0 +1,152 @@
+================================================================================
+  MCP SECURITY ASSESSMENT REPORT
+================================================================================
+
+TARGET INFORMATION
+────────────────────────────────────────────────────────────────────────────────
+Server:       Challenge 7 - Token Theft
+Version:      1.16.0
+Transport:    sse
+Exposure:     LOCAL
+Assessment:   0df3ee14-f01a-44ca-9930-28a1b4ef66c0
+Duration:     11.32s
+
+SUMMARY
+────────────────────────────────────────────────────────────────────────────────
+Detectors Run:      12
+  ✗ Vulnerabilities:  2
+  ✓ Passed:          10
+  ? Unknown:         0
+  - Not Applicable:   0
+
+VULNERABILITIES DETECTED
+────────────────────────────────────────────────────────────────────────────────
+
+
+================================================================================
+FINDING: Excessive Permissions Detector
+================================================================================
+
+Detector ID:     MCP-2024-EP-001
+Severity:        CRITICAL
+Confidence:      80%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-269
+  OWASP LLM:     LLM08
+  OWASP API:     API6:2023
+  CVSS Score:    9.1/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N
+
+Signals Detected: 2
+  1. [schema_overpermissive]
+     True
+     tool_name: authenticate
+     risk_score: 0.8
+     capabilities: ['credential_access']
+  2. [schema_overpermissive]
+     True
+     tool_name: verify_token
+     risk_score: 0.8
+     capabilities: ['credential_access']
+
+PROOF OF CONCEPT: 2 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: EXCESSIVE_PERMISSIONS
+  Target:        authenticate
+  Success:       YES
+  Timestamp:     2025-11-05 21:07:50 UTC
+
+  Impact:
+    Tool 'authenticate' has excessive permissions (risk: 80%). Capabilities: credential_access. Unrestricted params: 0. Potential for: elevated privileges.
+
+  Attack Payload:
+    tool_name: authenticate
+    detection_method: capability_analysis
+
+  Server Response:
+    risk_score: 0.8
+    capabilities: ['credential_access']
+    unrestricted_params: []
+    reason: High risk score (80%)
+
+PoC #2: EXCESSIVE_PERMISSIONS
+  Target:        verify_token
+  Success:       YES
+  Timestamp:     2025-11-05 21:07:50 UTC
+
+  Impact:
+    Tool 'verify_token' has excessive permissions (risk: 80%). Capabilities: credential_access. Unrestricted params: 0. Potential for: elevated privileges.
+
+  Attack Payload:
+    tool_name: verify_token
+    detection_method: capability_analysis
+
+  Server Response:
+    risk_score: 0.8
+    capabilities: ['credential_access']
+    unrestricted_params: []
+    reason: High risk score (80%)
+
+--------------------------------------------------------------------------------
+
+REMEDIATION:
+  - Apply principle of least privilege: (1) Restrict tool parameters to specific allowed values/paths, (2) Implement path validation and sanitization, (3) Split multi-capability tools into focused tools, (4) Add explicit access control checks, (5) Document and justify any high-risk capabilities.
+
+
+================================================================================
+FINDING: Insecure Token Storage Detector
+================================================================================
+
+Detector ID:     MCP-2024-IS-001
+Severity:        HIGH
+Confidence:      90%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-522
+  OWASP LLM:     LLM01
+  OWASP API:     API2:2023
+  CVSS Score:    8.6/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:N
+
+Signals Detected: 1
+  1. [sensitive_exposure]
+     True
+     tool_name: verify_token
+     secret_types: ['tokens']
+     total_secrets: 1
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: INSECURE_STORAGE
+  Target:        verify_token
+  Success:       YES
+  Timestamp:     2025-11-05 21:07:51 UTC
+
+  Impact:
+    Tool 'verify_token' exposes 1 secret(s) in responses. Types: tokens. Samples: tokens=[test]. Credentials are stored/transmitted insecurely, enabling theft.
+
+  Attack Payload:
+    tool: verify_token
+    method: call_tool
+
+  Server Response:
+    secret_types: ['tokens']
+    total_secrets: 1
+    Leaked Secrets:
+      tokens:
+        - test
+
+--------------------------------------------------------------------------------
+
+REMEDIATION:
+  - Secure credential storage: (1) Never return raw tokens/keys in responses, (2) Use secure credential storage (environment variables, key vaults), (3) Implement token redaction in tool outputs, (4) Use short-lived tokens, (5) Rotate credentials regularly, (6) Log credential access for auditing.
+
+────────────────────────────────────────────────────────────────────────────────
+Report generated: 2025-11-05T13:08:00.426997
+Framework version: 0.2.0
+================================================================================

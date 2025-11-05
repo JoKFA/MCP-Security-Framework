@@ -64,6 +64,12 @@ class SafeAdapter:
         self.base_adapter = base_adapter
         self.scope = scope
 
+        # Ensure tool enumeration is permitted unless explicitly blocked
+        if not any(prefix.startswith("/tools") for prefix in self.scope.allowed_prefixes):
+            self.scope.allowed_prefixes.append("/tools/")
+        if not any(prefix.startswith("/resources") for prefix in self.scope.allowed_prefixes):
+            self.scope.allowed_prefixes.append("/resources")
+
         # Initialize safety components
         self.rate_limiter = RateLimiter(scope.rate_limit)
         self.redactor = Redactor(scope.policy.max_payload_kb)

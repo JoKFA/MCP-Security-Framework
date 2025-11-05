@@ -10,10 +10,10 @@ import json
 import os
 import re
 import time
+from collections import deque
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
-from collections import deque
+from typing import Any, Dict, List, Literal, Optional, Union
 
 import yaml
 from pydantic import BaseModel, Field, field_validator
@@ -89,9 +89,13 @@ class ScopeConfig(BaseModel):
     """
     target: str = Field(..., description="Target URL or stdio command")
     transport: Optional[str] = Field(None, description="Transport type (auto-detected if None)")
+    mode: Literal["safe", "balanced", "aggressive"] = Field(
+        default="balanced",
+        description="Assessment intensity. Controls detector behavior and active probing."
+    )
 
     allowed_prefixes: List[str] = Field(
-        default_factory=lambda: ["/resources", "/tools"],
+        default_factory=lambda: ["internal://", "file://", "/resources", "/tools/"],
         description="Allowed resource/tool prefixes"
     )
     blocked_paths: List[str] = Field(
@@ -185,6 +189,11 @@ class ScopeConfig(BaseModel):
                 auth["client_secret"] = cls._expand_env_var(auth["client_secret"])
 
         return cls(**data)
+
+    @classmethod
+    def load_from_yaml(cls, path: Union[str, Path]) -> "ScopeConfig":
+        """Backwards-compatible alias for from_yaml()."""
+        return cls.from_yaml(path)
 
     @staticmethod
     def _expand_env_var(value: str) -> str:

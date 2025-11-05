@@ -1,0 +1,13 @@
+{
+  "assessment_id": "9fdf44d9-e23a-4012-a725-b81a69c2ae1c",
+  "target": "Challenge 8 - Malicious Code Execution",
+  "started_at": "2025-11-05T21:08:03.544662+00:00",
+  "completed_at": "2025-11-05T21:08:14.822392+00:00",
+  "framework_version": "0.2.0",
+  "summary": {
+    "present": 3,
+    "absent": 9,
+    "unknown": 0,
+    "not_applicable": 0
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "MCP Security Framework",
+          "version": "0.2.0",
+          "informationUri": "https://github.com/yourusername/mcp-security-framework",
+          "organization": "MCP Security Project",
+          "semanticVersion": "0.2.0",
+          "rules": [
+            {
+              "id": "MCP-2024-II-001",
+              "name": "Indirect Prompt Injection Detector",
+              "shortDescription": {
+                "text": "Indirect Prompt Injection Detector"
+              },
+              "fullDescription": {
+                "text": "Indirect Prompt Injection Detector detector"
+              },
+              "help": {
+                "text": "No remediation guidance available."
+              },
+              "properties": {
+                "confidence": 0.85,
+                "precision": "medium",
+                "security-severity": "8.1",
+                "tags": [
+                  "external/cwe/CWE-74",
+                  "external/owasp-llm/LLM01",
+                  "external/owasp-api/API8:2023"
+                ]
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            },
+            {
+              "id": "MCP-2024-TP-001",
+              "name": "Tool Poisoning Detector",
+              "shortDescription": {
+                "text": "Tool Poisoning Detector"
+              },
+              "fullDescription": {
+                "text": "Tool Poisoning Detector detector"
+              },
+              "help": {
+                "text": "No remediation guidance available."
+              },
+              "properties": {
+                "confidence": 0.9,
+                "precision": "high",
+                "security-severity": "8.1",
+                "tags": [
+                  "external/cwe/CWE-74",
+                  "external/owasp-llm/LLM02",
+                  "external/owasp-api/API8:2023"
+                ]
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            }
+          ]
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true,
+          "startTimeUtc": "2025-11-05T23:19:10.951749+00:00",
+          "endTimeUtc": "2025-11-05T23:19:12.348004+00:00",
+          "workingDirectory": {
+            "uri": "file:///"
+          },
+          "properties": {
+            "scope": {
+              "target": "stdio://targets\\python-sdk\\examples\\servers\\simple-prompt\\.venv\\Scripts\\python.exe/-m/mcp_simple_prompt",
+              "transport": null,
+              "mode": "aggressive",
+              "allowed_prefixes": [
+                "internal://",
+                "file://",
+                "/resources",
+                "/tools/"
+              ],
+              "blocked_paths": [],
+              "rate_limit": {
+                "qps": 3.0,
+                "burst": 5,
+                "backoff_ms": [
+                  200,
+                  400,
+                  800,
+                  1600
+                ]
+              },
+              "policy": {
+                "dry_run": false,
+                "redact_evidence": true,
+                "max_payload_kb": 256,
+                "fail_on_high": false,
+                "max_total_requests": 1000,
+                "request_timeout_s": 30
+              },
+              "auth": {
+                "type": "none",
+                "api_key": null,
+                "header_name": "X-API-Key",
+                "token_url": null,
+                "client_id": null,
+                "client_secret": null
+              },
+              "reporting": {
+                "output_dir": "reports/SIMPLE_PROMPT",
+                "formats": [
+                  "json",
+                  "sarif",
+                  "html"
+                ],
+                "store_evidence": true,
+                "evidence_retention_days": 30
+              },
+              "detectors": null,
+              "metadata": {}
+            }
+          }
+        }
+      ],
+      "results": [],
+      "artifacts": [],
+      "properties": {
+        "assessment_id": "caac996a-5d86-4ffb-820c-1da45249530f",
+        "target_server": "mcp-simple-prompt",
+        "target_version": "1.20.0",
+        "transport": "stdio",
+        "exposure": "unknown"
+      }
+    }
+  ]
+}

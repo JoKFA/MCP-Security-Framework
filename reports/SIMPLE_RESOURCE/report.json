@@ -1,0 +1,254 @@
+{
+  "assessment_id": "a8183227-ae98-4656-ab3d-d51b6ac861c4",
+  "started_at": "2025-11-05T23:06:58.532506Z",
+  "completed_at": "2025-11-05T23:07:02.384366Z",
+  "scope": {
+    "target": "stdio://targets\\python-sdk\\examples\\servers\\simple-resource\\.venv\\Scripts\\python.exe/-m/mcp_simple_resource",
+    "transport": null,
+    "mode": "aggressive",
+    "allowed_prefixes": [
+      "internal://",
+      "file://",
+      "/resources",
+      "/tools/"
+    ],
+    "blocked_paths": [],
+    "rate_limit": {
+      "qps": 3.0,
+      "burst": 5,
+      "backoff_ms": [
+        200,
+        400,
+        800,
+        1600
+      ]
+    },
+    "policy": {
+      "dry_run": false,
+      "redact_evidence": true,
+      "max_payload_kb": 256,
+      "fail_on_high": false,
+      "max_total_requests": 1000,
+      "request_timeout_s": 30
+    },
+    "auth": {
+      "type": "none",
+      "api_key": null,
+      "header_name": "X-API-Key",
+      "token_url": null,
+      "client_id": null,
+      "client_secret": null
+    },
+    "reporting": {
+      "output_dir": "reports/SIMPLE_RESOURCE",
+      "formats": [
+        "json",
+        "sarif",
+        "html"
+      ],
+      "store_evidence": true,
+      "evidence_retention_days": 30
+    },
+    "detectors": null,
+    "metadata": {}
+  },
+  "profile": {
+    "server_name": "mcp-simple-resource",
+    "server_version": "1.20.0",
+    "protocol_version": "2025-06-18",
+    "capabilities": {
+      "resources": true,
+      "tools": false,
+      "prompts": false,
+      "logging": false,
+      "sampling": false
+    },
+    "transport": "stdio",
+    "endpoint": null,
+    "auth_type": "none",
+    "exposure": "unknown",
+    "metadata": {},
+    "profiled_at": "2025-11-05T23:06:59.826259Z"
+  },
+  "results": [
+    {
+      "detector_id": "MCP-2024-CE-001",
+      "detector_name": "Credential Exposure Detector",
+      "detector_version": "1.0.0",
+      "status": "ABSENT",
+      "confidence": 0.95,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "resources_scanned": 3,
+        "sensitive_resources_found": 0,
+        "secrets_by_resource": {}
+      },
+      "standards": {
+        "cwe": "CWE-522",
+        "owasp_llm": "LLM01",
+        "owasp_api": "API2",
+        "asvs": [
+          "V2.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+          "base_score": 8.2,
+          "severity": "HIGH"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T23:06:59.848857Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-DUMMY-001",
+      "detector_name": "Dummy Detector",
+      "detector_version": "1.0.0",
+      "status": "ABSENT",
+      "confidence": 1.0,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "test": "passed",
+        "probes_sent": 0
+      },
+      "standards": {
+        "cwe": "CWE-0",
+        "owasp_llm": "LLM00",
+        "owasp_api": null,
+        "asvs": [],
+        "capec": [],
+        "cvss": null
+      },
+      "remediation": "No issues found",
+      "timestamp": "2025-11-05T23:06:59.861367Z",
+      "execution_time_ms": 0.0
+    },
+    {
+      "detector_id": "MCP-2024-II-001",
+      "detector_name": "Indirect Prompt Injection Detector",
+      "detector_version": "1.0.0",
+      "status": "ABSENT",
+      "confidence": 0.85,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "resources_analyzed": 3,
+        "tools_analyzed": 0,
+        "poisoned_resources": [],
+        "poisoned_tool_responses": [],
+        "canary_tool_responses": [],
+        "mode": "aggressive"
+      },
+      "standards": {
+        "cwe": "CWE-74",
+        "owasp_llm": "LLM01",
+        "owasp_api": "API8:2023",
+        "asvs": [
+          "V5.1",
+          "V5.3"
+        ],
+        "capec": [
+          "CAPEC-242"
+        ],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N",
+          "base_score": 8.1,
+          "severity": "HIGH"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T23:06:59.861424Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-PI-001",
+      "detector_name": "Prompt Injection via Resource Parameters",
+      "detector_version": "1.0.0",
+      "status": "ABSENT",
+      "confidence": 0.9,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "resources_tested": 0,
+        "no_issues_found": true
+      },
+      "standards": {
+        "cwe": "CWE-74",
+        "owasp_llm": "LLM01",
+        "owasp_api": "API8:2023",
+        "asvs": [
+          "V5.1",
+          "V9.1"
+        ],
+        "capec": [
+          "CAPEC-242"
+        ],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+          "base_score": 7.5,
+          "severity": "HIGH"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T23:07:01.545867Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-TP-001",
+      "detector_name": "Tool Poisoning Detector",
+      "detector_version": "1.0.0",
+      "status": "ABSENT",
+      "confidence": 0.9,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "tools_analyzed": 0,
+        "resources_analyzed": 3,
+        "poisoned_items": [],
+        "pattern_matches": {},
+        "tool_analysis_error": "Method not found"
+      },
+      "standards": {
+        "cwe": "CWE-74",
+        "owasp_llm": "LLM02",
+        "owasp_api": "API8:2023",
+        "asvs": [
+          "V5.1",
+          "V12.3"
+        ],
+        "capec": [
+          "CAPEC-242"
+        ],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N",
+          "base_score": 8.1,
+          "severity": "HIGH"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T23:07:01.545928Z",
+      "execution_time_ms": null
+    }
+  ],
+  "threat_model": null,
+  "summary": {
+    "present": 0,
+    "absent": 5,
+    "unknown": 0,
+    "not_applicable": 0
+  },
+  "audit_log_path": "captures\\audit_a8183227-ae98-4656-ab3d-d51b6ac861c4.jsonl",
+  "framework_version": "0.2.0"
+}

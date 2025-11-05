@@ -1,0 +1,13 @@
+{
+  "assessment_id": "6084bfc5-995e-438d-b7fc-d3fd0b55cdf1",
+  "target": "zcaceres/fetch",
+  "started_at": "2025-11-05T23:08:14.692041+00:00",
+  "completed_at": "2025-11-05T23:08:32.647057+00:00",
+  "framework_version": "0.2.0",
+  "summary": {
+    "present": 3,
+    "absent": 9,
+    "unknown": 2,
+    "not_applicable": 0
+  }
+}

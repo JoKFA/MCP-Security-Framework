@@ -1,0 +1,10 @@
+{"type": "connect_attempt", "ts": "2025-11-05T23:19:10.953344+00:00", "data": {"target": "stdio://targets\\python-sdk\\examples\\servers\\simple-prompt\\.venv\\Scripts\\python.exe/-m/mcp_simple_prompt", "transport": "auto"}}
+{"type": "connect_success", "ts": "2025-11-05T23:19:12.315130+00:00", "data": {"server_name": "mcp-simple-prompt", "server_version": "1.20.0", "capabilities": {"resources": false, "tools": false, "prompts": true}}}
+{"type": "request", "ts": "2025-11-05T23:19:12.338312+00:00", "data": {"method": "list_resources", "request_count": 1}}
+{"type": "error", "ts": "2025-11-05T23:19:12.341068+00:00", "data": {"method": "list_resources", "error": "Method not found"}}
+{"type": "request", "ts": "2025-11-05T23:19:12.341441+00:00", "data": {"method": "list_tools", "request_count": 2}}
+{"type": "error", "ts": "2025-11-05T23:19:12.343160+00:00", "data": {"method": "list_tools", "error": "Method not found"}}
+{"type": "request", "ts": "2025-11-05T23:19:12.343799+00:00", "data": {"method": "list_tools", "request_count": 3}}
+{"type": "error", "ts": "2025-11-05T23:19:12.345463+00:00", "data": {"method": "list_tools", "error": "Method not found"}}
+{"type": "request", "ts": "2025-11-05T23:19:12.345803+00:00", "data": {"method": "list_resources", "request_count": 4}}
+{"type": "error", "ts": "2025-11-05T23:19:12.347532+00:00", "data": {"method": "list_resources", "error": "Method not found"}}

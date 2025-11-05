@@ -1,0 +1,13 @@
+{
+  "assessment_id": "1c285150-2ef1-44f7-8e3e-e6b8898c744d",
+  "target": "excel-mcp",
+  "started_at": "2025-11-05T23:09:54.403709+00:00",
+  "completed_at": "2025-11-05T23:11:13.841255+00:00",
+  "framework_version": "0.2.0",
+  "summary": {
+    "present": 6,
+    "absent": 7,
+    "unknown": 1,
+    "not_applicable": 0
+  }
+}

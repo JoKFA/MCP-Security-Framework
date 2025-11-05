@@ -1,0 +1,13 @@
+{
+  "assessment_id": "0827332d-5318-440d-8e81-b9d90899ccee",
+  "target": "mcp-simple-pagination",
+  "started_at": "2025-11-05T23:20:17.648085+00:00",
+  "completed_at": "2025-11-05T23:20:47.748374+00:00",
+  "framework_version": "0.2.0",
+  "summary": {
+    "present": 1,
+    "absent": 13,
+    "unknown": 0,
+    "not_applicable": 0
+  }
+}

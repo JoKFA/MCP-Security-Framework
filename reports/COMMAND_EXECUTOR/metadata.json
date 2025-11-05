@@ -1,0 +1,13 @@
+{
+  "assessment_id": "528d6eff-05e9-4185-94bd-5a1c63b4a75f",
+  "target": "command-executor",
+  "started_at": "2025-11-05T23:17:21.297339+00:00",
+  "completed_at": "2025-11-05T23:17:27.103747+00:00",
+  "framework_version": "0.2.0",
+  "summary": {
+    "present": 2,
+    "absent": 9,
+    "unknown": 0,
+    "not_applicable": 0
+  }
+}

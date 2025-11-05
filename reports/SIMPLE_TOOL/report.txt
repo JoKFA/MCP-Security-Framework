@@ -1,0 +1,123 @@
+================================================================================
+  MCP SECURITY ASSESSMENT REPORT
+================================================================================
+
+TARGET INFORMATION
+────────────────────────────────────────────────────────────────────────────────
+Server:       mcp-website-fetcher
+Version:      1.20.0
+Transport:    stdio
+Exposure:     UNKNOWN
+Assessment:   95d09e4e-21e4-4e91-bf9e-e941db5a37ed
+Duration:     8.67s
+
+SUMMARY
+────────────────────────────────────────────────────────────────────────────────
+Detectors Run:      11
+  ✗ Vulnerabilities:  2
+  ✓ Passed:          9
+  ? Unknown:         0
+  - Not Applicable:   0
+
+VULNERABILITIES DETECTED
+────────────────────────────────────────────────────────────────────────────────
+
+
+================================================================================
+FINDING: Excessive Permissions Detector
+================================================================================
+
+Detector ID:     MCP-2024-EP-001
+Severity:        CRITICAL
+Confidence:      65%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-269
+  OWASP LLM:     LLM08
+  OWASP API:     API6:2023
+  CVSS Score:    9.1/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N
+
+Signals Detected: 1
+  1. [schema_overpermissive]
+     True
+     tool_name: fetch
+     risk_score: 0.65
+     capabilities: ['network_access']
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: EXCESSIVE_PERMISSIONS
+  Target:        fetch
+  Success:       YES
+  Timestamp:     2025-11-05 23:06:10 UTC
+
+  Impact:
+    Tool 'fetch' has excessive permissions (risk: 65%). Capabilities: network_access. Unrestricted params: 1. Potential for: external network access.
+
+  Attack Payload:
+    tool_name: fetch
+    detection_method: capability_analysis
+
+  Server Response:
+    risk_score: 0.65
+    capabilities: ['network_access']
+    unrestricted_params: ['url']
+    reason: Unrestricted parameters (1) with high-risk capabilities
+
+--------------------------------------------------------------------------------
+
+REMEDIATION:
+  - Apply principle of least privilege: (1) Restrict tool parameters to specific allowed values/paths, (2) Implement path validation and sanitization, (3) Split multi-capability tools into focused tools, (4) Add explicit access control checks, (5) Document and justify any high-risk capabilities.
+
+
+================================================================================
+FINDING: Unauthenticated Access Detector
+================================================================================
+
+Detector ID:     MCP-2024-UA-001
+Severity:        CRITICAL
+Confidence:      90%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-284
+  OWASP API:     API1
+  CVSS Score:    10.0/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+
+Signals Detected: 1
+  1. [auth_mismatch]
+     True
+     tools_accessible: True
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: UNAUTHENTICATED_ACCESS_TEST
+  Target:        MCP Server
+  Success:       YES
+  Timestamp:     2025-11-05 23:06:17 UTC
+
+  Impact:
+    Server exposes tool enumeration without authentication.
+
+  Attack Payload:
+    operations: ['list_tools']
+    authenticated: False
+
+  Server Response:
+    tools_count: 1
+    resources_count: None
+    tool_samples: ['fetch']
+    resource_samples: []
+    vulnerable: True
+
+--------------------------------------------------------------------------------
+
+────────────────────────────────────────────────────────────────────────────────
+Report generated: 2025-11-05T15:06:17.252522
+Framework version: 0.2.0
+================================================================================

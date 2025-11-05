@@ -1,0 +1,13 @@
+{
+  "assessment_id": "caac996a-5d86-4ffb-820c-1da45249530f",
+  "target": "mcp-simple-prompt",
+  "started_at": "2025-11-05T23:19:10.951749+00:00",
+  "completed_at": "2025-11-05T23:19:12.348004+00:00",
+  "framework_version": "0.2.0",
+  "summary": {
+    "present": 0,
+    "absent": 2,
+    "unknown": 0,
+    "not_applicable": 0
+  }
+}

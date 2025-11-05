@@ -3,7 +3,12 @@ Unauthenticated Access Detector (Top 25 #5)
 
 Detects if MCP servers are accessible without authentication.
 
-Detection method: PASSIVE - analyzes server response for authentication requirements
+How it works:
+- Tries to list tools and resources without authentication
+- If both succeed, server has no authentication (CRITICAL vulnerability)
+- If either fails, server requires authentication (good)
+
+Standards: CWE-284, OWASP API1, CVSS 10.0 CRITICAL
 """
 
 from typing import Any, Dict, List, Optional
@@ -23,11 +28,7 @@ from src.core.models import (
 
 
 class UnauthenticatedAccessDetector(Detector):
-    """
-    Detects if MCP server allows unauthenticated access.
-    
-    This is a critical vulnerability allowing anyone to access and execute commands.
-    """
+    """Detects if MCP server allows unauthenticated access (CRITICAL vulnerability)."""
 
     @property
     def metadata(self) -> ModuleMetadata:
@@ -59,12 +60,9 @@ class UnauthenticatedAccessDetector(Detector):
         profile: Optional[Any] = None
     ) -> DetectionResult:
         """
-        Detect if server is accessible without authentication.
+        Main function - checks if server requires authentication.
         
-        Strategy:
-        1. Try to list tools without authentication
-        2. Try to list resources without authentication
-        3. If both succeed, server has no authentication
+        Flow: Try to list tools/resources → Check if auth required → Report findings
         """
         signals: List[Signal] = []
         evidence: Dict[str, Any] = {
@@ -85,9 +83,9 @@ class UnauthenticatedAccessDetector(Detector):
                 tools = await adapter.list_tools()
                 evidence['tools_accessible'] = True
                 print(f"  [!] Found {len(tools)} tools accessible without authentication")
-            except Exception as e:
-                print(f"  [OK] Tools require authentication: {e}")
+            except Exception:
                 evidence['auth_required'] = True
+                print(f"  [OK] Tools require authentication")
 
             # Try to list resources without authentication
             print("  [PASSIVE] Checking if resources are accessible without authentication...")
@@ -95,16 +93,17 @@ class UnauthenticatedAccessDetector(Detector):
                 resources = await adapter.list_resources()
                 evidence['resources_accessible'] = True
                 print(f"  [!] Found {len(resources)} resources accessible without authentication")
-            except Exception as e:
-                print(f"  [OK] Resources require authentication: {e}")
+            except Exception:
                 evidence['auth_required'] = True
+                print(f"  [OK] Resources require authentication")
 
             # Determine vulnerability status
             if evidence['tools_accessible'] and evidence['resources_accessible']:
+                # CRITICAL: Server has no authentication
                 status = DetectionStatus.PRESENT
                 confidence = 0.95
                 
-                # Emit signal
+                # Create signal (framework uses this for correlation/reporting)
                 signals.append(Signal(
                     type=SignalType.AUTH_MISMATCH,
                     value=True,
@@ -117,35 +116,35 @@ class UnauthenticatedAccessDetector(Detector):
                     }
                 ))
                 
-                # Create PoC
+                # Create PoC (documents the finding)
                 pocs.append(ProofOfConcept(
                     target="MCP Server",
                     attack_type="unauthenticated_access_test",
                     payload={
                         "method": "list_tools and list_resources",
-                        "auth_required": False,
-                        "result": "Full access without authentication"
+                        "auth_required": False
                     },
                     response={
-                        "tools_count": len(tools) if evidence['tools_accessible'] else 0,
-                        "resources_count": len(resources) if evidence['resources_accessible'] else 0,
+                        "tools_count": len(tools),
+                        "resources_count": len(resources),
                         "vulnerable": True
                     },
                     success=True,
                     impact_demonstrated=(
                         f"CRITICAL: Server is accessible without authentication. "
-                        f"Anyone can list tools ({len(tools)}) and resources ({len(resources)}) and potentially execute commands. "
-                        f"This violates the principle of authentication and allows unauthorized access."
+                        f"Anyone can list tools ({len(tools)}) and resources ({len(resources)}). "
+                        f"This violates authentication requirements."
                     )
                 ))
-                
                 print(f"  [!] CRITICAL: Server has no authentication")
+                
             elif evidence['auth_required']:
+                # Server requires authentication (good!)
                 status = DetectionStatus.ABSENT
                 confidence = 0.9
                 print(f"  [OK] Server requires authentication")
             else:
-                # Partial access
+                # Partial access (some endpoints unprotected)
                 status = DetectionStatus.PRESENT
                 confidence = 0.7
                 signals.append(Signal(

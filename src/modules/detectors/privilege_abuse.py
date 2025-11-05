@@ -1,9 +1,24 @@
 """
-Privilege Abuse/Overbroad Permissions Detector (Top 25 #19)
+Privilege Abuse Detector (Top 25 #19)
 
 Detects tools with excessive permissions that violate the principle of least privilege.
 
-Detection method: PASSIVE - analyzes tool schemas for permission mismatches
+How it works:
+- Analyzes tool names, descriptions, and schemas
+- Checks if tools have permissions that don't match their intended function
+- Example: A calculator tool shouldn't have file system access
+
+Similar to tool_enumeration.py:
+- Both enumerate tools (list_tools)
+- Both analyze tool metadata (names, descriptions)
+- BUT: tool_enumeration flags ANY tool with dangerous keywords
+- privilege_abuse flags tools where permissions DON'T MATCH their purpose
+
+Example difference:
+- tool_enumeration: "execute_command" has "execute" → Dangerous!
+- privilege_abuse: "calculator" tool has file_access → Mismatch! (calculator shouldn't access files)
+
+Standards: CWE-250, OWASP API4, CVSS 6.5 MEDIUM
 """
 
 from typing import Any, Dict, List, Optional
@@ -23,11 +38,7 @@ from src.core.models import (
 
 
 class PrivilegeAbuseDetector(Detector):
-    """
-    Detects tools with excessive permissions.
-    
-    Example: A 'calculator' tool with file system access.
-    """
+    """Detects tools with excessive permissions that violate least privilege."""
 
     @property
     def metadata(self) -> ModuleMetadata:
@@ -53,7 +64,7 @@ class PrivilegeAbuseDetector(Detector):
         )
 
     def _get_tool_permissions(self, tool: Dict[str, Any]) -> List[str]:
-        """Analyze tool to determine what permissions it might have"""
+        """Analyze tool name/description/schema to determine what permissions it has"""
         permissions = []
         
         name = tool.get('name', '').lower()
@@ -133,7 +144,24 @@ class PrivilegeAbuseDetector(Detector):
         scope: Optional[Any] = None,
         profile: Optional[Any] = None
     ) -> DetectionResult:
-        """Detect tools with excessive permissions"""
+        """
+        Main function - analyzes tools for excessive permissions.
+        
+        Flow: Get tools → Infer permissions → Check for mismatches → Report findings
+        
+        MCP Calls Made:
+        - adapter.list_tools() → Gets list of all tools
+        
+        What it looks for:
+        - Tools where permissions don't match their purpose
+        - Example: "calculator" tool with file_system_access → Mismatch!
+        - Example: "read_file" tool with write/delete → Mismatch!
+        - Example: Tools with too many permissions (>3 types)
+        
+        Difference from tool_enumeration:
+        - tool_enumeration: Flags ANY tool with dangerous keywords
+        - privilege_abuse: Flags tools where permissions MISMATCH their purpose
+        """
         signals: List[Signal] = []
         evidence: Dict[str, Any] = {
             'tools_analyzed': 0,
@@ -144,34 +172,37 @@ class PrivilegeAbuseDetector(Detector):
         pocs: List[ProofOfConcept] = []
 
         try:
+            # Get all tools from the server
             print("  [PASSIVE] Analyzing tools for excessive permissions...")
             tools = await adapter.list_tools()
             evidence['tools_analyzed'] = len(tools)
+            print(f"  [PASSIVE] Found {len(tools)} tools")
 
+            # Check each tool for privilege mismatches
             for tool in tools:
                 tool_name = tool.get('name', 'Unknown')
                 tool_permissions = self._get_tool_permissions(tool)
                 
-                # Check for privilege mismatch
+                # Check if tool has permissions that don't match its purpose
                 mismatch = self._detect_privilege_mismatch(tool)
                 
                 if mismatch:
                     print(f"  [!] Found privilege mismatch: {tool_name}")
                     print(f"      Reason: {mismatch}")
                     
+                    # Track in evidence (for reports)
                     evidence['tools_with_excessive_permissions'].append({
                         'tool_name': tool_name,
                         'description': tool.get('description', ''),
                         'permissions': tool_permissions,
                         'issue': mismatch
                     })
-                    
                     evidence['privilege_mismatches'].append({
                         'tool': tool_name,
                         'reason': mismatch
                     })
                     
-                    # Emit signal
+                    # Create signal (framework uses this for correlation/reporting)
                     signals.append(Signal(
                         type=SignalType.SCHEMA_OVERPERMISSIVE,
                         value=True,
@@ -183,7 +214,7 @@ class PrivilegeAbuseDetector(Detector):
                         }
                     ))
                     
-                    # Create PoC
+                    # Create PoC (documents the finding, not active testing)
                     pocs.append(ProofOfConcept(
                         target=tool_name,
                         attack_type="privilege_mismatch_detection",

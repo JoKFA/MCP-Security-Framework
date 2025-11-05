@@ -31,11 +31,12 @@ class DetectorRegistry:
 
     def load_detectors(self, detectors_path: str = None) -> None:
         """
-        Load all detector modules from passive_detectors and active_detectors directories.
+        Load all detector modules from detectors directory.
+        
+        Each detector performs both passive analysis and active confirmation testing.
 
         Args:
-            detectors_path: Path to detectors directory (default: src/modules/detectors - for backward compat)
-                            Note: New structure uses passive_detectors/ and active_detectors/
+            detectors_path: Path to detectors directory (default: src/modules/detectors)
 
         Raises:
             ImportError: If module import fails
@@ -44,20 +45,26 @@ class DetectorRegistry:
         if self._loaded:
             return  # Already loaded
 
-        # Load from new structure: passive_detectors first, then active_detectors
+        # Load from unified detectors directory
         registry_dir = Path(__file__).parent
+        detectors_dir = registry_dir / "detectors"
         
-        # Phase 1: Load passive detectors first
-        print("Loading PASSIVE detectors...")
-        self._load_detector_directory("src.modules.passive_detectors", registry_dir / "passive_detectors")
-        
-        # Phase 2: Load active detectors (if directory exists)
-        print("Loading ACTIVE detectors...")
-        active_dir = registry_dir / "active_detectors"
-        if active_dir.exists():
-            self._load_detector_directory("src.modules.active_detectors", active_dir)
+        if detectors_dir.exists():
+            print("Loading detectors...")
+            self._load_detector_directory("src.modules.detectors", detectors_dir)
         else:
-            print("No active_detectors directory found. Skipping active detectors.")
+            # Fallback to old structure for backward compatibility
+            print("Warning: detectors/ directory not found. Checking for old structure...")
+            passive_dir = registry_dir / "passive_detectors"
+            active_dir = registry_dir / "active_detectors"
+            
+            if passive_dir.exists():
+                print("Loading PASSIVE detectors (legacy)...")
+                self._load_detector_directory("src.modules.passive_detectors", passive_dir)
+            
+            if active_dir.exists():
+                print("Loading ACTIVE detectors (legacy)...")
+                self._load_detector_directory("src.modules.active_detectors", active_dir)
 
         self._loaded = True
 
@@ -119,8 +126,7 @@ class DetectorRegistry:
                         continue
 
                     self._detectors[detector_id] = obj
-                    detector_type = "PASSIVE" if "passive" in package_name else "ACTIVE"
-                    print(f"Loaded [{detector_type}] detector: {detector_id} ({instance.metadata.name})")
+                    print(f"  ✓ {detector_id} ({instance.metadata.name})")
 
                 except Exception as e:
                     print(

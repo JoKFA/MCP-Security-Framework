@@ -1,10 +1,18 @@
 """
-Credential Exposure Detector (v0.2 Framework)
+Credential Exposure Detector
 
-Adapted from josh-test branch credential_exposure.py
 Detects exposed credentials in MCP server resources using pattern matching.
 
-Detection method: PASSIVE - scans existing resource content for secret patterns
+How it works:
+- Scans resource content for secret patterns (passwords, API keys, tokens, etc.)
+- Uses regex patterns to identify different types of secrets
+- Flags resources that contain sensitive data
+
+Similar to tool_enumeration.py:
+- Both enumerate everything (tools vs resources)
+- Both analyze what they find (dangerous keywords vs secret patterns)
+- Both are PASSIVE - just looking at metadata/content, not executing anything
+
 Standards: CWE-522, OWASP LLM01, OWASP API2, CVSS 8.2 HIGH
 """
 
@@ -54,17 +62,10 @@ class CredentialExposureDetector(Detector):
 
     def _extract_secrets(self, text: str) -> Dict[str, List[str]]:
         """
-        Extract potential secrets from text using pattern matching.
-
-        IMPORTANT: These patterns are preserved from josh-test for future active testing.
-        Current implementation: PASSIVE detection (scans existing content)
-        Future enhancement: ACTIVE testing (inject payloads to test validation)
-
-        Args:
-            text: Content to scan for secrets
-
-        Returns:
-            Dictionary mapping secret types to found values
+        Extract potential secrets from text using regex pattern matching.
+        
+        Scans for common secret patterns like passwords, API keys, tokens, etc.
+        Returns dictionary mapping secret types to found values.
         """
         secrets = {
             'passwords': [],
@@ -75,8 +76,7 @@ class CredentialExposureDetector(Detector):
             'database_urls': []
         }
 
-        # Pattern matching for different types of secrets
-        # NOTE: These patterns are kept for future active injection testing
+        # Regex patterns for different types of secrets
         patterns = {
             'passwords': [
                 r'(?i)(password|passwd|pwd)[\s:=]+([^\s\n]+)',
@@ -166,22 +166,20 @@ class CredentialExposureDetector(Detector):
         profile: Optional[Any] = None
     ) -> DetectionResult:
         """
-        Execute credential exposure detection.
-
-        Detection strategy:
-        1. List all resources
-        2. Filter for resources with sensitive-looking URIs
-        3. Read resource content
-        4. Scan content for secret patterns
-        5. Emit signals for each type of secret found
-
-        Args:
-            adapter: SafeAdapter instance (handles scope/rate limiting)
-            scope: ScopeConfig (optional, adapter enforces it)
-            profile: ServerProfile (optional metadata)
-
-        Returns:
-            DetectionResult with signals for detected credentials
+        Main function - scans resources for exposed credentials.
+        
+        Flow: List resources → Read content → Scan for secrets → Report findings
+        
+        MCP Calls Made:
+        - adapter.list_resources() → Gets list of all available resources
+        - adapter.read_resource(uri) → Reads content of each resource
+        
+        What it looks for:
+        - Passwords: "password: secret123", "pwd=mysecret"
+        - API Keys: "api_key: sk-1234...", "apikey=ak_abcd..."
+        - Tokens: "token: eyJ...", JWT tokens
+        - Connection Strings: "postgresql://user:pass@host", database URLs
+        - Private Keys: "-----BEGIN RSA PRIVATE KEY-----"
         """
         signals: List[Signal] = []
         evidence: Dict[str, Any] = {
@@ -192,27 +190,33 @@ class CredentialExposureDetector(Detector):
         start_time = datetime.now(timezone.utc)
 
         try:
-            # Step 1: List all available resources
+            # STEP 1: Get all resources from the server
+            # This calls: adapter.list_resources() → MCP sends "resources/list" request
+            # Returns: List of resource objects with URIs (e.g., "notes://user123", "internal://config")
+            print("  [PASSIVE] Listing resources...")
             resources = await adapter.list_resources()
-            total_resources = len(resources)
-            evidence['resources_scanned'] = total_resources
+            evidence['resources_scanned'] = len(resources)
+            print(f"  [PASSIVE] Found {len(resources)} resources")
 
-            # Step 2: Scan resources for credentials
+            # STEP 2: Read each resource and scan for secrets
+            print("  [PASSIVE] Scanning resources for credentials...")
             for resource in resources:
                 resource_uri = str(resource.get('uri', ''))
                 resource_name = resource.get('name', 'Unknown')
                 resource_description = resource.get('description', '')
 
-                # Prioritize resources with sensitive-looking URIs
+                # Check if resource URI suggests sensitive content (heuristic)
                 is_sensitive = self._is_sensitive_resource(resource_uri)
                 if is_sensitive:
                     evidence['sensitive_resources_found'] += 1
 
-                # Try to read the resource content
+                # STEP 3: Read resource content
+                # This calls: adapter.read_resource(uri) → MCP sends "resources/read" request
+                # Returns: Resource content (text, JSON, etc.)
                 try:
                     resource_data = await adapter.read_resource(resource_uri)
 
-                    # Extract text content
+                    # Extract text content from resource
                     content = ""
                     if 'contents' in resource_data:
                         for item in resource_data['contents']:
@@ -220,23 +224,22 @@ class CredentialExposureDetector(Detector):
                                 content += item['text'] + "\n"
 
                     if content.strip():
-                        # Scan for secrets using pattern matching
+                        # STEP 4: Scan content for secret patterns using regex
+                        # This runs regex patterns to find passwords, API keys, tokens, etc.
                         secrets = self._extract_secrets(content)
-
-                        # Check if any secrets were found
                         total_secrets = sum(len(v) for v in secrets.values())
 
                         if total_secrets > 0:
-                            # Store in evidence (with actual secrets for PoC generation)
+                            # Found secrets! Store findings
                             evidence['secrets_by_resource'][resource_uri] = {
                                 'resource_name': resource_name,
                                 'secret_types': [k for k, v in secrets.items() if v],
                                 'total_count': total_secrets,
                                 'severity': self._determine_severity(secrets),
-                                'secrets': secrets  # Store actual secrets for PoC
+                                'secrets': secrets  # Store for PoC generation
                             }
 
-                            # Emit signal for sensitive exposure
+                            # Create signal (framework uses this for correlation/reporting)
                             signals.append(Signal(
                                 type=SignalType.SENSITIVE_EXPOSURE,
                                 value=True,
@@ -249,19 +252,18 @@ class CredentialExposureDetector(Detector):
                                     'is_critical': bool(secrets['private_keys'] or secrets['connection_strings'])
                                 }
                             ))
+                            print(f"  [!] Found {total_secrets} secrets in {resource_uri}")
 
-                except Exception as e:
-                    # Resource might be protected or not accessible
-                    # This is not necessarily an error - it could indicate proper access control
-                    # We don't emit a signal for this case
+                except Exception:
+                    # Resource might be protected or not accessible - skip it
                     pass
 
-            # Generate PoCs for resources with secrets
+            # Generate PoCs from findings (these document what we found, not active testing)
             pocs = self._generate_pocs(evidence.get('secrets_by_resource', {}))
 
-            # Determine overall status
+            # Build result
             status = DetectionStatus.PRESENT if signals else DetectionStatus.ABSENT
-            confidence = 0.95 if total_resources > 0 else 0.0
+            confidence = 0.95 if evidence['resources_scanned'] > 0 else 0.0
 
             return DetectionResult(
                 detector_id=self.metadata.id,
@@ -291,7 +293,7 @@ class CredentialExposureDetector(Detector):
             )
 
     def _generate_pocs(self, secrets_by_resource: Dict[str, Any]) -> List[ProofOfConcept]:
-        """Generate PoCs from detected credentials with actual secret samples"""
+        """Generate proof-of-concept documents from detected credentials (redacted samples)"""
         pocs = []
         for uri, secret_info in list(secrets_by_resource.items())[:3]:  # Max 3 PoCs
             # Get actual secrets

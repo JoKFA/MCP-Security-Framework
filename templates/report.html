@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}{{ report_name }} - MCP Security Framework{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="{{ url_for('index') }}" class="back-link">← Back to Reports</a>
+    <h2>{{ report_name }}</h2>
+</div>
+
+{% if metadata %}
+<div class="report-metadata">
+    <div class="metadata-card">
+        <h3>Assessment Information</h3>
+        <dl>
+            <dt>Assessment ID:</dt>
+            <dd><code>{{ metadata.assessment_id }}</code></dd>
+            
+            <dt>Target:</dt>
+            <dd>{{ metadata.target }}</dd>
+            
+            <dt>Started:</dt>
+            <dd>{{ metadata.started_at }}</dd>
+            
+            <dt>Completed:</dt>
+            <dd>{{ metadata.completed_at }}</dd>
+            
+            {% if metadata.framework_version %}
+            <dt>Framework Version:</dt>
+            <dd>{{ metadata.framework_version }}</dd>
+            {% endif %}
+        </dl>
+    </div>
+    
+    {% if metadata.summary %}
+    <div class="metadata-card">
+        <h3>Summary</h3>
+        <div class="summary-stats">
+            <div class="stat-box critical">
+                <div class="stat-value">{{ metadata.summary.present }}</div>
+                <div class="stat-label">Vulnerabilities</div>
+            </div>
+            <div class="stat-box success">
+                <div class="stat-value">{{ metadata.summary.absent }}</div>
+                <div class="stat-label">Passed</div>
+            </div>
+            {% if metadata.summary.unknown %}
+            <div class="stat-box warning">
+                <div class="stat-value">{{ metadata.summary.unknown }}</div>
+                <div class="stat-label">Unknown</div>
+            </div>
+            {% endif %}
+            {% if metadata.summary.not_applicable %}
+            <div class="stat-box info">
+                <div class="stat-value">{{ metadata.summary.not_applicable }}</div>
+                <div class="stat-label">N/A</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if report_data %}
+<div class="report-details">
+    {% if report_data.profile %}
+    <section class="report-section">
+        <h3>Server Profile</h3>
+        <div class="info-grid">
+            <div><strong>Name:</strong> {{ report_data.profile.server_name }}</div>
+            <div><strong>Version:</strong> {{ report_data.profile.server_version }}</div>
+            <div><strong>Protocol:</strong> {{ report_data.profile.protocol_version }}</div>
+            <div><strong>Transport:</strong> {{ report_data.profile.transport }}</div>
+            {% if report_data.profile.endpoint %}
+            <div><strong>Endpoint:</strong> <code>{{ report_data.profile.endpoint }}</code></div>
+            {% endif %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if report_data.results %}
+    <section class="report-section">
+        <h3>Detection Results</h3>
+        <div class="results-list">
+            {% for result in report_data.results %}
+            <div class="result-card status-{{ result.status.lower() }}">
+                <div class="result-header">
+                    <h4>{{ result.detector_name }}</h4>
+                    <span class="status-badge status-{{ result.status.lower() }}">{{ result.status }}</span>
+                </div>
+                
+                <div class="result-details">
+                    <div class="detail-row">
+                        <span class="label">Detector ID:</span>
+                        <code>{{ result.detector_id }}</code>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Confidence:</span>
+                        <span class="confidence">{{ (result.confidence * 100) | round }}%</span>
+                    </div>
+                    
+                    {% if result.standards %}
+                    <div class="standards-mapping">
+                        <strong>Standards Mapping:</strong>
+                        <div class="standards-grid">
+                            {% if result.standards.cwe %}
+                            <div class="standard-item">
+                                <span class="standard-label">CWE:</span>
+                                <code>{{ result.standards.cwe }}</code>
+                            </div>
+                            {% endif %}
+                            {% if result.standards.owasp_llm %}
+                            <div class="standard-item">
+                                <span class="standard-label">OWASP LLM:</span>
+                                <code>{{ result.standards.owasp_llm }}</code>
+                            </div>
+                            {% endif %}
+                            {% if result.standards.owasp_api %}
+                            <div class="standard-item">
+                                <span class="standard-label">OWASP API:</span>
+                                <code>{{ result.standards.owasp_api }}</code>
+                            </div>
+                            {% endif %}
+                            {% if result.standards.cvss %}
+                            <div class="standard-item">
+                                <span class="standard-label">CVSS Score:</span>
+                                <code>{{ result.standards.cvss.base_score }}/10</code>
+                                <span class="severity-badge severity-{{ result.standards.cvss.severity.lower() }}">
+                                    {{ result.standards.cvss.severity }}
+                                </span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if result.affected_resources %}
+                    <div class="detail-row">
+                        <span class="label">Affected Resources:</span>
+                        <div class="resource-list">
+                            {% for resource in result.affected_resources %}
+                            <code>{{ resource }}</code>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if result.signals %}
+                <div class="signals">
+                    <strong>Signals:</strong>
+                    <ul>
+                        {% for signal in result.signals %}
+                        <li>
+                            <code>{{ signal.type }}</code>
+                            {% if signal.context %}
+                            <div class="signal-context">{{ signal.context | tojson }}</div>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                {% if result.proof_of_concepts %}
+                <div class="pocs">
+                    <strong>Proof of Concepts ({{ result.proof_of_concepts|length }} exploit(s) demonstrated):</strong>
+                    {% for poc in result.proof_of_concepts %}
+                    <div class="poc-card">
+                        <div class="poc-header">
+                            <h5>
+                                {% if poc.attack_type %}
+                                    PoC #{{ loop.index }}: {{ poc.attack_type|upper|replace('_', ' ') }}
+                                {% else %}
+                                    PoC #{{ loop.index }}
+                                {% endif %}
+                            </h5>
+                            <div class="poc-status">
+                                {% if poc.success %}
+                                <span class="status-badge status-present">Success: YES</span>
+                                {% else %}
+                                <span class="status-badge status-unknown">Success: NO</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="poc-details">
+                            {% if poc.target %}
+                            <div class="poc-detail-row">
+                                <span class="label">Target:</span>
+                                <code>{{ poc.target }}</code>
+                            </div>
+                            {% endif %}
+                            
+                            {% if poc.timestamp %}
+                            <div class="poc-detail-row">
+                                <span class="label">Timestamp:</span>
+                                <span>{{ poc.timestamp }}</span>
+                            </div>
+                            {% endif %}
+                            
+                            {% if poc.impact_demonstrated %}
+                            <div class="poc-impact">
+                                <strong>Impact:</strong>
+                                <p>{{ poc.impact_demonstrated }}</p>
+                            </div>
+                            {% endif %}
+                            
+                            {% if poc.payload %}
+                            <div class="poc-section">
+                                <strong>Attack Payload:</strong>
+                                <div class="poc-json">{{ poc.payload | tojson }}</div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if poc.response %}
+                            <div class="poc-section">
+                                <strong>Server Response:</strong>
+                                <div class="poc-json">{{ poc.response | tojson }}</div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                {% if result.remediation %}
+                <div class="remediation">
+                    <strong>Remediation:</strong>
+                    <p>{{ result.remediation }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endif %}
+
+<div class="report-actions">
+    <a href="{{ url_for('api_report', report_id=report_id) }}" class="btn btn-secondary" target="_blank">View JSON</a>
+    <a href="{{ url_for('api_report_sarif', report_id=report_id) }}" class="btn btn-secondary" target="_blank">View SARIF</a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Add JSON filter for Jinja2
+function jsonFilter(value) {
+    return JSON.stringify(value, null, 2);
+}
+</script>
+{% endblock %}
+

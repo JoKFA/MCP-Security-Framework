@@ -8,8 +8,8 @@ Server:       Wikipedia
 Version:      1.16.0
 Transport:    stdio
 Exposure:     UNKNOWN
-Assessment:   4d930eaa-3e31-4716-a88b-47857fd66c79
-Duration:     48.13s
+Assessment:   ba951da2-9d26-4e53-b83a-c4f67c4856b3
+Duration:     48.74s
 
 SUMMARY
 ────────────────────────────────────────────────────────────────────────────────
@@ -62,7 +62,7 @@ PROOF OF CONCEPT: 3 exploit(s) demonstrated
 PoC #1: EXCESSIVE_PERMISSIONS
   Target:        search_wikipedia
   Success:       YES
-  Timestamp:     2025-11-13 20:49:40 UTC
+  Timestamp:     2025-11-19 18:19:24 UTC
 
   Impact:
     Tool 'search_wikipedia' has excessive permissions (risk: 75%). Capabilities: database_access. Unrestricted params: 1. Potential for: database manipulation.
@@ -80,7 +80,7 @@ PoC #1: EXCESSIVE_PERMISSIONS
 PoC #2: EXCESSIVE_PERMISSIONS
   Target:        summarize_article_for_query
   Success:       YES
-  Timestamp:     2025-11-13 20:49:40 UTC
+  Timestamp:     2025-11-19 18:19:24 UTC
 
   Impact:
     Tool 'summarize_article_for_query' has excessive permissions (risk: 75%). Capabilities: database_access. Unrestricted params: 1. Potential for: database manipulation.
@@ -98,7 +98,7 @@ PoC #2: EXCESSIVE_PERMISSIONS
 PoC #3: EXCESSIVE_PERMISSIONS
   Target:        test_wikipedia_connectivity
   Success:       YES
-  Timestamp:     2025-11-13 20:49:40 UTC
+  Timestamp:     2025-11-19 18:19:24 UTC
 
   Impact:
     Tool 'test_wikipedia_connectivity' has excessive permissions (risk: 60%). Capabilities: network_access. Unrestricted params: 0. Potential for: external network access.
@@ -188,7 +188,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: INDIRECT_INJECTION_CANARY
   Target:        search_wikipedia
   Success:       YES
-  Timestamp:     2025-11-13 20:49:48 UTC
+  Timestamp:     2025-11-19 18:19:33 UTC
 
   Impact:
     Tool 'search_wikipedia' executed canary instructions, confirming indirect injection impact.
@@ -226,22 +226,38 @@ Standards Mapping:
 Signals Detected: 2
   1. [schema_overpermissive]
      True
-     tool_name: test_wikipedia_connectivity
+     tool_name: search_wikipedia
      iteration: 2
      change_type: response_modified
   2. [schema_overpermissive]
      True
-     tool_name: search_wikipedia
-     iteration: 4
+     tool_name: test_wikipedia_connectivity
+     iteration: 2
      change_type: response_modified
 
 PROOF OF CONCEPT: 2 exploit(s) demonstrated
 --------------------------------------------------------------------------------
 
 PoC #1: RUG_PULL_RESPONSE
+  Target:        search_wikipedia
+  Success:       YES
+  Timestamp:     2025-11-19 18:20:10 UTC
+
+  Impact:
+    Tool 'search_wikipedia' returned different content for identical inputs after 2 invocation(s), indicating dynamic behaviour.
+
+  Attack Payload:
+    tool_name: search_wikipedia
+    iteration: 2
+
+  Server Response:
+    baseline_response: {"query":"test","results":[{"title":"Test","snippet":"Look up <span class=\"searchmatch\">test</span>, <span class=\"searchmatch\">testing</span>, <span class=\"searchmatch\">Test</span>, or <span cla
+    modified_response: {"query":"test","results":[{"title":"Test","snippet":"Look up <span class=\"searchmatch\">test</span>, <span class=\"searchmatch\">testing</span>, <span class=\"searchmatch\">Test</span>, or <span cla
+
+PoC #2: RUG_PULL_RESPONSE
   Target:        test_wikipedia_connectivity
   Success:       YES
-  Timestamp:     2025-11-13 20:50:25 UTC
+  Timestamp:     2025-11-19 18:20:10 UTC
 
   Impact:
     Tool 'test_wikipedia_connectivity' returned different content for identical inputs after 2 invocation(s), indicating dynamic behaviour.
@@ -251,24 +267,8 @@ PoC #1: RUG_PULL_RESPONSE
     iteration: 2
 
   Server Response:
-    baseline_response: {"status":"success","url":"https://en.wikipedia.org/w/api.php","language":"en","site_name":"Wikipedia","server":"//en.wikipedia.org","response_time_ms":183.648}
-    modified_response: {"status":"success","url":"https://en.wikipedia.org/w/api.php","language":"en","site_name":"Wikipedia","server":"//en.wikipedia.org","response_time_ms":191.833}
-
-PoC #2: RUG_PULL_RESPONSE
-  Target:        search_wikipedia
-  Success:       YES
-  Timestamp:     2025-11-13 20:50:25 UTC
-
-  Impact:
-    Tool 'search_wikipedia' returned different content for identical inputs after 4 invocation(s), indicating dynamic behaviour.
-
-  Attack Payload:
-    tool_name: search_wikipedia
-    iteration: 4
-
-  Server Response:
-    baseline_response: {"query":"test","results":[{"title":"Test","snippet":"Look up <span class=\"searchmatch\">test</span>, <span class=\"searchmatch\">testing</span>, <span class=\"searchmatch\">Test</span>, or <span cla
-    modified_response: {"query":"test","results":[{"title":"Test","snippet":"Look up <span class=\"searchmatch\">test</span>, <span class=\"searchmatch\">testing</span>, <span class=\"searchmatch\">Test</span>, or <span cla
+    baseline_response: {"status":"success","url":"https://en.wikipedia.org/w/api.php","language":"en","site_name":"Wikipedia","server":"//en.wikipedia.org","response_time_ms":185.60399999999998}
+    modified_response: {"status":"success","url":"https://en.wikipedia.org/w/api.php","language":"en","site_name":"Wikipedia","server":"//en.wikipedia.org","response_time_ms":180.753}
 
 --------------------------------------------------------------------------------
 
@@ -327,7 +327,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: UNAUTHENTICATED_ACCESS_TEST
   Target:        MCP Server
   Success:       YES
-  Timestamp:     2025-11-13 20:50:27 UTC
+  Timestamp:     2025-11-19 18:20:12 UTC
 
   Impact:
     Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.
@@ -346,6 +346,6 @@ PoC #1: UNAUTHENTICATED_ACCESS_TEST
 --------------------------------------------------------------------------------
 
 ────────────────────────────────────────────────────────────────────────────────
-Report generated: 2025-11-13T12:50:27.750939
+Report generated: 2025-11-19T10:20:12.502522
 Framework version: 0.2.0
 ================================================================================

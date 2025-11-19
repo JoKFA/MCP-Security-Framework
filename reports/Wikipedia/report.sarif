@@ -373,8 +373,8 @@
       "invocations": [
         {
           "executionSuccessful": true,
-          "startTimeUtc": "2025-11-13T20:49:39.614688+00:00",
-          "endTimeUtc": "2025-11-13T20:50:27.748938+00:00",
+          "startTimeUtc": "2025-11-19T18:19:23.755971+00:00",
+          "endTimeUtc": "2025-11-19T18:20:12.500523+00:00",
           "workingDirectory": {
             "uri": "file:///"
           },
@@ -1326,18 +1326,52 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "test_wikipedia_connectivity"
+                  "uri": "search_wikipedia"
                 },
                 "region": {
                   "startLine": 1,
                   "snippet": {
-                    "text": "{'tool_name': 'test_wikipedia_connectivity', 'iteration': 2, 'change_type': 'response_modified'}"
+                    "text": "{'tool_name': 'search_wikipedia', 'iteration': 2, 'change_type': 'response_modified'}"
                   }
                 }
               }
             }
           ],
           "codeFlows": [
+            {
+              "message": {
+                "text": "Tool 'search_wikipedia' returned different content for identical inputs after 2 invocation(s), indicating dynamic behaviour."
+              },
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "message": {
+                          "text": "Attack: rug_pull_response"
+                        },
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "search_wikipedia"
+                          }
+                        }
+                      },
+                      "state": {
+                        "payload": {
+                          "tool_name": "search_wikipedia",
+                          "iteration": 2
+                        },
+                        "response": {
+                          "baseline_response": "{\"query\":\"test\",\"results\":[{\"title\":\"Test\",\"snippet\":\"Look up <span class=\\\"searchmatch\\\">test</span>, <span class=\\\"searchmatch\\\">testing</span>, <span class=\\\"searchmatch\\\">Test</span>, or <span cla",
+                          "modified_response": "{\"query\":\"test\",\"results\":[{\"title\":\"Test\",\"snippet\":\"Look up <span class=\\\"searchmatch\\\">test</span>, <span class=\\\"searchmatch\\\">testing</span>, <span class=\\\"searchmatch\\\">Test</span>, or <span cla"
+                        },
+                        "success": true
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
             {
               "message": {
                 "text": "Tool 'test_wikipedia_connectivity' returned different content for identical inputs after 2 invocation(s), indicating dynamic behaviour."
@@ -1362,42 +1396,8 @@
                           "iteration": 2
                         },
                         "response": {
-                          "baseline_response": "{\"status\":\"success\",\"url\":\"https://en.wikipedia.org/w/api.php\",\"language\":\"en\",\"site_name\":\"Wikipedia\",\"server\":\"//en.wikipedia.org\",\"response_time_ms\":183.648}",
-                          "modified_response": "{\"status\":\"success\",\"url\":\"https://en.wikipedia.org/w/api.php\",\"language\":\"en\",\"site_name\":\"Wikipedia\",\"server\":\"//en.wikipedia.org\",\"response_time_ms\":191.833}"
-                        },
-                        "success": true
-                      }
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "message": {
-                "text": "Tool 'search_wikipedia' returned different content for identical inputs after 4 invocation(s), indicating dynamic behaviour."
-              },
-              "threadFlows": [
-                {
-                  "locations": [
-                    {
-                      "location": {
-                        "message": {
-                          "text": "Attack: rug_pull_response"
-                        },
-                        "physicalLocation": {
-                          "artifactLocation": {
-                            "uri": "search_wikipedia"
-                          }
-                        }
-                      },
-                      "state": {
-                        "payload": {
-                          "tool_name": "search_wikipedia",
-                          "iteration": 4
-                        },
-                        "response": {
-                          "baseline_response": "{\"query\":\"test\",\"results\":[{\"title\":\"Test\",\"snippet\":\"Look up <span class=\\\"searchmatch\\\">test</span>, <span class=\\\"searchmatch\\\">testing</span>, <span class=\\\"searchmatch\\\">Test</span>, or <span cla",
-                          "modified_response": "{\"query\":\"test\",\"results\":[{\"title\":\"Test\",\"snippet\":\"Look up <span class=\\\"searchmatch\\\">test</span>, <span class=\\\"searchmatch\\\">testing</span>, <span class=\\\"searchmatch\\\">Test</span>, or <span cla"
+                          "baseline_response": "{\"status\":\"success\",\"url\":\"https://en.wikipedia.org/w/api.php\",\"language\":\"en\",\"site_name\":\"Wikipedia\",\"server\":\"//en.wikipedia.org\",\"response_time_ms\":185.60399999999998}",
+                          "modified_response": "{\"status\":\"success\",\"url\":\"https://en.wikipedia.org/w/api.php\",\"language\":\"en\",\"site_name\":\"Wikipedia\",\"server\":\"//en.wikipedia.org\",\"response_time_ms\":180.753}"
                         },
                         "success": true
                       }
@@ -1422,18 +1422,52 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "search_wikipedia"
+                  "uri": "test_wikipedia_connectivity"
                 },
                 "region": {
                   "startLine": 1,
                   "snippet": {
-                    "text": "{'tool_name': 'search_wikipedia', 'iteration': 4, 'change_type': 'response_modified'}"
+                    "text": "{'tool_name': 'test_wikipedia_connectivity', 'iteration': 2, 'change_type': 'response_modified'}"
                   }
                 }
               }
             }
           ],
           "codeFlows": [
+            {
+              "message": {
+                "text": "Tool 'search_wikipedia' returned different content for identical inputs after 2 invocation(s), indicating dynamic behaviour."
+              },
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "message": {
+                          "text": "Attack: rug_pull_response"
+                        },
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "search_wikipedia"
+                          }
+                        }
+                      },
+                      "state": {
+                        "payload": {
+                          "tool_name": "search_wikipedia",
+                          "iteration": 2
+                        },
+                        "response": {
+                          "baseline_response": "{\"query\":\"test\",\"results\":[{\"title\":\"Test\",\"snippet\":\"Look up <span class=\\\"searchmatch\\\">test</span>, <span class=\\\"searchmatch\\\">testing</span>, <span class=\\\"searchmatch\\\">Test</span>, or <span cla",
+                          "modified_response": "{\"query\":\"test\",\"results\":[{\"title\":\"Test\",\"snippet\":\"Look up <span class=\\\"searchmatch\\\">test</span>, <span class=\\\"searchmatch\\\">testing</span>, <span class=\\\"searchmatch\\\">Test</span>, or <span cla"
+                        },
+                        "success": true
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
             {
               "message": {
                 "text": "Tool 'test_wikipedia_connectivity' returned different content for identical inputs after 2 invocation(s), indicating dynamic behaviour."
@@ -1458,42 +1492,8 @@
                           "iteration": 2
                         },
                         "response": {
-                          "baseline_response": "{\"status\":\"success\",\"url\":\"https://en.wikipedia.org/w/api.php\",\"language\":\"en\",\"site_name\":\"Wikipedia\",\"server\":\"//en.wikipedia.org\",\"response_time_ms\":183.648}",
-                          "modified_response": "{\"status\":\"success\",\"url\":\"https://en.wikipedia.org/w/api.php\",\"language\":\"en\",\"site_name\":\"Wikipedia\",\"server\":\"//en.wikipedia.org\",\"response_time_ms\":191.833}"
-                        },
-                        "success": true
-                      }
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "message": {
-                "text": "Tool 'search_wikipedia' returned different content for identical inputs after 4 invocation(s), indicating dynamic behaviour."
-              },
-              "threadFlows": [
-                {
-                  "locations": [
-                    {
-                      "location": {
-                        "message": {
-                          "text": "Attack: rug_pull_response"
-                        },
-                        "physicalLocation": {
-                          "artifactLocation": {
-                            "uri": "search_wikipedia"
-                          }
-                        }
-                      },
-                      "state": {
-                        "payload": {
-                          "tool_name": "search_wikipedia",
-                          "iteration": 4
-                        },
-                        "response": {
-                          "baseline_response": "{\"query\":\"test\",\"results\":[{\"title\":\"Test\",\"snippet\":\"Look up <span class=\\\"searchmatch\\\">test</span>, <span class=\\\"searchmatch\\\">testing</span>, <span class=\\\"searchmatch\\\">Test</span>, or <span cla",
-                          "modified_response": "{\"query\":\"test\",\"results\":[{\"title\":\"Test\",\"snippet\":\"Look up <span class=\\\"searchmatch\\\">test</span>, <span class=\\\"searchmatch\\\">testing</span>, <span class=\\\"searchmatch\\\">Test</span>, or <span cla"
+                          "baseline_response": "{\"status\":\"success\",\"url\":\"https://en.wikipedia.org/w/api.php\",\"language\":\"en\",\"site_name\":\"Wikipedia\",\"server\":\"//en.wikipedia.org\",\"response_time_ms\":185.60399999999998}",
+                          "modified_response": "{\"status\":\"success\",\"url\":\"https://en.wikipedia.org/w/api.php\",\"language\":\"en\",\"site_name\":\"Wikipedia\",\"server\":\"//en.wikipedia.org\",\"response_time_ms\":180.753}"
                         },
                         "success": true
                       }
@@ -1592,7 +1592,7 @@
       ],
       "artifacts": [],
       "properties": {
-        "assessment_id": "4d930eaa-3e31-4716-a88b-47857fd66c79",
+        "assessment_id": "ba951da2-9d26-4e53-b83a-c4f67c4856b3",
         "target_server": "Wikipedia",
         "target_version": "1.16.0",
         "transport": "stdio",

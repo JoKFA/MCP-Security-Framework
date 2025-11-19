@@ -1,7 +1,7 @@
 {
-  "assessment_id": "4d930eaa-3e31-4716-a88b-47857fd66c79",
-  "started_at": "2025-11-13T20:49:39.614688Z",
-  "completed_at": "2025-11-13T20:50:27.748938Z",
+  "assessment_id": "ba951da2-9d26-4e53-b83a-c4f67c4856b3",
+  "started_at": "2025-11-19T18:19:23.755971Z",
+  "completed_at": "2025-11-19T18:20:12.500523Z",
   "scope": {
     "target": "stdio://python/-m/wikipedia_mcp/--transport/stdio",
     "transport": null,
@@ -68,7 +68,7 @@
     "auth_type": "none",
     "exposure": "unknown",
     "metadata": {},
-    "profiled_at": "2025-11-13T20:49:40.423099Z"
+    "profiled_at": "2025-11-19T18:19:24.646133Z"
   },
   "results": [
     {
@@ -101,7 +101,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-13T20:49:40.434099Z",
+      "timestamp": "2025-11-19T18:19:24.656149Z",
       "execution_time_ms": null
     },
     {
@@ -138,7 +138,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-13T20:49:40.436101Z",
+      "timestamp": "2025-11-19T18:19:24.658150Z",
       "execution_time_ms": null
     },
     {
@@ -175,7 +175,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-13T20:49:40.438100Z",
+      "timestamp": "2025-11-19T18:19:24.661657Z",
       "execution_time_ms": null
     },
     {
@@ -200,7 +200,7 @@
         "cvss": null
       },
       "remediation": "No issues found",
-      "timestamp": "2025-11-13T20:49:40.440099Z",
+      "timestamp": "2025-11-19T18:19:24.662657Z",
       "execution_time_ms": 0.0
     },
     {
@@ -229,7 +229,7 @@
             ],
             "reason": "Unrestricted parameters (1) with high-risk capabilities"
           },
-          "timestamp": "2025-11-13T20:49:40.443099Z"
+          "timestamp": "2025-11-19T18:19:24.665167Z"
         },
         {
           "type": "schema_overpermissive",
@@ -243,7 +243,7 @@
             "unrestricted_params": [],
             "reason": "N/A"
           },
-          "timestamp": "2025-11-13T20:49:40.443099Z"
+          "timestamp": "2025-11-19T18:19:24.665167Z"
         },
         {
           "type": "schema_overpermissive",
@@ -263,7 +263,7 @@
             ],
             "reason": "Unrestricted parameters (1) with high-risk capabilities"
           },
-          "timestamp": "2025-11-13T20:49:40.443099Z"
+          "timestamp": "2025-11-19T18:19:24.666166Z"
         }
       ],
       "proof_of_concepts": [
@@ -286,7 +286,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'search_wikipedia' has excessive permissions (risk: 75%). Capabilities: database_access. Unrestricted params: 1. Potential for: database manipulation.",
-          "timestamp": "2025-11-13T20:49:40.443099Z"
+          "timestamp": "2025-11-19T18:19:24.666166Z"
         },
         {
           "target": "summarize_article_for_query",
@@ -307,7 +307,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'summarize_article_for_query' has excessive permissions (risk: 75%). Capabilities: database_access. Unrestricted params: 1. Potential for: database manipulation.",
-          "timestamp": "2025-11-13T20:49:40.443099Z"
+          "timestamp": "2025-11-19T18:19:24.666166Z"
         },
         {
           "target": "test_wikipedia_connectivity",
@@ -326,7 +326,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'test_wikipedia_connectivity' has excessive permissions (risk: 60%). Capabilities: network_access. Unrestricted params: 0. Potential for: external network access.",
-          "timestamp": "2025-11-13T20:49:40.443099Z"
+          "timestamp": "2025-11-19T18:19:24.666166Z"
         }
       ],
       "evidence": {
@@ -412,7 +412,7 @@
         }
       },
       "remediation": "Apply principle of least privilege: (1) Restrict tool parameters to specific allowed values/paths, (2) Implement path validation and sanitization, (3) Split multi-capability tools into focused tools, (4) Add explicit access control checks, (5) Document and justify any high-risk capabilities.",
-      "timestamp": "2025-11-13T20:49:40.440099Z",
+      "timestamp": "2025-11-19T18:19:24.662657Z",
       "execution_time_ms": null
     },
     {
@@ -434,7 +434,7 @@
               "canary_trigger"
             ]
           },
-          "timestamp": "2025-11-13T20:49:41.832642Z"
+          "timestamp": "2025-11-19T18:19:26.073970Z"
         },
         {
           "type": "sensitive_exposure",
@@ -447,7 +447,7 @@
               "canary_trigger"
             ]
           },
-          "timestamp": "2025-11-13T20:49:42.900198Z"
+          "timestamp": "2025-11-19T18:19:27.082451Z"
         },
         {
           "type": "sensitive_exposure",
@@ -460,7 +460,7 @@
               "canary_trigger"
             ]
           },
-          "timestamp": "2025-11-13T20:49:43.262411Z"
+          "timestamp": "2025-11-19T18:19:27.655101Z"
         },
         {
           "type": "sensitive_exposure",
@@ -473,7 +473,7 @@
               "canary_trigger"
             ]
           },
-          "timestamp": "2025-11-13T20:49:44.025366Z"
+          "timestamp": "2025-11-19T18:19:28.209518Z"
         },
         {
           "type": "sensitive_exposure",
@@ -486,7 +486,7 @@
               "canary_trigger"
             ]
           },
-          "timestamp": "2025-11-13T20:49:44.586614Z"
+          "timestamp": "2025-11-19T18:19:28.796422Z"
         },
         {
           "type": "sensitive_exposure",
@@ -499,7 +499,7 @@
               "canary_trigger"
             ]
           },
-          "timestamp": "2025-11-13T20:49:47.836694Z"
+          "timestamp": "2025-11-19T18:19:32.465117Z"
         },
         {
           "type": "sensitive_exposure",
@@ -512,7 +512,7 @@
               "canary_trigger"
             ]
           },
-          "timestamp": "2025-11-13T20:49:48.188157Z"
+          "timestamp": "2025-11-19T18:19:32.830596Z"
         },
         {
           "type": "sensitive_exposure",
@@ -525,7 +525,7 @@
               "canary_trigger"
             ]
           },
-          "timestamp": "2025-11-13T20:49:48.541515Z"
+          "timestamp": "2025-11-19T18:19:33.212733Z"
         },
         {
           "type": "sensitive_exposure",
@@ -538,7 +538,7 @@
               "canary_trigger"
             ]
           },
-          "timestamp": "2025-11-13T20:49:48.869380Z"
+          "timestamp": "2025-11-19T18:19:33.535035Z"
         }
       ],
       "proof_of_concepts": [
@@ -557,7 +557,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'search_wikipedia' executed canary instructions, confirming indirect injection impact.",
-          "timestamp": "2025-11-13T20:49:48.869380Z"
+          "timestamp": "2025-11-19T18:19:33.535035Z"
         }
       ],
       "evidence": {
@@ -653,7 +653,7 @@
         }
       },
       "remediation": "Prevent indirect injection: (1) Sanitize all external data before presenting to LLM, (2) Clearly mark untrusted content, (3) Use structured output formats (JSON) instead of freeform text, (4) Implement content filtering for injection patterns, (5) Validate data sources and implement allowlists.",
-      "timestamp": "2025-11-13T20:49:40.443099Z",
+      "timestamp": "2025-11-19T18:19:24.666166Z",
       "execution_time_ms": null
     },
     {
@@ -689,7 +689,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-13T20:49:48.869380Z",
+      "timestamp": "2025-11-19T18:19:33.535035Z",
       "execution_time_ms": null
     },
     {
@@ -800,7 +800,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-13T20:49:49.723302Z",
+      "timestamp": "2025-11-19T18:19:34.360888Z",
       "execution_time_ms": null
     },
     {
@@ -834,7 +834,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-13T20:49:50.341840Z",
+      "timestamp": "2025-11-19T18:19:34.973946Z",
       "execution_time_ms": null
     },
     {
@@ -849,24 +849,39 @@
           "type": "schema_overpermissive",
           "value": true,
           "context": {
-            "tool_name": "test_wikipedia_connectivity",
+            "tool_name": "search_wikipedia",
             "iteration": 2,
             "change_type": "response_modified"
           },
-          "timestamp": "2025-11-13T20:50:00.485399Z"
+          "timestamp": "2025-11-19T18:19:44.404366Z"
         },
         {
           "type": "schema_overpermissive",
           "value": true,
           "context": {
-            "tool_name": "search_wikipedia",
-            "iteration": 4,
+            "tool_name": "test_wikipedia_connectivity",
+            "iteration": 2,
             "change_type": "response_modified"
           },
-          "timestamp": "2025-11-13T20:50:17.969315Z"
+          "timestamp": "2025-11-19T18:19:45.014488Z"
         }
       ],
       "proof_of_concepts": [
+        {
+          "target": "search_wikipedia",
+          "attack_type": "rug_pull_response",
+          "payload": {
+            "tool_name": "search_wikipedia",
+            "iteration": 2
+          },
+          "response": {
+            "baseline_response": "{\"query\":\"test\",\"results\":[{\"title\":\"Test\",\"snippet\":\"Look up <span class=\\\"searchmatch\\\">test</span>, <span class=\\\"searchmatch\\\">testing</span>, <span class=\\\"searchmatch\\\">Test</span>, or <span cla",
+            "modified_response": "{\"query\":\"test\",\"results\":[{\"title\":\"Test\",\"snippet\":\"Look up <span class=\\\"searchmatch\\\">test</span>, <span class=\\\"searchmatch\\\">testing</span>, <span class=\\\"searchmatch\\\">Test</span>, or <span cla"
+          },
+          "success": true,
+          "impact_demonstrated": "Tool 'search_wikipedia' returned different content for identical inputs after 2 invocation(s), indicating dynamic behaviour.",
+          "timestamp": "2025-11-19T18:20:10.438625Z"
+        },
         {
           "target": "test_wikipedia_connectivity",
           "attack_type": "rug_pull_response",
@@ -875,27 +890,12 @@
             "iteration": 2
           },
           "response": {
-            "baseline_response": "{\"status\":\"success\",\"url\":\"https://en.wikipedia.org/w/api.php\",\"language\":\"en\",\"site_name\":\"Wikipedia\",\"server\":\"//en.wikipedia.org\",\"response_time_ms\":183.648}",
-            "modified_response": "{\"status\":\"success\",\"url\":\"https://en.wikipedia.org/w/api.php\",\"language\":\"en\",\"site_name\":\"Wikipedia\",\"server\":\"//en.wikipedia.org\",\"response_time_ms\":191.833}"
+            "baseline_response": "{\"status\":\"success\",\"url\":\"https://en.wikipedia.org/w/api.php\",\"language\":\"en\",\"site_name\":\"Wikipedia\",\"server\":\"//en.wikipedia.org\",\"response_time_ms\":185.60399999999998}",
+            "modified_response": "{\"status\":\"success\",\"url\":\"https://en.wikipedia.org/w/api.php\",\"language\":\"en\",\"site_name\":\"Wikipedia\",\"server\":\"//en.wikipedia.org\",\"response_time_ms\":180.753}"
           },
           "success": true,
           "impact_demonstrated": "Tool 'test_wikipedia_connectivity' returned different content for identical inputs after 2 invocation(s), indicating dynamic behaviour.",
-          "timestamp": "2025-11-13T20:50:25.884046Z"
-        },
-        {
-          "target": "search_wikipedia",
-          "attack_type": "rug_pull_response",
-          "payload": {
-            "tool_name": "search_wikipedia",
-            "iteration": 4
-          },
-          "response": {
-            "baseline_response": "{\"query\":\"test\",\"results\":[{\"title\":\"Test\",\"snippet\":\"Look up <span class=\\\"searchmatch\\\">test</span>, <span class=\\\"searchmatch\\\">testing</span>, <span class=\\\"searchmatch\\\">Test</span>, or <span cla",
-            "modified_response": "{\"query\":\"test\",\"results\":[{\"title\":\"Test\",\"snippet\":\"Look up <span class=\\\"searchmatch\\\">test</span>, <span class=\\\"searchmatch\\\">testing</span>, <span class=\\\"searchmatch\\\">Test</span>, or <span cla"
-          },
-          "success": true,
-          "impact_demonstrated": "Tool 'search_wikipedia' returned different content for identical inputs after 4 invocation(s), indicating dynamic behaviour.",
-          "timestamp": "2025-11-13T20:50:25.884046Z"
+          "timestamp": "2025-11-19T18:20:10.438625Z"
         }
       ],
       "evidence": {
@@ -904,16 +904,16 @@
         "changed_tools": [],
         "response_changes": [
           {
-            "tool_name": "test_wikipedia_connectivity",
-            "iteration": 2,
-            "baseline_response": "{\"status\":\"success\",\"url\":\"https://en.wikipedia.org/w/api.php\",\"language\":\"en\",\"site_name\":\"Wikipedia\",\"server\":\"//en.wikipedia.org\",\"response_time_ms\":183.648}",
-            "modified_response": "{\"status\":\"success\",\"url\":\"https://en.wikipedia.org/w/api.php\",\"language\":\"en\",\"site_name\":\"Wikipedia\",\"server\":\"//en.wikipedia.org\",\"response_time_ms\":191.833}"
-          },
-          {
             "tool_name": "search_wikipedia",
-            "iteration": 4,
+            "iteration": 2,
             "baseline_response": "{\"query\":\"test\",\"results\":[{\"title\":\"Test\",\"snippet\":\"Look up <span class=\\\"searchmatch\\\">test</span>, <span class=\\\"searchmatch\\\">testing</span>, <span class=\\\"searchmatch\\\">Test</span>, or <span cla",
             "modified_response": "{\"query\":\"test\",\"results\":[{\"title\":\"Test\",\"snippet\":\"Look up <span class=\\\"searchmatch\\\">test</span>, <span class=\\\"searchmatch\\\">testing</span>, <span class=\\\"searchmatch\\\">Test</span>, or <span cla"
+          },
+          {
+            "tool_name": "test_wikipedia_connectivity",
+            "iteration": 2,
+            "baseline_response": "{\"status\":\"success\",\"url\":\"https://en.wikipedia.org/w/api.php\",\"language\":\"en\",\"site_name\":\"Wikipedia\",\"server\":\"//en.wikipedia.org\",\"response_time_ms\":185.60399999999998}",
+            "modified_response": "{\"status\":\"success\",\"url\":\"https://en.wikipedia.org/w/api.php\",\"language\":\"en\",\"site_name\":\"Wikipedia\",\"server\":\"//en.wikipedia.org\",\"response_time_ms\":180.753}"
           }
         ],
         "call_failures": [],
@@ -935,7 +935,7 @@
         }
       },
       "remediation": "Implement immutable tool definitions: (1) Lock tool descriptions after registration, (2) Use version control for tool changes, (3) Require re-approval for any modifications, (4) Implement integrity checks (hashing) to detect unauthorized changes, (5) Log all tool definition updates with audit trail.",
-      "timestamp": "2025-11-13T20:49:50.341840Z",
+      "timestamp": "2025-11-19T18:19:34.973946Z",
       "execution_time_ms": null
     },
     {
@@ -957,7 +957,7 @@
             "tool_description": "Provide diagnostics for Wikipedia API connectivity.",
             "keyword": null
           },
-          "timestamp": "2025-11-13T20:50:26.090703Z"
+          "timestamp": "2025-11-19T18:20:10.644794Z"
         }
       ],
       "proof_of_concepts": [],
@@ -990,7 +990,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-13T20:50:25.884046Z",
+      "timestamp": "2025-11-19T18:20:10.438625Z",
       "execution_time_ms": null
     },
     {
@@ -1027,7 +1027,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-13T20:50:26.091208Z",
+      "timestamp": "2025-11-19T18:20:10.644794Z",
       "execution_time_ms": null
     },
     {
@@ -1062,7 +1062,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-13T20:50:26.916621Z",
+      "timestamp": "2025-11-19T18:20:11.463970Z",
       "execution_time_ms": null
     },
     {
@@ -1083,7 +1083,7 @@
             "vulnerability": "unauthenticated_access",
             "severity": "CRITICAL"
           },
-          "timestamp": "2025-11-13T20:50:27.747937Z"
+          "timestamp": "2025-11-19T18:20:12.500523Z"
         }
       ],
       "proof_of_concepts": [
@@ -1112,7 +1112,7 @@
           },
           "success": true,
           "impact_demonstrated": "Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.",
-          "timestamp": "2025-11-13T20:50:27.747937Z"
+          "timestamp": "2025-11-19T18:20:12.500523Z"
         }
       ],
       "evidence": {
@@ -1149,7 +1149,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-13T20:50:27.135150Z",
+      "timestamp": "2025-11-19T18:20:11.669304Z",
       "execution_time_ms": null
     }
   ],
@@ -1160,6 +1160,6 @@
     "unknown": 0,
     "not_applicable": 0
   },
-  "audit_log_path": "captures\\audit_4d930eaa-3e31-4716-a88b-47857fd66c79.jsonl",
+  "audit_log_path": "captures\\audit_ba951da2-9d26-4e53-b83a-c4f67c4856b3.jsonl",
   "framework_version": "0.2.0"
 }

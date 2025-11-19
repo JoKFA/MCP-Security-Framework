@@ -1,8 +1,8 @@
 {
-  "assessment_id": "4d930eaa-3e31-4716-a88b-47857fd66c79",
+  "assessment_id": "ba951da2-9d26-4e53-b83a-c4f67c4856b3",
   "target": "Wikipedia",
-  "started_at": "2025-11-13T20:49:39.614688+00:00",
-  "completed_at": "2025-11-13T20:50:27.748938+00:00",
+  "started_at": "2025-11-19T18:19:23.755971+00:00",
+  "completed_at": "2025-11-19T18:20:12.500523+00:00",
   "framework_version": "0.2.0",
   "summary": {
     "present": 5,

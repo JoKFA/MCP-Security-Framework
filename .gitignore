@@ -37,6 +37,7 @@ targets/*
 
 # Local Claude settings
 .claude/
+CLAUDE.md
 
 
 # Test coverage

@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+
+{% block title %}Run Assessment - MCP Security Framework{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Run Security Assessment</h2>
+    <p>Enter an MCP server target to run a security assessment</p>
+</div>
+
+<div class="assessment-form">
+    <form id="assessmentForm">
+        <div class="form-group">
+            <label for="target">MCP Server Target:</label>
+            <input 
+                type="text" 
+                id="target" 
+                name="target" 
+                placeholder="stdio://python/-m/wikipedia_mcp/--transport/stdio or http://localhost:9001/sse"
+                required
+                class="form-control"
+            >
+            <small class="form-hint">
+                <strong>Examples:</strong><br>
+                • stdio://python/-m/wikipedia_mcp/--transport/stdio<br>
+                • stdio://npx/-y/@starwind-ui/mcp/--transport/stdio<br>
+                • http://localhost:9001/sse
+            </small>
+        </div>
+        
+        <div class="form-group">
+            <label for="mode">Assessment Mode:</label>
+            <select id="mode" name="mode" class="form-control">
+                <option value="balanced" selected>Balanced</option>
+                <option value="safe">Safe</option>
+                <option value="aggressive">Aggressive</option>
+            </select>
+        </div>
+        
+        <button type="submit" id="submitBtn" class="btn btn-primary">
+            Run Assessment
+        </button>
+    </form>
+</div>
+
+<div id="statusContainer" style="display: none; margin-top: 2rem;">
+    <div class="status-card">
+        <h3>Assessment Status</h3>
+        <div id="statusMessage" class="status-message"></div>
+        <div class="progress-bar-container">
+            <div id="progressBar" class="progress-bar" style="width: 0%;"></div>
+        </div>
+        <div id="logContainer" class="log-container" style="display: none;">
+            <h4>Live Logs</h4>
+            <div id="logs" class="logs"></div>
+        </div>
+        <div id="errorDetails" class="error-details" style="display: none;"></div>
+    </div>
+</div>
+
+<style>
+.assessment-form {
+    max-width: 800px;
+    margin: 2rem 0;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: monospace;
+}
+
+.form-hint {
+    display: block;
+    margin-top: 0.5rem;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.status-card {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1.5rem;
+    max-width: 800px;
+}
+
+.status-message {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #e7f3ff;
+    border-left: 4px solid #2196F3;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.status-message.error {
+    background: #ffebee;
+    border-left-color: #f44336;
+    color: #c62828;
+}
+
+.status-message.success {
+    background: #e8f5e9;
+    border-left-color: #4caf50;
+    color: #2e7d32;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 24px;
+    background: #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 1rem 0;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #4caf50, #8bc34a);
+    transition: width 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.log-container {
+    margin-top: 1.5rem;
+}
+
+.log-container h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    color: #666;
+}
+
+.logs {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 1rem;
+    border-radius: 4px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.85rem;
+    max-height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    line-height: 1.5;
+}
+
+.logs::-webkit-scrollbar {
+    width: 8px;
+}
+
+.logs::-webkit-scrollbar-track {
+    background: #2d2d2d;
+}
+
+.logs::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+}
+
+.error-details {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid #ffcdd2;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    max-height: 400px;
+    overflow-y: auto;
+}
+</style>
+
+<script>
+let statusCheckInterval = null;
+let currentAssessmentId = null;
+
+document.getElementById('assessmentForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const target = document.getElementById('target').value.trim();
+    const mode = document.getElementById('mode').value;
+    const submitBtn = document.getElementById('submitBtn');
+    const statusContainer = document.getElementById('statusContainer');
+    const statusMessage = document.getElementById('statusMessage');
+    const progressBar = document.getElementById('progressBar');
+    const errorDetails = document.getElementById('errorDetails');
+    
+    // Reset UI
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Starting...';
+    statusContainer.style.display = 'block';
+    statusMessage.className = 'status-message';
+    statusMessage.textContent = 'Starting assessment...';
+    progressBar.style.width = '0%';
+    errorDetails.style.display = 'none';
+    
+    try {
+        const response = await fetch('/api/assess', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ target, mode })
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Failed to start assessment');
+        }
+        
+        const data = await response.json();
+        currentAssessmentId = data.assessment_id;
+        
+        // Start polling for status
+        statusCheckInterval = setInterval(checkStatus, 1000);
+        checkStatus(); // Check immediately
+        
+    } catch (error) {
+        statusMessage.className = 'status-message error';
+        statusMessage.textContent = `Error: ${error.message}`;
+        errorDetails.textContent = error.stack || error.toString();
+        errorDetails.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Run Assessment';
+    }
+});
+
+async function checkStatus() {
+    if (!currentAssessmentId) return;
+    
+    try {
+        const response = await fetch(`/api/assess/${currentAssessmentId}/status`);
+        const status = await response.json();
+        
+        const statusMessage = document.getElementById('statusMessage');
+        const progressBar = document.getElementById('progressBar');
+        const submitBtn = document.getElementById('submitBtn');
+        const errorDetails = document.getElementById('errorDetails');
+        const logContainer = document.getElementById('logContainer');
+        const logs = document.getElementById('logs');
+        
+        statusMessage.textContent = status.message;
+        progressBar.style.width = `${status.progress}%`;
+        progressBar.textContent = `${status.progress}%`;
+        
+        // Update logs if available
+        if (status.logs && status.logs.length > 0) {
+            logContainer.style.display = 'block';
+            logs.textContent = status.logs.join('\n');
+            // Auto-scroll to bottom
+            logs.scrollTop = logs.scrollHeight;
+        }
+        
+        if (status.status === 'completed') {
+            clearInterval(statusCheckInterval);
+            statusMessage.className = 'status-message success';
+            statusMessage.textContent = `✓ ${status.message}`;
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Run Assessment';
+            
+            // Redirect to report if available
+            if (status.report_id) {
+                setTimeout(() => {
+                    window.location.href = `/report/${status.report_id}`;
+                }, 2000);
+            }
+        } else if (status.status === 'error') {
+            clearInterval(statusCheckInterval);
+            statusMessage.className = 'status-message error';
+            statusMessage.textContent = `✗ ${status.message}`;
+            if (status.error) {
+                errorDetails.textContent = status.error;
+                errorDetails.style.display = 'block';
+            }
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Run Assessment';
+        } else if (status.status === 'running') {
+            statusMessage.className = 'status-message';
+        }
+        
+    } catch (error) {
+        console.error('Error checking status:', error);
+    }
+}
+</script>
+{% endblock %}
+

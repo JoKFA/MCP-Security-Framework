@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Reports - MCP Security Framework{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Assessment Reports</h2>
+    <p>View security assessment results for MCP servers</p>
+</div>
+
+{% if reports %}
+<div class="reports-grid">
+    {% for report in reports %}
+    <div class="report-card">
+        <div class="report-header">
+            <h3><a href="{{ url_for('view_report', report_id=report.id) }}">{{ report.name }}</a></h3>
+            <span class="report-date">
+                {% if report.metadata.completed_at %}
+                    {{ report.metadata.completed_at[:10] }}
+                {% endif %}
+            </span>
+        </div>
+        
+        {% if report.metadata.summary %}
+        <div class="report-summary">
+            <div class="summary-item">
+                <span class="label">Vulnerabilities:</span>
+                <span class="value critical">{{ report.metadata.summary.present }}</span>
+            </div>
+            <div class="summary-item">
+                <span class="label">Passed:</span>
+                <span class="value success">{{ report.metadata.summary.absent }}</span>
+            </div>
+            {% if report.metadata.summary.unknown %}
+            <div class="summary-item">
+                <span class="label">Unknown:</span>
+                <span class="value warning">{{ report.metadata.summary.unknown }}</span>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <div class="report-meta">
+            <small>
+                Assessment ID: {{ report.metadata.assessment_id[:8] }}...
+                {% if report.metadata.framework_version %}
+                | Framework: {{ report.metadata.framework_version }}
+                {% endif %}
+            </small>
+        </div>
+        
+        <div class="report-actions">
+            <a href="{{ url_for('view_report', report_id=report.id) }}" class="btn btn-primary">View Report</a>
+            <a href="{{ url_for('api_report', report_id=report.id) }}" class="btn btn-secondary" target="_blank">JSON</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <p>No reports found in the reports directory.</p>
+    <p>Run an assessment using: <code>mcpsf assess &lt;target&gt;</code></p>
+</div>
+{% endif %}
+{% endblock %}
+

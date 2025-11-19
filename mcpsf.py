@@ -38,7 +38,8 @@ from src.modules.registry import DetectorRegistry
 
 def print_banner():
     """Print MCP Security Framework banner"""
-    banner = """
+    try:
+        banner = """
 ╔════════════════════════════════════════════════════════════════════╗
 ║                                                                    ║
 ║           MCP Security Framework (mcpsf) v0.2.0                    ║
@@ -46,7 +47,18 @@ def print_banner():
 ║                                                                    ║
 ╚════════════════════════════════════════════════════════════════════╝
 """
-    print(banner)
+        print(banner)
+    except UnicodeEncodeError:
+        # Fallback for Windows consoles that don't support Unicode box characters
+        banner = """
+======================================================================
+                                                                   
+           MCP Security Framework (mcpsf) v0.2.0                    
+           Professional Security Testing for MCP Servers            
+                                                                   
+======================================================================
+"""
+        print(banner)
 
 
 def list_detectors():

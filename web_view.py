@@ -16,11 +16,16 @@ Security:
 
 import json
 import argparse
+import asyncio
+import threading
+import traceback
+import io
+import sys
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from flask import Flask, render_template, jsonify, send_from_directory, abort
+from flask import Flask, render_template, jsonify, send_from_directory, abort, request
 
 app = Flask(__name__)
 
@@ -85,11 +90,238 @@ def get_all_reports(reports_dir: Path) -> List[Dict]:
     return reports
 
 
+# Assessment status tracking
+assessment_status = {}
+assessment_lock = threading.Lock()
+
+
+class LogCapture:
+    """Capture stdout/stderr for display in UI while preserving file descriptors."""
+    def __init__(self, assessment_id: str):
+        self.assessment_id = assessment_id
+        self.logs = []
+        self.stdout = sys.stdout
+        self.stderr = sys.stderr
+        self.buffer = io.StringIO()
+    
+    def write(self, text):
+        """Capture write operations."""
+        if text.strip():  # Only capture non-empty lines
+            self.logs.append(text.rstrip())
+            # Keep only last 100 lines
+            if len(self.logs) > 100:
+                self.logs = self.logs[-100:]
+            # Update status with latest log
+            with assessment_lock:
+                if self.assessment_id in assessment_status:
+                    assessment_status[self.assessment_id]['logs'] = self.logs[-20:]  # Last 20 lines
+        self.buffer.write(text)
+        self.stdout.write(text)  # Also write to real stdout
+    
+    def flush(self):
+        self.buffer.flush()
+        self.stdout.flush()
+    
+    def fileno(self):
+        """Return file descriptor for subprocess compatibility."""
+        # Delegate to real stdout for subprocess operations
+        return self.stdout.fileno()
+    
+    def isatty(self):
+        """Check if this is a TTY."""
+        return self.stdout.isatty()
+    
+    def readable(self):
+        """Check if readable."""
+        return False
+    
+    def writable(self):
+        """Check if writable."""
+        return True
+    
+    def seekable(self):
+        """Check if seekable."""
+        return False
+    
+    def __enter__(self):
+        sys.stdout = self
+        sys.stderr = self
+        return self
+    
+    def __exit__(self, *args):
+        sys.stdout = self.stdout
+        sys.stderr = self.stderr
+
+
 @app.route('/')
 def index():
     """Main page showing list of all reports."""
     reports = get_all_reports(REPORTS_DIR)
     return render_template('index.html', reports=reports)
+
+
+@app.route('/assess')
+def assess_page():
+    """Assessment page where users can run assessments."""
+    return render_template('assess.html')
+
+
+@app.route('/api/assess', methods=['POST'])
+def api_assess():
+    """API endpoint to run an assessment."""
+    if not request.is_json:
+        return jsonify({'error': 'Request must be JSON'}), 400
+    
+    data = request.get_json()
+    target = data.get('target')
+    mode = data.get('mode', 'balanced')
+    
+    if not target:
+        return jsonify({'error': 'target is required'}), 400
+    
+    # Generate assessment ID
+    assessment_id = datetime.now().strftime('%Y%m%d_%H%M%S')
+    
+    # Initialize status
+    with assessment_lock:
+        assessment_status[assessment_id] = {
+            'status': 'running',
+            'message': 'Starting assessment...',
+            'progress': 0,
+            'error': None,
+            'report_id': None
+        }
+    
+    # Run assessment in background thread
+    thread = threading.Thread(
+        target=run_assessment,
+        args=(target, mode, assessment_id),
+        daemon=True
+    )
+    thread.start()
+    
+    return jsonify({
+        'assessment_id': assessment_id,
+        'status': 'started',
+        'message': 'Assessment started'
+    })
+
+
+@app.route('/api/assess/<assessment_id>/status')
+def api_assess_status(assessment_id: str):
+    """Get status of a running assessment."""
+    with assessment_lock:
+        status = assessment_status.get(assessment_id, {
+            'status': 'unknown',
+            'message': 'Assessment not found'
+        })
+    return jsonify(status)
+
+
+def run_assessment(target: str, mode: str, assessment_id: str):
+    """Run assessment in background thread."""
+    # Capture logs
+    with LogCapture(assessment_id):
+        try:
+            # Update status
+            with assessment_lock:
+                assessment_status[assessment_id]['message'] = 'Connecting to server...'
+                assessment_status[assessment_id]['progress'] = 10
+                assessment_status[assessment_id]['logs'] = []
+            
+            # Import here to avoid circular imports
+            from src.core.runner import TestRunner
+            from src.core.policy import ScopeConfig, RateLimitConfig, PolicyConfig
+            from src.core.reporters.manager import ReportManager
+            
+            # Parse stdio:// URLs properly (handle scoped packages)
+            if target.startswith("stdio://"):
+                stdio_part = target[8:]  # Remove "stdio://"
+                parts = stdio_part.split("/")
+                command = parts[0] if parts else "npx"
+                args = []
+                
+                # Handle scoped packages (starting with @)
+                i = 1
+                while i < len(parts):
+                    arg = parts[i]
+                    if arg.startswith("@") and i + 1 < len(parts):
+                        # Scoped package: @scope/package
+                        args.append(f"{arg}/{parts[i+1]}")
+                        i += 2
+                    else:
+                        if arg:  # Skip empty args
+                            args.append(arg)
+                        i += 1
+                
+                # Reconstruct target with proper args
+                if args:
+                    target = f"stdio://{command}/{'/'.join(args)}"
+                else:
+                    target = f"stdio://{command}"
+            
+            # Create scope
+            scope = ScopeConfig(
+                target=target,
+                mode=mode,
+                allowed_prefixes=["internal://", "file://", "/resources", "/tools/"],
+                blocked_paths=[],
+                rate_limit=RateLimitConfig(qps=3, burst=5),
+                policy=PolicyConfig(
+                    dry_run=False,
+                    redact_evidence=True,
+                    max_payload_kb=256,
+                    max_total_requests=1000,
+                )
+            )
+            
+            with assessment_lock:
+                assessment_status[assessment_id]['message'] = 'Running detectors...'
+                assessment_status[assessment_id]['progress'] = 30
+            
+            # Create event loop for this thread
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            
+            # Run assessment
+            runner = TestRunner(scope)
+            result = loop.run_until_complete(runner.assess())
+            
+            with assessment_lock:
+                assessment_status[assessment_id]['message'] = 'Generating reports...'
+                assessment_status[assessment_id]['progress'] = 80
+            
+            # Generate bundle name from server name (same as mcpsf.py)
+            server_name = result.profile.server_name.replace(" ", "_").replace("/", "_").replace("\\", "_")
+            bundle_name = server_name
+            
+            # Generate report bundle
+            report_manager = ReportManager(reports_dir=REPORTS_DIR)
+            bundle_dir = report_manager.generate_bundle(
+                result,
+                bundle_name=bundle_name
+            )
+            
+            # Get the actual report directory name (relative to REPORTS_DIR)
+            report_id = bundle_dir.name
+            
+            with assessment_lock:
+                assessment_status[assessment_id]['status'] = 'completed'
+                assessment_status[assessment_id]['message'] = 'Assessment completed successfully'
+                assessment_status[assessment_id]['progress'] = 100
+                assessment_status[assessment_id]['report_id'] = report_id
+            
+            loop.close()
+            
+        except Exception as e:
+            error_msg = str(e)
+            error_trace = traceback.format_exc()
+            
+            with assessment_lock:
+                assessment_status[assessment_id]['status'] = 'error'
+                assessment_status[assessment_id]['message'] = f'Assessment failed: {error_msg}'
+                assessment_status[assessment_id]['error'] = error_trace
+                assessment_status[assessment_id]['progress'] = 0
 
 
 @app.route('/api/reports')

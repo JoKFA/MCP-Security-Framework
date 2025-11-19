@@ -1,0 +1,360 @@
+{
+  "assessment_id": "f9d0e008-a122-4c99-a194-24816bae9021",
+  "started_at": "2025-11-05T20:50:22.271808Z",
+  "completed_at": "2025-11-05T20:50:23.584102Z",
+  "scope": {
+    "target": "stdio://npx/-y/%40modelcontextprotocol%2Fserver-everything",
+    "transport": "stdio",
+    "allowed_prefixes": [
+      "/"
+    ],
+    "blocked_paths": [],
+    "rate_limit": {
+      "qps": 2.0,
+      "burst": 5,
+      "backoff_ms": [
+        200,
+        400,
+        800,
+        1600
+      ]
+    },
+    "policy": {
+      "dry_run": false,
+      "redact_evidence": true,
+      "max_payload_kb": 128,
+      "fail_on_high": false,
+      "max_total_requests": 1000,
+      "request_timeout_s": 30
+    },
+    "auth": {
+      "type": "none",
+      "api_key": null,
+      "header_name": "X-API-Key",
+      "token_url": null,
+      "client_id": null,
+      "client_secret": null
+    },
+    "reporting": {
+      "output_dir": "./reports",
+      "formats": [
+        "json",
+        "sarif",
+        "html"
+      ],
+      "store_evidence": true,
+      "evidence_retention_days": 30
+    },
+    "detectors": null,
+    "metadata": {}
+  },
+  "profile": {
+    "server_name": "example-servers/everything",
+    "server_version": "1.0.0",
+    "protocol_version": "2025-06-18",
+    "capabilities": {
+      "resources": true,
+      "tools": true,
+      "prompts": true,
+      "logging": false,
+      "sampling": false
+    },
+    "transport": "stdio",
+    "endpoint": null,
+    "auth_type": "none",
+    "exposure": "unknown",
+    "metadata": {},
+    "profiled_at": "2025-11-05T20:50:22.913313Z"
+  },
+  "results": [
+    {
+      "detector_id": "MCP-2024-CE-001",
+      "detector_name": "Credential Exposure Detector",
+      "detector_version": "1.0.0",
+      "status": "ABSENT",
+      "confidence": 0.0,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "resources_scanned": 0,
+        "sensitive_resources_found": 0,
+        "secrets_by_resource": {}
+      },
+      "standards": {
+        "cwe": "CWE-522",
+        "owasp_llm": "LLM01",
+        "owasp_api": "API2",
+        "asvs": [
+          "V2.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+          "base_score": 8.2,
+          "severity": "HIGH"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T20:50:22.917316Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-DUMMY-001",
+      "detector_name": "Dummy Detector",
+      "detector_version": "1.0.0",
+      "status": "ABSENT",
+      "confidence": 1.0,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "test": "passed",
+        "probes_sent": 0
+      },
+      "standards": {
+        "cwe": "CWE-0",
+        "owasp_llm": "LLM00",
+        "owasp_api": null,
+        "asvs": [],
+        "capec": [],
+        "cvss": null
+      },
+      "remediation": "No issues found",
+      "timestamp": "2025-11-05T20:50:22.959300Z",
+      "execution_time_ms": 0.0
+    },
+    {
+      "detector_id": "MCP-2024-PA-001",
+      "detector_name": "Privilege Abuse Detector",
+      "detector_version": "1.0.0",
+      "status": "ABSENT",
+      "confidence": 0.8,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "tools_analyzed": 10,
+        "tools_with_excessive_permissions": [],
+        "privilege_mismatches": []
+      },
+      "standards": {
+        "cwe": "CWE-250",
+        "owasp_llm": null,
+        "owasp_api": "API4",
+        "asvs": [
+          "V4.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+          "base_score": 6.5,
+          "severity": "MEDIUM"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T20:50:22.959300Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-PI-001",
+      "detector_name": "Prompt Injection via Resource Parameters",
+      "detector_version": "1.0.0",
+      "status": "ABSENT",
+      "confidence": 0.8,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "reason": "No resources found to test"
+      },
+      "standards": {
+        "cwe": "CWE-74",
+        "owasp_llm": "LLM01",
+        "owasp_api": "API8:2023",
+        "asvs": [
+          "V5.1",
+          "V9.1"
+        ],
+        "capec": [
+          "CAPEC-242"
+        ],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+          "base_score": 7.5,
+          "severity": "HIGH"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T20:50:22.964301Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-TE-001",
+      "detector_name": "Tool Enumeration Analyzer",
+      "detector_version": "1.0.0",
+      "status": "PRESENT",
+      "confidence": 0.9,
+      "affected_resources": [],
+      "signals": [
+        {
+          "type": "schema_overpermissive",
+          "value": true,
+          "context": {
+            "tool_name": "longRunningOperation",
+            "risk_type": "dangerous_tool",
+            "severity": "MEDIUM",
+            "rationale": "Tool has 'run' in name/description - sketchy!",
+            "tool_description": "Demonstrates a long running operation with progress updates",
+            "keyword": "run"
+          },
+          "timestamp": "2025-11-05T20:50:22.966302Z"
+        },
+        {
+          "type": "schema_overpermissive",
+          "value": true,
+          "context": {
+            "tool_name": "printEnv",
+            "risk_type": "no_input_validation",
+            "severity": "LOW",
+            "rationale": "Tool has empty input schema - accepts anything!",
+            "tool_description": "Prints all environment variables, helpful for debugging MCP server configuration",
+            "keyword": null
+          },
+          "timestamp": "2025-11-05T20:50:22.966302Z"
+        },
+        {
+          "type": "schema_overpermissive",
+          "value": true,
+          "context": {
+            "tool_name": ""getTinyImage,
+            "risk_type": "no_input_validation",
+            "severity": "LOW",
+            "rationale": "Tool has empty input schema - accepts anything!",
+            "tool_description": "Returns the MCP_TINY_IMAGE",
+            "keyword": null
+          },
+          "timestamp": "2025-11-05T20:50:22.966302Z"
+        }
+      ],
+      "proof_of_concepts": [],
+      "evidence": {
+        "tools_analyzed": 10,
+        "dangerous_tools": [
+          {
+            "name": "longRunningOperation",
+            "keyword": "run",
+            "description": "Demonstrates a long running operation with progress updates"
+          }
+        ],
+        "tools_without_validation": [
+          {
+            "name": "printEnv",
+            "type": "no_input_validation"
+          },
+          {
+            "name": "getTinyImage",
+            "type": "no_input_validation"
+          }
+        ],
+        "risk_summary": {
+          "dangerous_tool": 1,
+          "no_input_validation": 2
+        }
+      },
+      "standards": {
+        "cwe": "CWE-250",
+        "owasp_llm": null,
+        "owasp_api": "API4",
+        "asvs": [
+          "V4.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+          "base_score": 6.5,
+          "severity": "MEDIUM"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T20:50:22.964301Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-UA-001",
+      "detector_name": "Unauthenticated Access Detector",
+      "detector_version": "1.0.0",
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "affected_resources": [],
+      "signals": [
+        {
+          "type": "auth_mismatch",
+          "value": true,
+          "context": {
+            "tools_accessible": true,
+            "resources_accessible": true,
+            "vulnerability": "unauthenticated_access",
+            "severity": "CRITICAL",
+            "allows_anyone_to_access": true
+          },
+          "timestamp": "2025-11-05T20:50:23.584102Z"
+        }
+      ],
+      "proof_of_concepts": [
+        {
+          "target": "MCP Server",
+          "attack_type": "unauthenticated_access_test",
+          "payload": {
+            "method": "list_tools and list_resources",
+            "auth_required": false
+          },
+          "response": {
+            "tools_count": 10,
+            "resources_count": 0,
+            "vulnerable": true
+          },
+          "success": true,
+          "impact_demonstrated": "CRITICAL: Server is accessible without authentication. Anyone can list tools (10) and resources (0). This violates authentication requirements.",
+          "timestamp": "2025-11-05T20:50:23.584102Z"
+        }
+      ],
+      "evidence": {
+        "tools_accessible": true,
+        "resources_accessible": true,
+        "auth_required": false
+      },
+      "standards": {
+        "cwe": "CWE-284",
+        "owasp_llm": null,
+        "owasp_api": "API1",
+        "asvs": [
+          "V1.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "base_score": 10.0,
+          "severity": "CRITICAL"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-05T20:50:22.966302Z",
+      "execution_time_ms": null
+    }
+  ],
+  "threat_model": null,
+  "summary": {
+    "present": 2,
+    "absent": 4,
+    "unknown": 0,
+    "not_applicable": 0
+  },
+  "audit_log_path": "captures\\audit_f9d0e008-a122-4c99-a194-24816bae9021.jsonl",
+  "framework_version": "0.2.0"
+}

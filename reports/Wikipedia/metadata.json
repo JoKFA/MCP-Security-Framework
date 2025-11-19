@@ -1,0 +1,13 @@
+{
+  "assessment_id": "4d930eaa-3e31-4716-a88b-47857fd66c79",
+  "target": "Wikipedia",
+  "started_at": "2025-11-13T20:49:39.614688+00:00",
+  "completed_at": "2025-11-13T20:50:27.748938+00:00",
+  "framework_version": "0.2.0",
+  "summary": {
+    "present": 5,
+    "absent": 9,
+    "unknown": 0,
+    "not_applicable": 0
+  }
+}

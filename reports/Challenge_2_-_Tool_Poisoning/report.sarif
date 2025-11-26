@@ -373,8 +373,8 @@
       "invocations": [
         {
           "executionSuccessful": true,
-          "startTimeUtc": "2025-11-05T21:43:42.699206+00:00",
-          "endTimeUtc": "2025-11-05T21:43:58.671409+00:00",
+          "startTimeUtc": "2025-11-19T23:19:54.681570+00:00",
+          "endTimeUtc": "2025-11-19T23:20:03.116182+00:00",
           "workingDirectory": {
             "uri": "file:///"
           },
@@ -384,15 +384,14 @@
               "transport": null,
               "mode": "aggressive",
               "allowed_prefixes": [
-                "internal://",
-                "file://",
                 "/resources",
-                "/tools/"
+                "/tools",
+                "internal://"
               ],
               "blocked_paths": [],
               "rate_limit": {
-                "qps": 3.0,
-                "burst": 5,
+                "qps": 5.0,
+                "burst": 10,
                 "backoff_ms": [
                   200,
                   400,
@@ -402,10 +401,10 @@
               },
               "policy": {
                 "dry_run": false,
-                "redact_evidence": true,
-                "max_payload_kb": 256,
+                "redact_evidence": false,
+                "max_payload_kb": 128,
                 "fail_on_high": false,
-                "max_total_requests": 1000,
+                "max_total_requests": 600,
                 "request_timeout_s": 30
               },
               "auth": {
@@ -426,7 +425,9 @@
                 "store_evidence": true,
                 "evidence_retention_days": 30
               },
-              "detectors": null,
+              "detectors": {
+                "include": []
+              },
               "metadata": {}
             }
           }
@@ -925,7 +926,7 @@
                 "region": {
                   "startLine": 1,
                   "snippet": {
-                    "text": "{'tool_name': 'execute_command', 'risk_type': 'dangerous_tool', 'severity': 'MEDIUM', 'rationale': \"Tool contains potentially dangerous keyword 'execute' indicating system-level access\", 'tool_description': \"Execute a system command (restricted to safe commands only)\\n\\nArgs:\\n    command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\\n\", 'keyword': 'execute'}"
+                    "text": "{'tool_name': 'execute_command', 'risk_type': 'dangerous_tool', 'severity': 'MEDIUM', 'rationale': \"Tool contains potentially dangerous keyword 'execute' indicating system-level access\", 'tool_description': \"Execute a system command (restricted to safe commands only)\\n            \\n            Args:\\n                command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\\n            \", 'keyword': 'execute'}"
                   }
                 }
               }
@@ -1021,7 +1022,7 @@
                 "region": {
                   "startLine": 1,
                   "snippet": {
-                    "text": "{'tool_name': 'execute_command', 'risk_type': 'dangerous_tool', 'severity': 'MEDIUM', 'rationale': \"Tool contains potentially dangerous keyword 'command' indicating system-level access\", 'tool_description': \"Execute a system command (restricted to safe commands only)\\n\\nArgs:\\n    command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\\n\", 'keyword': 'command'}"
+                    "text": "{'tool_name': 'execute_command', 'risk_type': 'dangerous_tool', 'severity': 'MEDIUM', 'rationale': \"Tool contains potentially dangerous keyword 'command' indicating system-level access\", 'tool_description': \"Execute a system command (restricted to safe commands only)\\n            \\n            Args:\\n                command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\\n            \", 'keyword': 'command'}"
                   }
                 }
               }
@@ -1117,7 +1118,7 @@
                 "region": {
                   "startLine": 1,
                   "snippet": {
-                    "text": "{'tool_name': 'execute_command', 'risk_type': 'dangerous_tool', 'severity': 'MEDIUM', 'rationale': \"Tool contains potentially dangerous keyword 'system' indicating system-level access\", 'tool_description': \"Execute a system command (restricted to safe commands only)\\n\\nArgs:\\n    command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\\n\", 'keyword': 'system'}"
+                    "text": "{'tool_name': 'execute_command', 'risk_type': 'dangerous_tool', 'severity': 'MEDIUM', 'rationale': \"Tool contains potentially dangerous keyword 'system' indicating system-level access\", 'tool_description': \"Execute a system command (restricted to safe commands only)\\n            \\n            Args:\\n                command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\\n            \", 'keyword': 'system'}"
                   }
                 }
               }
@@ -1213,7 +1214,7 @@
                 "region": {
                   "startLine": 1,
                   "snippet": {
-                    "text": "{'tool_name': 'execute_command', 'risk_type': 'dangerous_tool', 'severity': 'MEDIUM', 'rationale': \"Tool contains potentially dangerous keyword 'exec' indicating system-level access\", 'tool_description': \"Execute a system command (restricted to safe commands only)\\n\\nArgs:\\n    command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\\n\", 'keyword': 'exec'}"
+                    "text": "{'tool_name': 'execute_command', 'risk_type': 'dangerous_tool', 'severity': 'MEDIUM', 'rationale': \"Tool contains potentially dangerous keyword 'exec' indicating system-level access\", 'tool_description': \"Execute a system command (restricted to safe commands only)\\n            \\n            Args:\\n                command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\\n            \", 'keyword': 'exec'}"
                   }
                 }
               }
@@ -1309,7 +1310,7 @@
                 "region": {
                   "startLine": 1,
                   "snippet": {
-                    "text": "{'tool_name': 'read_file', 'risk_type': 'dangerous_tool', 'severity': 'MEDIUM', 'rationale': \"Tool contains potentially dangerous keyword 'system' indicating system-level access\", 'tool_description': 'Read a file from the system (restricted to safe files only)\\n\\nArgs:\\n    filename: The file to read (only files in /tmp/safe/ allowed)\\n', 'keyword': 'system'}"
+                    "text": "{'tool_name': 'read_file', 'risk_type': 'dangerous_tool', 'severity': 'MEDIUM', 'rationale': \"Tool contains potentially dangerous keyword 'system' indicating system-level access\", 'tool_description': 'Read a file from the system (restricted to safe files only)\\n            \\n            Args:\\n                filename: The file to read (only files in /tmp/safe/ allowed)\\n            ', 'keyword': 'system'}"
                   }
                 }
               }
@@ -1445,9 +1446,9 @@
       ],
       "artifacts": [],
       "properties": {
-        "assessment_id": "d0767036-97f0-4281-935f-6c4df7349313",
+        "assessment_id": "fc342f17-49f2-4a9d-998b-ebb9118bda9b",
         "target_server": "Challenge 2 - Tool Poisoning",
-        "target_version": "1.16.0",
+        "target_version": "1.21.2",
         "transport": "sse",
         "exposure": "local"
       }

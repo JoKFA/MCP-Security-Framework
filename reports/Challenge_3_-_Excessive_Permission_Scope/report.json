@@ -1,21 +1,20 @@
 {
-  "assessment_id": "5a7d7cef-02a4-4bd5-b2b2-832289c5d95c",
-  "started_at": "2025-11-05T21:44:01.813711Z",
-  "completed_at": "2025-11-05T21:44:12.502508Z",
+  "assessment_id": "e50d94cf-c65c-4eb2-9326-3aebdf44f2f0",
+  "started_at": "2025-11-19T23:20:31.926841Z",
+  "completed_at": "2025-11-19T23:20:36.830666Z",
   "scope": {
     "target": "http://localhost:9003/sse",
     "transport": null,
     "mode": "aggressive",
     "allowed_prefixes": [
-      "internal://",
-      "file://",
       "/resources",
-      "/tools/"
+      "/tools",
+      "internal://"
     ],
     "blocked_paths": [],
     "rate_limit": {
-      "qps": 3.0,
-      "burst": 5,
+      "qps": 5.0,
+      "burst": 10,
       "backoff_ms": [
         200,
         400,
@@ -26,9 +25,9 @@
     "policy": {
       "dry_run": false,
       "redact_evidence": true,
-      "max_payload_kb": 256,
+      "max_payload_kb": 128,
       "fail_on_high": false,
-      "max_total_requests": 1000,
+      "max_total_requests": 600,
       "request_timeout_s": 30
     },
     "auth": {
@@ -49,12 +48,14 @@
       "store_evidence": true,
       "evidence_retention_days": 30
     },
-    "detectors": null,
+    "detectors": {
+      "include": []
+    },
     "metadata": {}
   },
   "profile": {
     "server_name": "Challenge 3 - Excessive Permission Scope",
-    "server_version": "1.16.0",
+    "server_version": "1.21.2",
     "protocol_version": "2025-06-18",
     "capabilities": {
       "resources": true,
@@ -68,7 +69,7 @@
     "auth_type": "none",
     "exposure": "local",
     "metadata": {},
-    "profiled_at": "2025-11-05T21:44:02.720945Z"
+    "profiled_at": "2025-11-19T23:20:32.491062Z"
   },
   "results": [
     {
@@ -101,7 +102,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:44:02.745392Z",
+      "timestamp": "2025-11-19T23:20:32.514995Z",
       "execution_time_ms": null
     },
     {
@@ -138,7 +139,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:44:02.753689Z",
+      "timestamp": "2025-11-19T23:20:32.609785Z",
       "execution_time_ms": null
     },
     {
@@ -175,7 +176,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:44:02.759158Z",
+      "timestamp": "2025-11-19T23:20:32.659497Z",
       "execution_time_ms": null
     },
     {
@@ -200,7 +201,7 @@
         "cvss": null
       },
       "remediation": "No issues found",
-      "timestamp": "2025-11-05T21:44:02.764494Z",
+      "timestamp": "2025-11-19T23:20:32.707882Z",
       "execution_time_ms": 0.0
     },
     {
@@ -230,7 +231,7 @@
             ],
             "reason": "2 high-risk capabilities combined; Unrestricted parameters (1) with high-risk capabilities"
           },
-          "timestamp": "2025-11-05T21:44:02.770621Z"
+          "timestamp": "2025-11-19T23:20:32.756242Z"
         }
       ],
       "proof_of_concepts": [
@@ -239,15 +240,15 @@
           "attack_type": "filesystem_access",
           "payload": {
             "action": "read",
-            "path": "C:\\Windows\\System32\\drivers\\etc\\hosts"
+            "path": "/etc/hosts"
           },
           "response": {
-            "preview": "# Copyright (c) 1993-2009 Microsoft Corp.\n\n#\n\n# This is a sample HOSTS file used by Microsoft TCP/IP for Windows.\n\n#\n\n# This file contains the mappings of IP addresses to host names. Each\n\n# entry should be kept on an individual line. The IP address should\n\n# be placed in the first column followed by the corresponding host name.\n\n# The IP address and the host name should be separated by at least o",
-            "path": "C:\\Windows\\System32\\drivers\\etc\\hosts"
+            "preview": "127.0.0.1\tlocalhost\n::1\tlocalhost ip6-localhost ip6-loopback\nfe00::\tip6-localnet\nff00::\tip6-mcastprefix\nff02::1\tip6-allnodes\nff02::2\tip6-allrouters\n172.17.0.3\t67a64296665e\n",
+            "path": "/etc/hosts"
           },
           "success": true,
-          "impact_demonstrated": "Tool 'file_manager' granted file access to 'C:\\Windows\\System32\\drivers\\etc\\hosts' without additional authorization.",
-          "timestamp": "2025-11-05T21:44:03.825525Z"
+          "impact_demonstrated": "Tool 'file_manager' granted file access to '/etc/hosts' without additional authorization.",
+          "timestamp": "2025-11-19T23:20:32.806396Z"
         }
       ],
       "evidence": {
@@ -290,13 +291,13 @@
             "attack_type": "filesystem_access",
             "payload": {
               "action": "read",
-              "path": "C:\\Windows\\System32\\drivers\\etc\\hosts"
+              "path": "/etc/hosts"
             },
             "response": {
-              "preview": "# Copyright (c) 1993-2009 Microsoft Corp.\n\n#\n\n# This is a sample HOSTS file used by Microsoft TCP/IP for Windows.\n\n#\n\n# This file contains the mappings of IP addresses to host names. Each\n\n# entry should be kept on an individual line. The IP address should\n\n# be placed in the first column followed by the corresponding host name.\n\n# The IP address and the host name should be separated by at least o",
-              "path": "C:\\Windows\\System32\\drivers\\etc\\hosts"
+              "preview": "127.0.0.1\tlocalhost\n::1\tlocalhost ip6-localhost ip6-loopback\nfe00::\tip6-localnet\nff00::\tip6-mcastprefix\nff02::1\tip6-allnodes\nff02::2\tip6-allrouters\n172.17.0.3\t67a64296665e\n",
+              "path": "/etc/hosts"
             },
-            "impact": "Tool 'file_manager' granted file access to 'C:\\Windows\\System32\\drivers\\etc\\hosts' without additional authorization."
+            "impact": "Tool 'file_manager' granted file access to '/etc/hosts' without additional authorization."
           }
         ],
         "mode": "aggressive"
@@ -318,7 +319,7 @@
         }
       },
       "remediation": "Apply principle of least privilege: (1) Restrict tool parameters to specific allowed values/paths, (2) Implement path validation and sanitization, (3) Split multi-capability tools into focused tools, (4) Add explicit access control checks, (5) Document and justify any high-risk capabilities.",
-      "timestamp": "2025-11-05T21:44:02.764546Z",
+      "timestamp": "2025-11-19T23:20:32.707930Z",
       "execution_time_ms": null
     },
     {
@@ -340,7 +341,7 @@
               "canary_trigger"
             ]
           },
-          "timestamp": "2025-11-05T21:44:05.282848Z"
+          "timestamp": "2025-11-19T23:20:33.008825Z"
         }
       ],
       "proof_of_concepts": [
@@ -360,7 +361,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'file_manager' executed canary instructions, confirming indirect injection impact.",
-          "timestamp": "2025-11-05T21:44:05.282867Z"
+          "timestamp": "2025-11-19T23:20:33.008844Z"
         }
       ],
       "evidence": {
@@ -399,7 +400,7 @@
         }
       },
       "remediation": "Prevent indirect injection: (1) Sanitize all external data before presenting to LLM, (2) Clearly mark untrusted content, (3) Use structured output formats (JSON) instead of freeform text, (4) Implement content filtering for injection patterns, (5) Validate data sources and implement allowlists.",
-      "timestamp": "2025-11-05T21:44:03.825676Z",
+      "timestamp": "2025-11-19T23:20:32.806687Z",
       "execution_time_ms": null
     },
     {
@@ -435,7 +436,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:44:05.283016Z",
+      "timestamp": "2025-11-19T23:20:33.009002Z",
       "execution_time_ms": null
     },
     {
@@ -459,7 +460,7 @@
             "mode": "aggressive",
             "score": 0.9
           },
-          "timestamp": "2025-11-05T21:44:06.130793Z"
+          "timestamp": "2025-11-19T23:20:33.155240Z"
         }
       ],
       "proof_of_concepts": [
@@ -493,7 +494,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'file_manager' exposes filesystem_delete, filesystem_write capabilities despite its declared purpose, enabling privilege abuse.",
-          "timestamp": "2025-11-05T21:44:06.130810Z"
+          "timestamp": "2025-11-19T23:20:33.155257Z"
         }
       ],
       "evidence": {
@@ -545,7 +546,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:44:06.125527Z",
+      "timestamp": "2025-11-19T23:20:33.106184Z",
       "execution_time_ms": null
     },
     {
@@ -579,7 +580,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:44:06.745046Z",
+      "timestamp": "2025-11-19T23:20:33.202579Z",
       "execution_time_ms": null
     },
     {
@@ -615,7 +616,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:44:06.745132Z",
+      "timestamp": "2025-11-19T23:20:33.202682Z",
       "execution_time_ms": null
     },
     {
@@ -634,10 +635,10 @@
             "risk_type": "dangerous_tool",
             "severity": "MEDIUM",
             "rationale": "Tool contains potentially dangerous keyword 'delete' indicating system-level access",
-            "tool_description": "File manager tool that can read, write, and delete files\n\nArgs:\n    action: The action to perform (read, write, delete)\n    path: The file path to operate on\n",
+            "tool_description": "File manager tool that can read, write, and delete files\n            \n            Args:\n                action: The action to perform (read, write, delete)\n                path: The file path to operate on\n            ",
             "keyword": "delete"
           },
-          "timestamp": "2025-11-05T21:44:10.605669Z"
+          "timestamp": "2025-11-19T23:20:35.714876Z"
         }
       ],
       "proof_of_concepts": [
@@ -654,7 +655,7 @@
           },
           "success": true,
           "impact_demonstrated": "Successfully called dangerous tool 'file_manager' (contains keyword 'delete')",
-          "timestamp": "2025-11-05T21:44:10.823239Z"
+          "timestamp": "2025-11-19T23:20:35.963245Z"
         }
       ],
       "evidence": {
@@ -663,7 +664,7 @@
           {
             "name": "file_manager",
             "keyword": "delete",
-            "description": "File manager tool that can read, write, and delete files\n\nArgs:\n    action: The action to perform (read, write, delete)\n    path: The file path to operate on\n"
+            "description": "File manager tool that can read, write, and delete files\n            \n            Args:\n                action: The action to perform (read, write, delete)\n                path: The file path to operate on\n            "
           }
         ],
         "tools_without_validation": [],
@@ -687,7 +688,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:44:10.399759Z",
+      "timestamp": "2025-11-19T23:20:35.665977Z",
       "execution_time_ms": null
     },
     {
@@ -724,7 +725,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:44:10.823415Z",
+      "timestamp": "2025-11-19T23:20:35.963398Z",
       "execution_time_ms": null
     },
     {
@@ -759,7 +760,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:44:11.452701Z",
+      "timestamp": "2025-11-19T23:20:36.270704Z",
       "execution_time_ms": null
     },
     {
@@ -780,7 +781,7 @@
             "vulnerability": "unauthenticated_access",
             "severity": "CRITICAL"
           },
-          "timestamp": "2025-11-05T21:44:12.502409Z"
+          "timestamp": "2025-11-19T23:20:36.830566Z"
         }
       ],
       "proof_of_concepts": [
@@ -805,7 +806,7 @@
           },
           "success": true,
           "impact_demonstrated": "Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.",
-          "timestamp": "2025-11-05T21:44:12.502423Z"
+          "timestamp": "2025-11-19T23:20:36.830581Z"
         }
       ],
       "evidence": {
@@ -838,7 +839,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:44:12.067478Z",
+      "timestamp": "2025-11-19T23:20:36.519434Z",
       "execution_time_ms": null
     }
   ],
@@ -849,6 +850,6 @@
     "unknown": 0,
     "not_applicable": 0
   },
-  "audit_log_path": "captures\\audit_5a7d7cef-02a4-4bd5-b2b2-832289c5d95c.jsonl",
+  "audit_log_path": "captures\\audit_e50d94cf-c65c-4eb2-9326-3aebdf44f2f0.jsonl",
   "framework_version": "0.2.0"
 }

@@ -1,0 +1,315 @@
+================================================================================
+  MCP SECURITY ASSESSMENT REPORT
+================================================================================
+
+TARGET INFORMATION
+────────────────────────────────────────────────────────────────────────────────
+Server:       calculator-sse-server
+Version:      1.0.0
+Transport:    sse
+Exposure:     LOCAL
+Assessment:   5d32c669-52ed-4296-8cb7-cb5e12053952
+Duration:     38.25s
+
+SUMMARY
+────────────────────────────────────────────────────────────────────────────────
+Detectors Run:      14
+  ✗ Vulnerabilities:  5
+  ✓ Passed:          9
+  ? Unknown:         0
+  - Not Applicable:   0
+
+VULNERABILITIES DETECTED
+────────────────────────────────────────────────────────────────────────────────
+
+
+================================================================================
+FINDING: Code Execution Detector
+================================================================================
+
+Detector ID:     MCP-2024-CEX-001
+Severity:        CRITICAL
+Confidence:      90%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-94
+  OWASP LLM:     LLM07
+  OWASP API:     API8:2023
+  CVSS Score:    9.8/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H
+
+Signals Detected: 1
+  1. [schema_overpermissive]
+     True
+     tool_name: calculate
+     risk_score: 0.8
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: CODE_EXECUTION
+  Target:        calculate
+  Success:       YES
+  Timestamp:     2025-11-20 07:59:47 UTC
+
+  Impact:
+    Tool 'calculate' executes arbitrary code via parameter(s): . No sandboxing detected. Risk score: 80%. Attacker can execute malicious code, access files, exfiltrate data, or compromise the system.
+
+  Attack Payload:
+    tool_name: calculate
+    dangerous_params: []
+    test_code: 1 + 1
+
+  Server Response:
+    risk_score: 0.8
+    has_sandboxing: False
+    impact: Arbitrary code execution without restrictions
+
+--------------------------------------------------------------------------------
+
+REMEDIATION:
+  - Secure code execution: (1) Implement strict sandboxing (containers, VMs), (2) Whitelist allowed operations/modules, (3) Set resource limits (CPU, memory, time), (4) Disable dangerous functions (file I/O, network, exec), (5) Validate and sanitize all code inputs, (6) Log all executions for audit.
+
+
+================================================================================
+FINDING: Excessive Permissions Detector
+================================================================================
+
+Detector ID:     MCP-2024-EP-001
+Severity:        CRITICAL
+Confidence:      65%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-269
+  OWASP LLM:     LLM08
+  OWASP API:     API6:2023
+  CVSS Score:    9.1/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N
+
+Signals Detected: 1
+  1. [schema_overpermissive]
+     True
+     tool_name: batch_calculate
+     risk_score: 0.6
+     capabilities: ['network_access']
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: EXCESSIVE_PERMISSIONS
+  Target:        batch_calculate
+  Success:       YES
+  Timestamp:     2025-11-20 07:59:47 UTC
+
+  Impact:
+    Tool 'batch_calculate' has excessive permissions (risk: 60%). Capabilities: network_access. Unrestricted params: 0. Potential for: external network access.
+
+  Attack Payload:
+    tool_name: batch_calculate
+    detection_method: capability_analysis
+
+  Server Response:
+    risk_score: 0.6
+    capabilities: ['network_access']
+    unrestricted_params: []
+    reason: N/A
+
+--------------------------------------------------------------------------------
+
+REMEDIATION:
+  - Apply principle of least privilege: (1) Restrict tool parameters to specific allowed values/paths, (2) Implement path validation and sanitization, (3) Split multi-capability tools into focused tools, (4) Add explicit access control checks, (5) Document and justify any high-risk capabilities.
+
+
+================================================================================
+FINDING: Tool Behavior Monitor (Rug Pull Detector)
+================================================================================
+
+Detector ID:     MCP-2024-RUG-001
+Severity:        HIGH
+Confidence:      90%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-494
+  OWASP LLM:     LLM03
+  OWASP API:     API8:2023
+  CVSS Score:    7.8/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N
+
+Signals Detected: 3
+  1. [schema_overpermissive]
+     True
+     tool_name: solve_math_problem
+     iteration: 2
+     change_type: response_modified
+  2. [schema_overpermissive]
+     True
+     tool_name: explain_formula
+     iteration: 2
+     change_type: response_modified
+  3. [schema_overpermissive]
+     True
+     tool_name: calculator_assistant
+     iteration: 2
+     change_type: response_modified
+
+PROOF OF CONCEPT: 3 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: RUG_PULL_RESPONSE
+  Target:        solve_math_problem
+  Success:       YES
+  Timestamp:     2025-11-20 08:00:21 UTC
+
+  Impact:
+    Tool 'solve_math_problem' returned different content for identical inputs after 2 invocation(s), indicating dynamic behaviour.
+
+  Attack Payload:
+    tool_name: solve_math_problem
+    iteration: 2
+
+  Server Response:
+    baseline_response: {
+  "problem": "test",
+  "solution": "Please provide a more specific mathematical expression or equation.",
+  "steps": [
+    "This problem requires advanced mathematical analysis.",
+    "Breaking down
+    modified_response: {
+  "problem": "test",
+  "solution": "Please provide a more specific mathematical expression or equation.",
+  "steps": [
+    "This problem requires advanced mathematical analysis.",
+    "Breaking down
+
+PoC #2: RUG_PULL_RESPONSE
+  Target:        explain_formula
+  Success:       YES
+  Timestamp:     2025-11-20 08:00:21 UTC
+
+  Impact:
+    Tool 'explain_formula' returned different content for identical inputs after 2 invocation(s), indicating dynamic behaviour.
+
+  Attack Payload:
+    tool_name: explain_formula
+    iteration: 2
+
+  Server Response:
+    baseline_response: {
+  "formula": "test",
+  "explanation": {
+    "name": "Custom Formula",
+    "description": "This appears to be a mathematical relationship between variables",
+    "analysis": "The formula \"test\" con
+    modified_response: {
+  "formula": "test",
+  "explanation": {
+    "name": "Custom Formula",
+    "description": "This appears to be a mathematical relationship between variables",
+    "analysis": "The formula \"test\" con
+
+PoC #3: RUG_PULL_RESPONSE
+  Target:        calculator_assistant
+  Success:       YES
+  Timestamp:     2025-11-20 08:00:21 UTC
+
+  Impact:
+    Tool 'calculator_assistant' returned different content for identical inputs after 2 invocation(s), indicating dynamic behaviour.
+
+  Attack Payload:
+    tool_name: calculator_assistant
+    iteration: 2
+
+  Server Response:
+    baseline_response: {
+  "query": "test",
+  "timestamp": "2025-11-20T07:59:58.044Z",
+  "type": "general",
+  "message": "I'm ready to help with mathematical calculations. Try asking me to calculate something or type \"help
+    modified_response: {
+  "query": "test",
+  "timestamp": "2025-11-20T08:00:04.812Z",
+  "type": "general",
+  "message": "I'm ready to help with mathematical calculations. Try asking me to calculate something or type \"help
+
+--------------------------------------------------------------------------------
+
+REMEDIATION:
+  - Implement immutable tool definitions: (1) Lock tool descriptions after registration, (2) Use version control for tool changes, (3) Require re-approval for any modifications, (4) Implement integrity checks (hashing) to detect unauthorized changes, (5) Log all tool definition updates with audit trail.
+
+
+================================================================================
+FINDING: Tool Enumeration Analyzer
+================================================================================
+
+Detector ID:     MCP-2024-TE-001
+Severity:        MEDIUM
+Confidence:      90%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-250
+  OWASP API:     API4
+  CVSS Score:    6.5/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L
+
+Signals Detected: 1
+  1. [schema_overpermissive]
+     Tool contains potentially dangerous keyword 'eval' indicating system-level access
+     tool_name: advanced_calculate
+     risk_type: dangerous_tool
+     severity: MEDIUM
+
+
+================================================================================
+FINDING: Unauthenticated Access Detector
+================================================================================
+
+Detector ID:     MCP-2024-UA-001
+Severity:        CRITICAL
+Confidence:      95%
+Status:          ✗ PRESENT
+
+Standards Mapping:
+  CWE:           CWE-284
+  OWASP API:     API1
+  CVSS Score:    10.0/10
+  CVSS Vector:   CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+
+Signals Detected: 1
+  1. [auth_mismatch]
+     True
+     tools_accessible: True
+     resources_accessible: True
+     resources_supported: True
+
+PROOF OF CONCEPT: 1 exploit(s) demonstrated
+--------------------------------------------------------------------------------
+
+PoC #1: UNAUTHENTICATED_ACCESS_TEST
+  Target:        MCP Server
+  Success:       YES
+  Timestamp:     2025-11-20 08:00:24 UTC
+
+  Impact:
+    Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.
+
+  Attack Payload:
+    operations: ['list_tools', 'list_resources']
+    authenticated: False
+
+  Server Response:
+    tools_count: 7
+    resources_count: 0
+    tool_samples: ['calculate', 'demo_progress', 'solve_math_problem', 'explain_formula', 'calculator_assistant']
+    resource_samples: []
+    vulnerable: True
+
+--------------------------------------------------------------------------------
+
+────────────────────────────────────────────────────────────────────────────────
+Report generated: 2025-11-20T00:00:25.331484
+Framework version: 0.2.0
+================================================================================

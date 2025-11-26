@@ -5,26 +5,30 @@
 {% block content %}
 <div class="page-header">
     <h2>Run Security Assessment</h2>
-    <p>Enter an MCP server target to run a security assessment</p>
+    <p>Enter any MCP source (npm/GitHub/local/URL) - AMSAW v2 auto-sandboxes and tests automatically</p>
 </div>
 
 <div class="assessment-form">
     <form id="assessmentForm">
         <div class="form-group">
-            <label for="target">MCP Server Target:</label>
-            <input 
-                type="text" 
-                id="target" 
-                name="target" 
-                placeholder="stdio://python/-m/wikipedia_mcp/--transport/stdio or http://localhost:9001/sse"
+            <label for="target">MCP Server Source:</label>
+            <input
+                type="text"
+                id="target"
+                name="target"
+                placeholder="@modelcontextprotocol/server-time or targets/vulnerable/dv-mcp/challenges/easy/challenge1"
                 required
                 class="form-control"
             >
             <small class="form-hint">
-                <strong>Examples:</strong><br>
-                • stdio://python/-m/wikipedia_mcp/--transport/stdio<br>
-                • stdio://npx/-y/@starwind-ui/mcp/--transport/stdio<br>
-                • http://localhost:9001/sse
+                <strong>AMSAW v2 Auto-Sandbox (Recommended):</strong><br>
+                • <strong>npm package:</strong> @modelcontextprotocol/server-time<br>
+                • <strong>GitHub repo:</strong> https://github.com/modelcontextprotocol/servers/tree/main/src/time<br>
+                • <strong>Local path:</strong> targets/vulnerable/dv-mcp/challenges/easy/challenge1<br>
+                <br>
+                <strong>Legacy URL Mode (Already Running Servers):</strong><br>
+                • http://localhost:9001/sse<br>
+                • stdio://python/-m/module/--transport/stdio
             </small>
         </div>
         

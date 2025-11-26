@@ -204,77 +204,120 @@ def run_assessment(target: str, mode: str, assessment_id: str):
     with LogCapture(assessment_id):
         try:
             with assessment_lock:
-                assessment_status[assessment_id]['message'] = 'Connecting to server...'
-                assessment_status[assessment_id]['progress'] = 10
+                assessment_status[assessment_id]['message'] = 'Starting assessment...'
+                assessment_status[assessment_id]['progress'] = 5
                 assessment_status[assessment_id]['logs'] = []
-            
+
+            # Import new pipeline and legacy components
+            from src.core.pipeline import AssessmentPipeline
+            from src.core.discovery import SourceDetectionError
             from src.core.runner import TestRunner
             from src.core.policy import ScopeConfig, RateLimitConfig, PolicyConfig
             from src.core.reporters.manager import ReportManager
-            
-            if target.startswith("stdio://"):
-                stdio_part = target[8:]
-                parts = stdio_part.split("/")
-                command = parts[0] if parts else "npx"
-                args = []
-                
-                i = 1
-                while i < len(parts):
-                    arg = parts[i]
-                    if arg.startswith("@") and i + 1 < len(parts):
-                        args.append(f"{arg}/{parts[i+1]}")
-                        i += 2
-                    else:
-                        if arg:
-                            args.append(arg)
-                        i += 1
-                
-                if args:
-                    target = f"stdio://{command}/{'/'.join(args)}"
-                else:
-                    target = f"stdio://{command}"
-            
-            scope = ScopeConfig(
-                target=target,
-                mode=mode,
-                allowed_prefixes=["internal://", "file://", "/resources", "/tools/"],
-                blocked_paths=[],
-                rate_limit=RateLimitConfig(qps=3, burst=5),
-                policy=PolicyConfig(
-                    dry_run=False,
-                    redact_evidence=True,
-                    max_payload_kb=256,
-                    max_total_requests=1000,
-                )
-            )
-            
-            with assessment_lock:
-                assessment_status[assessment_id]['message'] = 'Running detectors...'
-                assessment_status[assessment_id]['progress'] = 30
-            
+
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
-            
-            runner = TestRunner(scope)
-            result = loop.run_until_complete(runner.assess())
-            
-            with assessment_lock:
-                assessment_status[assessment_id]['message'] = 'Generating reports...'
-                assessment_status[assessment_id]['progress'] = 80
-            
-            server_name = result.profile.server_name.replace(" ", "_").replace("/", "_").replace("\\", "_")
-            report_manager = ReportManager(reports_dir=REPORTS_DIR)
-            bundle_dir = report_manager.generate_bundle(result, bundle_name=server_name)
-            report_id = bundle_dir.name
-            
+
+            result = None
+            report_id = None
+
+            # Try AMSAW v2 pipeline first (for npm/github/local sources)
+            try:
+                with assessment_lock:
+                    assessment_status[assessment_id]['message'] = 'Detecting source type...'
+                    assessment_status[assessment_id]['progress'] = 10
+
+                pipeline = AssessmentPipeline(interactive=False)
+
+                with assessment_lock:
+                    assessment_status[assessment_id]['message'] = 'Running AMSAW v2 pipeline...'
+                    assessment_status[assessment_id]['progress'] = 20
+
+                result = loop.run_until_complete(
+                    pipeline.run(
+                        source=target,
+                        profile=mode,
+                        detectors=None
+                    )
+                )
+
+                with assessment_lock:
+                    assessment_status[assessment_id]['message'] = 'Generating reports...'
+                    assessment_status[assessment_id]['progress'] = 90
+
+                # Generate reports
+                report_manager = ReportManager(reports_dir=REPORTS_DIR)
+                bundle_dir = report_manager.generate_bundle(result, bundle_name=None)
+                report_id = bundle_dir.name
+
+            except SourceDetectionError:
+                # Fall back to legacy URL mode for remote URLs
+                with assessment_lock:
+                    assessment_status[assessment_id]['message'] = 'Using legacy URL mode...'
+                    assessment_status[assessment_id]['progress'] = 15
+
+                # Legacy URL handling (for http://, https://, stdio://)
+                if target.startswith("stdio://"):
+                    stdio_part = target[8:]
+                    parts = stdio_part.split("/")
+                    command = parts[0] if parts else "npx"
+                    args = []
+
+                    i = 1
+                    while i < len(parts):
+                        arg = parts[i]
+                        if arg.startswith("@") and i + 1 < len(parts):
+                            args.append(f"{arg}/{parts[i+1]}")
+                            i += 2
+                        else:
+                            if arg:
+                                args.append(arg)
+                            i += 1
+
+                    if args:
+                        target = f"stdio://{command}/{'/'.join(args)}"
+                    else:
+                        target = f"stdio://{command}"
+
+                scope = ScopeConfig(
+                    target=target,
+                    mode=mode,
+                    allowed_prefixes=["internal://", "file://", "/resources", "/tools/"],
+                    blocked_paths=[],
+                    rate_limit=RateLimitConfig(qps=3, burst=5),
+                    policy=PolicyConfig(
+                        dry_run=False,
+                        redact_evidence=True,
+                        max_payload_kb=256,
+                        max_total_requests=1000,
+                    )
+                )
+
+                with assessment_lock:
+                    assessment_status[assessment_id]['message'] = 'Running detectors...'
+                    assessment_status[assessment_id]['progress'] = 40
+
+                runner = TestRunner(scope)
+                result = loop.run_until_complete(runner.assess())
+
+                with assessment_lock:
+                    assessment_status[assessment_id]['message'] = 'Generating reports...'
+                    assessment_status[assessment_id]['progress'] = 90
+
+                server_name = result.profile.server_name.replace(" ", "_").replace("/", "_").replace("\\", "_")
+                report_manager = ReportManager(reports_dir=REPORTS_DIR)
+                bundle_dir = report_manager.generate_bundle(result, bundle_name=server_name)
+                report_id = bundle_dir.name
+
+            # Success
             with assessment_lock:
                 assessment_status[assessment_id]['status'] = 'completed'
                 assessment_status[assessment_id]['message'] = 'Assessment completed successfully'
                 assessment_status[assessment_id]['progress'] = 100
                 assessment_status[assessment_id]['report_id'] = report_id
-            
+
             loop.close()
-            
+
         except Exception as e:
             with assessment_lock:
                 assessment_status[assessment_id]['status'] = 'error'

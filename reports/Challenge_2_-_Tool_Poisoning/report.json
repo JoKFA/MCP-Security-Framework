@@ -1,21 +1,20 @@
 {
-  "assessment_id": "d0767036-97f0-4281-935f-6c4df7349313",
-  "started_at": "2025-11-05T21:43:42.699206Z",
-  "completed_at": "2025-11-05T21:43:58.671409Z",
+  "assessment_id": "fc342f17-49f2-4a9d-998b-ebb9118bda9b",
+  "started_at": "2025-11-19T23:19:54.681570Z",
+  "completed_at": "2025-11-19T23:20:03.116182Z",
   "scope": {
     "target": "http://localhost:9002/sse",
     "transport": null,
     "mode": "aggressive",
     "allowed_prefixes": [
-      "internal://",
-      "file://",
       "/resources",
-      "/tools/"
+      "/tools",
+      "internal://"
     ],
     "blocked_paths": [],
     "rate_limit": {
-      "qps": 3.0,
-      "burst": 5,
+      "qps": 5.0,
+      "burst": 10,
       "backoff_ms": [
         200,
         400,
@@ -25,10 +24,10 @@
     },
     "policy": {
       "dry_run": false,
-      "redact_evidence": true,
-      "max_payload_kb": 256,
+      "redact_evidence": false,
+      "max_payload_kb": 128,
       "fail_on_high": false,
-      "max_total_requests": 1000,
+      "max_total_requests": 600,
       "request_timeout_s": 30
     },
     "auth": {
@@ -49,12 +48,14 @@
       "store_evidence": true,
       "evidence_retention_days": 30
     },
-    "detectors": null,
+    "detectors": {
+      "include": []
+    },
     "metadata": {}
   },
   "profile": {
     "server_name": "Challenge 2 - Tool Poisoning",
-    "server_version": "1.16.0",
+    "server_version": "1.21.2",
     "protocol_version": "2025-06-18",
     "capabilities": {
       "resources": true,
@@ -68,7 +69,7 @@
     "auth_type": "none",
     "exposure": "local",
     "metadata": {},
-    "profiled_at": "2025-11-05T21:43:43.594508Z"
+    "profiled_at": "2025-11-19T23:19:55.101764Z"
   },
   "results": [
     {
@@ -101,7 +102,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:43:43.620842Z",
+      "timestamp": "2025-11-19T23:19:55.124723Z",
       "execution_time_ms": null
     },
     {
@@ -123,7 +124,7 @@
             ],
             "has_sandbox": true
           },
-          "timestamp": "2025-11-05T21:43:43.634233Z"
+          "timestamp": "2025-11-19T23:19:55.268977Z"
         }
       ],
       "proof_of_concepts": [
@@ -144,7 +145,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'execute_command' executes arbitrary code via parameter(s): command. Limited sandboxing. Risk score: 70%. Attacker can execute malicious code, access files, exfiltrate data, or compromise the system.",
-          "timestamp": "2025-11-05T21:43:43.641424Z"
+          "timestamp": "2025-11-19T23:19:55.319461Z"
         }
       ],
       "evidence": {
@@ -181,7 +182,7 @@
         }
       },
       "remediation": "Secure code execution: (1) Implement strict sandboxing (containers, VMs), (2) Whitelist allowed operations/modules, (3) Set resource limits (CPU, memory, time), (4) Disable dangerous functions (file I/O, network, exec), (5) Validate and sanitize all code inputs, (6) Log all executions for audit.",
-      "timestamp": "2025-11-05T21:43:43.628952Z",
+      "timestamp": "2025-11-19T23:19:55.219226Z",
       "execution_time_ms": null
     },
     {
@@ -204,7 +205,7 @@
             "has_validation": false,
             "mode": "aggressive"
           },
-          "timestamp": "2025-11-05T21:43:43.647015Z"
+          "timestamp": "2025-11-19T23:19:55.368924Z"
         }
       ],
       "proof_of_concepts": [
@@ -222,7 +223,7 @@
           },
           "success": true,
           "impact_demonstrated": "Safe payload echoed canary token via tool 'execute_command', confirming command injection through parameter 'command'.",
-          "timestamp": "2025-11-05T21:43:44.266384Z"
+          "timestamp": "2025-11-19T23:19:55.466085Z"
         }
       ],
       "evidence": {
@@ -285,7 +286,7 @@
         }
       },
       "remediation": "Prevent command injection: (1) Never pass user input directly to system commands, (2) Use parameterized APIs instead of shell execution, (3) Whitelist allowed inputs, (4) Sanitize input (remove ;|&`$() characters), (5) Use least privilege for execution, (6) Avoid shell interpreters (use exec() family directly).",
-      "timestamp": "2025-11-05T21:43:43.641575Z",
+      "timestamp": "2025-11-19T23:19:55.319621Z",
       "execution_time_ms": null
     },
     {
@@ -310,7 +311,7 @@
         "cvss": null
       },
       "remediation": "No issues found",
-      "timestamp": "2025-11-05T21:43:44.266564Z",
+      "timestamp": "2025-11-19T23:19:55.466278Z",
       "execution_time_ms": 0.0
     },
     {
@@ -340,7 +341,7 @@
             ],
             "reason": "2 high-risk capabilities combined; Unrestricted parameters (1) with high-risk capabilities"
           },
-          "timestamp": "2025-11-05T21:43:44.485537Z"
+          "timestamp": "2025-11-19T23:19:55.514037Z"
         },
         {
           "type": "schema_overpermissive",
@@ -361,7 +362,7 @@
             ],
             "reason": "2 high-risk capabilities combined; Unrestricted parameters (1) with high-risk capabilities"
           },
-          "timestamp": "2025-11-05T21:43:44.485748Z"
+          "timestamp": "2025-11-19T23:19:55.514309Z"
         }
       ],
       "proof_of_concepts": [
@@ -385,7 +386,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'execute_command' has excessive permissions (risk: 100%). Capabilities: code_execution, system_commands. Unrestricted params: 1. Potential for: arbitrary code execution, system command execution.",
-          "timestamp": "2025-11-05T21:43:45.955467Z"
+          "timestamp": "2025-11-19T23:19:55.710035Z"
         },
         {
           "target": "read_file",
@@ -407,7 +408,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'read_file' has excessive permissions (risk: 100%). Capabilities: filesystem_access, system_commands. Unrestricted params: 1. Potential for: system command execution, unrestricted file system access.",
-          "timestamp": "2025-11-05T21:43:45.955481Z"
+          "timestamp": "2025-11-19T23:19:55.710051Z"
         }
       ],
       "evidence": {
@@ -489,7 +490,7 @@
         }
       },
       "remediation": "Apply principle of least privilege: (1) Restrict tool parameters to specific allowed values/paths, (2) Implement path validation and sanitization, (3) Split multi-capability tools into focused tools, (4) Add explicit access control checks, (5) Document and justify any high-risk capabilities.",
-      "timestamp": "2025-11-05T21:43:44.266611Z",
+      "timestamp": "2025-11-19T23:19:55.466329Z",
       "execution_time_ms": null
     },
     {
@@ -511,7 +512,7 @@
               "canary_trigger"
             ]
           },
-          "timestamp": "2025-11-05T21:43:47.012226Z"
+          "timestamp": "2025-11-19T23:19:56.322492Z"
         }
       ],
       "proof_of_concepts": [
@@ -530,7 +531,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'read_file' executed canary instructions, confirming indirect injection impact.",
-          "timestamp": "2025-11-05T21:43:47.012243Z"
+          "timestamp": "2025-11-19T23:19:56.322513Z"
         }
       ],
       "evidence": {
@@ -568,7 +569,7 @@
         }
       },
       "remediation": "Prevent indirect injection: (1) Sanitize all external data before presenting to LLM, (2) Clearly mark untrusted content, (3) Use structured output formats (JSON) instead of freeform text, (4) Implement content filtering for injection patterns, (5) Validate data sources and implement allowlists.",
-      "timestamp": "2025-11-05T21:43:45.955646Z",
+      "timestamp": "2025-11-19T23:19:55.710235Z",
       "execution_time_ms": null
     },
     {
@@ -604,7 +605,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:43:47.012396Z",
+      "timestamp": "2025-11-19T23:19:56.322708Z",
       "execution_time_ms": null
     },
     {
@@ -627,7 +628,7 @@
             "mode": "aggressive",
             "score": 0.45
           },
-          "timestamp": "2025-11-05T21:43:48.484553Z"
+          "timestamp": "2025-11-19T23:19:57.161357Z"
         }
       ],
       "proof_of_concepts": [
@@ -657,7 +658,7 @@
           },
           "success": true,
           "impact_demonstrated": "Tool 'read_file' exposes command_execution capabilities despite its declared purpose, enabling privilege abuse.",
-          "timestamp": "2025-11-05T21:43:48.484573Z"
+          "timestamp": "2025-11-19T23:19:57.161379Z"
         }
       ],
       "evidence": {
@@ -714,7 +715,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:43:48.268822Z",
+      "timestamp": "2025-11-19T23:19:56.898368Z",
       "execution_time_ms": null
     },
     {
@@ -748,7 +749,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:43:48.700089Z",
+      "timestamp": "2025-11-19T23:19:57.207823Z",
       "execution_time_ms": null
     },
     {
@@ -784,7 +785,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:43:48.700177Z",
+      "timestamp": "2025-11-19T23:19:57.207907Z",
       "execution_time_ms": null
     },
     {
@@ -803,10 +804,10 @@
             "risk_type": "dangerous_tool",
             "severity": "MEDIUM",
             "rationale": "Tool contains potentially dangerous keyword 'execute' indicating system-level access",
-            "tool_description": "Execute a system command (restricted to safe commands only)\n\nArgs:\n    command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\n",
+            "tool_description": "Execute a system command (restricted to safe commands only)\n            \n            Args:\n                command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\n            ",
             "keyword": "execute"
           },
-          "timestamp": "2025-11-05T21:43:56.153394Z"
+          "timestamp": "2025-11-19T23:20:01.708353Z"
         },
         {
           "type": "schema_overpermissive",
@@ -816,10 +817,10 @@
             "risk_type": "dangerous_tool",
             "severity": "MEDIUM",
             "rationale": "Tool contains potentially dangerous keyword 'command' indicating system-level access",
-            "tool_description": "Execute a system command (restricted to safe commands only)\n\nArgs:\n    command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\n",
+            "tool_description": "Execute a system command (restricted to safe commands only)\n            \n            Args:\n                command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\n            ",
             "keyword": "command"
           },
-          "timestamp": "2025-11-05T21:43:56.153406Z"
+          "timestamp": "2025-11-19T23:20:01.708366Z"
         },
         {
           "type": "schema_overpermissive",
@@ -829,10 +830,10 @@
             "risk_type": "dangerous_tool",
             "severity": "MEDIUM",
             "rationale": "Tool contains potentially dangerous keyword 'system' indicating system-level access",
-            "tool_description": "Execute a system command (restricted to safe commands only)\n\nArgs:\n    command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\n",
+            "tool_description": "Execute a system command (restricted to safe commands only)\n            \n            Args:\n                command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\n            ",
             "keyword": "system"
           },
-          "timestamp": "2025-11-05T21:43:56.153412Z"
+          "timestamp": "2025-11-19T23:20:01.708372Z"
         },
         {
           "type": "schema_overpermissive",
@@ -842,10 +843,10 @@
             "risk_type": "dangerous_tool",
             "severity": "MEDIUM",
             "rationale": "Tool contains potentially dangerous keyword 'exec' indicating system-level access",
-            "tool_description": "Execute a system command (restricted to safe commands only)\n\nArgs:\n    command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\n",
+            "tool_description": "Execute a system command (restricted to safe commands only)\n            \n            Args:\n                command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\n            ",
             "keyword": "exec"
           },
-          "timestamp": "2025-11-05T21:43:56.153416Z"
+          "timestamp": "2025-11-19T23:20:01.708376Z"
         },
         {
           "type": "schema_overpermissive",
@@ -855,10 +856,10 @@
             "risk_type": "dangerous_tool",
             "severity": "MEDIUM",
             "rationale": "Tool contains potentially dangerous keyword 'system' indicating system-level access",
-            "tool_description": "Read a file from the system (restricted to safe files only)\n\nArgs:\n    filename: The file to read (only files in /tmp/safe/ allowed)\n",
+            "tool_description": "Read a file from the system (restricted to safe files only)\n            \n            Args:\n                filename: The file to read (only files in /tmp/safe/ allowed)\n            ",
             "keyword": "system"
           },
-          "timestamp": "2025-11-05T21:43:56.153429Z"
+          "timestamp": "2025-11-19T23:20:01.708388Z"
         }
       ],
       "proof_of_concepts": [
@@ -875,7 +876,7 @@
           },
           "success": true,
           "impact_demonstrated": "Successfully called dangerous tool 'execute_command' (contains keyword 'execute')",
-          "timestamp": "2025-11-05T21:43:56.369632Z"
+          "timestamp": "2025-11-19T23:20:01.972132Z"
         },
         {
           "target": "execute_command",
@@ -890,7 +891,7 @@
           },
           "success": true,
           "impact_demonstrated": "Successfully called dangerous tool 'execute_command' (contains keyword 'command')",
-          "timestamp": "2025-11-05T21:43:56.994215Z"
+          "timestamp": "2025-11-19T23:20:02.020318Z"
         }
       ],
       "evidence": {
@@ -899,27 +900,27 @@
           {
             "name": "execute_command",
             "keyword": "execute",
-            "description": "Execute a system command (restricted to safe commands only)\n\nArgs:\n    command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\n"
+            "description": "Execute a system command (restricted to safe commands only)\n            \n            Args:\n                command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\n            "
           },
           {
             "name": "execute_command",
             "keyword": "command",
-            "description": "Execute a system command (restricted to safe commands only)\n\nArgs:\n    command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\n"
+            "description": "Execute a system command (restricted to safe commands only)\n            \n            Args:\n                command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\n            "
           },
           {
             "name": "execute_command",
             "keyword": "system",
-            "description": "Execute a system command (restricted to safe commands only)\n\nArgs:\n    command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\n"
+            "description": "Execute a system command (restricted to safe commands only)\n            \n            Args:\n                command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\n            "
           },
           {
             "name": "execute_command",
             "keyword": "exec",
-            "description": "Execute a system command (restricted to safe commands only)\n\nArgs:\n    command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\n"
+            "description": "Execute a system command (restricted to safe commands only)\n            \n            Args:\n                command: The command to execute (only 'ls', 'pwd', 'whoami', 'date' allowed)\n            "
           },
           {
             "name": "read_file",
             "keyword": "system",
-            "description": "Read a file from the system (restricted to safe files only)\n\nArgs:\n    filename: The file to read (only files in /tmp/safe/ allowed)\n"
+            "description": "Read a file from the system (restricted to safe files only)\n            \n            Args:\n                filename: The file to read (only files in /tmp/safe/ allowed)\n            "
           }
         ],
         "tools_without_validation": [],
@@ -943,7 +944,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:43:55.946218Z",
+      "timestamp": "2025-11-19T23:20:01.659117Z",
       "execution_time_ms": null
     },
     {
@@ -980,7 +981,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:43:56.994366Z",
+      "timestamp": "2025-11-19T23:20:02.020477Z",
       "execution_time_ms": null
     },
     {
@@ -1017,7 +1018,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:43:57.614271Z",
+      "timestamp": "2025-11-19T23:20:02.543806Z",
       "execution_time_ms": null
     },
     {
@@ -1038,7 +1039,7 @@
             "vulnerability": "unauthenticated_access",
             "severity": "CRITICAL"
           },
-          "timestamp": "2025-11-05T21:43:58.671304Z"
+          "timestamp": "2025-11-19T23:20:03.116075Z"
         }
       ],
       "proof_of_concepts": [
@@ -1064,7 +1065,7 @@
           },
           "success": true,
           "impact_demonstrated": "Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.",
-          "timestamp": "2025-11-05T21:43:58.671319Z"
+          "timestamp": "2025-11-19T23:20:03.116089Z"
         }
       ],
       "evidence": {
@@ -1098,7 +1099,7 @@
         }
       },
       "remediation": null,
-      "timestamp": "2025-11-05T21:43:57.833205Z",
+      "timestamp": "2025-11-19T23:20:02.592996Z",
       "execution_time_ms": null
     }
   ],
@@ -1109,6 +1110,6 @@
     "unknown": 0,
     "not_applicable": 0
   },
-  "audit_log_path": "captures\\audit_d0767036-97f0-4281-935f-6c4df7349313.jsonl",
+  "audit_log_path": "captures\\audit_fc342f17-49f2-4a9d-998b-ebb9118bda9b.jsonl",
   "framework_version": "0.2.0"
 }

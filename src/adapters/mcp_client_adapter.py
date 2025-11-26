@@ -10,6 +10,7 @@ import asyncio
 from typing import Optional, Dict, Any, List
 from datetime import datetime, timezone
 from contextlib import asynccontextmanager
+import httpx
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
@@ -98,7 +99,10 @@ class McpClientAdapter:
                 if not url:
                     raise ValueError("SSE transport requires 'url' parameter")
 
-                client_cm = sse_client(url)
+                # Disable read timeout for SSE (infinite stream)
+                timeout_val = 10.0
+                sse_read_timeout = None  # no read timeout
+                client_cm = sse_client(url, timeout=timeout_val, sse_read_timeout=sse_read_timeout)
 
             elif self.transport == "stdio":
                 command = self.transport_config.get("command")

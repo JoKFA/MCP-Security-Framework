@@ -114,6 +114,16 @@ class TestRunner:
             self.completed_at = datetime.now(timezone.utc)
             raise TestRunnerError(f"Assessment failed: {e}") from e
 
+    async def run(
+        self,
+        adapter: Optional[SafeAdapter] = None,
+        detector_ids: Optional[List[str]] = None,
+    ) -> AssessmentResult:
+        """
+        Backwards-compatible alias for assess().
+        """
+        return await self.assess(adapter=adapter, detector_ids=detector_ids)
+
     async def _create_adapter(self) -> SafeAdapter:
         """Create SafeAdapter from scope configuration."""
         # Parse target and create base adapter

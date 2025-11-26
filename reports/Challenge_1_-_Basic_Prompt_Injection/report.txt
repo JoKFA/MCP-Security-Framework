@@ -5,11 +5,11 @@
 TARGET INFORMATION
 ────────────────────────────────────────────────────────────────────────────────
 Server:       Challenge 1 - Basic Prompt Injection
-Version:      1.16.0
+Version:      1.21.2
 Transport:    sse
 Exposure:     LOCAL
-Assessment:   92d105fc-3de4-4af8-a353-f5a32259f087
-Duration:     10.47s
+Assessment:   96a2e7a2-635b-4bcc-b59b-59b7a965fc13
+Duration:     5.29s
 
 SUMMARY
 ────────────────────────────────────────────────────────────────────────────────
@@ -52,10 +52,10 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: CREDENTIAL_EXPOSURE
   Target:        internal://credentials
   Success:       YES
-  Timestamp:     2025-11-05 21:43:29 UTC
+  Timestamp:     2025-11-19 22:38:30 UTC
 
   Impact:
-    Retrieved 4 secrets (passwords, api_keys, connection_strings) from internal://credentials. Samples: passwords=[super_...d123, sk-a1b...i9j0]; api_keys=[sk-a1b...i9j0]; connection_strings=[dbuser...tion]
+    Retrieved 4 secrets (passwords, api_keys, connection_strings) from internal://credentials. Samples: passwords=[sk-a1b...i9j0, super_...d123]; api_keys=[sk-a1b...i9j0]; connection_strings=[dbuser...tion]
 
   Attack Payload:
     method: read_resource
@@ -66,8 +66,8 @@ PoC #1: CREDENTIAL_EXPOSURE
     total_secrets: 4
     Leaked Secrets:
       passwords:
-        - super_...d123
         - sk-a1b...i9j0
+        - super_...d123
       api_keys:
         - sk-a1b...i9j0
       connection_strings:
@@ -105,7 +105,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: INDIRECT_INJECTION_CANARY
   Target:        get_user_info
   Success:       YES
-  Timestamp:     2025-11-05 21:43:31 UTC
+  Timestamp:     2025-11-19 22:38:31 UTC
 
   Impact:
     Tool 'get_user_info' executed canary instructions, confirming indirect injection impact.
@@ -159,7 +159,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: UNAUTHORIZED_ACCESS
   Target:        internal://credentials
   Success:       YES
-  Timestamp:     2025-11-05 21:43:33 UTC
+  Timestamp:     2025-11-19 22:38:32 UTC
 
   Impact:
     Accessed sensitive resource 'internal://credentials' without authentication. Contains: passwords
@@ -217,7 +217,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: UNAUTHENTICATED_ACCESS_TEST
   Target:        MCP Server
   Success:       YES
-  Timestamp:     2025-11-05 21:43:39 UTC
+  Timestamp:     2025-11-19 22:38:35 UTC
 
   Impact:
     Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.
@@ -236,6 +236,6 @@ PoC #1: UNAUTHENTICATED_ACCESS_TEST
 --------------------------------------------------------------------------------
 
 ────────────────────────────────────────────────────────────────────────────────
-Report generated: 2025-11-05T13:43:39.494407
+Report generated: 2025-11-19T14:38:35.444773
 Framework version: 0.2.0
 ================================================================================

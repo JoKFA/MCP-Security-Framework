@@ -373,8 +373,8 @@
       "invocations": [
         {
           "executionSuccessful": true,
-          "startTimeUtc": "2025-11-05T21:44:01.813711+00:00",
-          "endTimeUtc": "2025-11-05T21:44:12.502508+00:00",
+          "startTimeUtc": "2025-11-19T23:20:31.926841+00:00",
+          "endTimeUtc": "2025-11-19T23:20:36.830666+00:00",
           "workingDirectory": {
             "uri": "file:///"
           },
@@ -384,15 +384,14 @@
               "transport": null,
               "mode": "aggressive",
               "allowed_prefixes": [
-                "internal://",
-                "file://",
                 "/resources",
-                "/tools/"
+                "/tools",
+                "internal://"
               ],
               "blocked_paths": [],
               "rate_limit": {
-                "qps": 3.0,
-                "burst": 5,
+                "qps": 5.0,
+                "burst": 10,
                 "backoff_ms": [
                   200,
                   400,
@@ -403,9 +402,9 @@
               "policy": {
                 "dry_run": false,
                 "redact_evidence": true,
-                "max_payload_kb": 256,
+                "max_payload_kb": 128,
                 "fail_on_high": false,
-                "max_total_requests": 1000,
+                "max_total_requests": 600,
                 "request_timeout_s": 30
               },
               "auth": {
@@ -426,7 +425,9 @@
                 "store_evidence": true,
                 "evidence_retention_days": 30
               },
-              "detectors": null,
+              "detectors": {
+                "include": []
+              },
               "metadata": {}
             }
           }
@@ -461,7 +462,7 @@
           "codeFlows": [
             {
               "message": {
-                "text": "Tool 'file_manager' granted file access to 'C:\\Windows\\System32\\drivers\\etc\\hosts' without additional authorization."
+                "text": "Tool 'file_manager' granted file access to '/etc/hosts' without additional authorization."
               },
               "threadFlows": [
                 {
@@ -480,11 +481,11 @@
                       "state": {
                         "payload": {
                           "action": "read",
-                          "path": "C:\\Windows\\System32\\drivers\\etc\\hosts"
+                          "path": "/etc/hosts"
                         },
                         "response": {
-                          "preview": "# Copyright (c) 1993-2009 Microsoft Corp.\n\n#\n\n# This is a sample HOSTS file used by Microsoft TCP/IP for Windows.\n\n#\n\n# This file contains the mappings of IP addresses to host names. Each\n\n# entry should be kept on an individual line. The IP address should\n\n# be placed in the first column followed by the corresponding host name.\n\n# The IP address and the host name should be separated by at least o",
-                          "path": "C:\\Windows\\System32\\drivers\\etc\\hosts"
+                          "preview": "127.0.0.1\tlocalhost\n::1\tlocalhost ip6-localhost ip6-loopback\nfe00::\tip6-localnet\nff00::\tip6-mcastprefix\nff02::1\tip6-allnodes\nff02::2\tip6-allrouters\n172.17.0.3\t67a64296665e\n",
+                          "path": "/etc/hosts"
                         },
                         "success": true
                       }
@@ -643,7 +644,7 @@
                 "region": {
                   "startLine": 1,
                   "snippet": {
-                    "text": "{'tool_name': 'file_manager', 'risk_type': 'dangerous_tool', 'severity': 'MEDIUM', 'rationale': \"Tool contains potentially dangerous keyword 'delete' indicating system-level access\", 'tool_description': 'File manager tool that can read, write, and delete files\\n\\nArgs:\\n    action: The action to perform (read, write, delete)\\n    path: The file path to operate on\\n', 'keyword': 'delete'}"
+                    "text": "{'tool_name': 'file_manager', 'risk_type': 'dangerous_tool', 'severity': 'MEDIUM', 'rationale': \"Tool contains potentially dangerous keyword 'delete' indicating system-level access\", 'tool_description': 'File manager tool that can read, write, and delete files\\n            \\n            Args:\\n                action: The action to perform (read, write, delete)\\n                path: The file path to operate on\\n            ', 'keyword': 'delete'}"
                   }
                 }
               }
@@ -744,9 +745,9 @@
       ],
       "artifacts": [],
       "properties": {
-        "assessment_id": "5a7d7cef-02a4-4bd5-b2b2-832289c5d95c",
+        "assessment_id": "e50d94cf-c65c-4eb2-9326-3aebdf44f2f0",
         "target_server": "Challenge 3 - Excessive Permission Scope",
-        "target_version": "1.16.0",
+        "target_version": "1.21.2",
         "transport": "sse",
         "exposure": "local"
       }

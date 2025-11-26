@@ -5,11 +5,11 @@
 TARGET INFORMATION
 ────────────────────────────────────────────────────────────────────────────────
 Server:       Challenge 3 - Excessive Permission Scope
-Version:      1.16.0
+Version:      1.21.2
 Transport:    sse
 Exposure:     LOCAL
-Assessment:   5a7d7cef-02a4-4bd5-b2b2-832289c5d95c
-Duration:     10.69s
+Assessment:   e50d94cf-c65c-4eb2-9326-3aebdf44f2f0
+Duration:     4.90s
 
 SUMMARY
 ────────────────────────────────────────────────────────────────────────────────
@@ -52,32 +52,25 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: FILESYSTEM_ACCESS
   Target:        file_manager
   Success:       YES
-  Timestamp:     2025-11-05 21:44:03 UTC
+  Timestamp:     2025-11-19 23:20:32 UTC
 
   Impact:
-    Tool 'file_manager' granted file access to 'C:\Windows\System32\drivers\etc\hosts' without additional authorization.
+    Tool 'file_manager' granted file access to '/etc/hosts' without additional authorization.
 
   Attack Payload:
     action: read
-    path: C:\Windows\System32\drivers\etc\hosts
+    path: /etc/hosts
 
   Server Response:
-    preview: # Copyright (c) 1993-2009 Microsoft Corp.
+    preview: 127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::	ip6-localnet
+ff00::	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+172.17.0.3	67a64296665e
 
-#
-
-# This is a sample HOSTS file used by Microsoft TCP/IP for Windows.
-
-#
-
-# This file contains the mappings of IP addresses to host names. Each
-
-# entry should be kept on an individual line. The IP address should
-
-# be placed in the first column followed by the corresponding host name.
-
-# The IP address and the host name should be separated by at least o
-    path: C:\Windows\System32\drivers\etc\hosts
+    path: /etc/hosts
 
 --------------------------------------------------------------------------------
 
@@ -114,7 +107,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: INDIRECT_INJECTION_CANARY
   Target:        file_manager
   Success:       YES
-  Timestamp:     2025-11-05 21:44:05 UTC
+  Timestamp:     2025-11-19 23:20:33 UTC
 
   Impact:
     Tool 'file_manager' executed canary instructions, confirming indirect injection impact.
@@ -161,7 +154,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: PRIVILEGE_MISMATCH_DETECTION
   Target:        file_manager
   Success:       YES
-  Timestamp:     2025-11-05 21:44:06 UTC
+  Timestamp:     2025-11-19 23:20:33 UTC
 
   Impact:
     Tool 'file_manager' exposes filesystem_delete, filesystem_write capabilities despite its declared purpose, enabling privilege abuse.
@@ -205,7 +198,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: TOOL_ABUSE
   Target:        file_manager
   Success:       YES
-  Timestamp:     2025-11-05 21:44:10 UTC
+  Timestamp:     2025-11-19 23:20:35 UTC
 
   Impact:
     Successfully called dangerous tool 'file_manager' (contains keyword 'delete')
@@ -249,7 +242,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: UNAUTHENTICATED_ACCESS_TEST
   Target:        MCP Server
   Success:       YES
-  Timestamp:     2025-11-05 21:44:12 UTC
+  Timestamp:     2025-11-19 23:20:36 UTC
 
   Impact:
     Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.
@@ -268,6 +261,6 @@ PoC #1: UNAUTHENTICATED_ACCESS_TEST
 --------------------------------------------------------------------------------
 
 ────────────────────────────────────────────────────────────────────────────────
-Report generated: 2025-11-05T13:44:12.508248
+Report generated: 2025-11-19T15:20:36.835762
 Framework version: 0.2.0
 ================================================================================

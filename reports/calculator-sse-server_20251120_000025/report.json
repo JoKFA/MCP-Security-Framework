@@ -1,0 +1,885 @@
+{
+  "assessment_id": "5d32c669-52ed-4296-8cb7-cb5e12053952",
+  "started_at": "2025-11-20T07:59:46.677319Z",
+  "completed_at": "2025-11-20T08:00:24.924609Z",
+  "scope": {
+    "target": "http://localhost:64605/sse",
+    "transport": "sse",
+    "mode": "balanced",
+    "allowed_prefixes": [
+      "internal://",
+      "file://",
+      "/resources",
+      "/tools/"
+    ],
+    "blocked_paths": [
+      "/admin",
+      "/system"
+    ],
+    "rate_limit": {
+      "qps": 2.0,
+      "burst": 5,
+      "backoff_ms": [
+        200,
+        400,
+        800,
+        1600
+      ]
+    },
+    "policy": {
+      "dry_run": false,
+      "redact_evidence": true,
+      "max_payload_kb": 128,
+      "fail_on_high": false,
+      "max_total_requests": 1000,
+      "request_timeout_s": 30
+    },
+    "auth": {
+      "type": "none",
+      "api_key": null,
+      "header_name": "X-API-Key",
+      "token_url": null,
+      "client_id": null,
+      "client_secret": null
+    },
+    "reporting": {
+      "output_dir": "./reports",
+      "formats": [
+        "json",
+        "sarif",
+        "html"
+      ],
+      "store_evidence": true,
+      "evidence_retention_days": 30
+    },
+    "detectors": null,
+    "metadata": {}
+  },
+  "profile": {
+    "server_name": "calculator-sse-server",
+    "server_version": "1.0.0",
+    "protocol_version": "2025-06-18",
+    "capabilities": {
+      "resources": true,
+      "tools": true,
+      "prompts": true,
+      "logging": false,
+      "sampling": false
+    },
+    "transport": "sse",
+    "endpoint": "http://localhost:64605/sse",
+    "auth_type": "none",
+    "exposure": "local",
+    "metadata": {},
+    "profiled_at": "2025-11-20T07:59:47.112732Z"
+  },
+  "results": [
+    {
+      "detector_id": "MCP-2024-CE-001",
+      "detector_name": "Credential Exposure Detector",
+      "detector_version": "1.0.0",
+      "status": "ABSENT",
+      "confidence": 0.0,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "resources_scanned": 0,
+        "sensitive_resources_found": 0,
+        "secrets_by_resource": {}
+      },
+      "standards": {
+        "cwe": "CWE-522",
+        "owasp_llm": "LLM01",
+        "owasp_api": "API2",
+        "asvs": [
+          "V2.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+          "base_score": 8.2,
+          "severity": "HIGH"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-20T07:59:47.141866Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-CEX-001",
+      "detector_name": "Code Execution Detector",
+      "detector_version": "1.0.0",
+      "status": "PRESENT",
+      "confidence": 0.9,
+      "affected_resources": [],
+      "signals": [
+        {
+          "type": "schema_overpermissive",
+          "value": true,
+          "context": {
+            "tool_name": "calculate",
+            "risk_score": 0.8,
+            "dangerous_params": [],
+            "has_sandbox": false
+          },
+          "timestamp": "2025-11-20T07:59:47.288467Z"
+        }
+      ],
+      "proof_of_concepts": [
+        {
+          "target": "calculate",
+          "attack_type": "code_execution",
+          "payload": {
+            "tool_name": "calculate",
+            "dangerous_params": [],
+            "test_code": "1 + 1"
+          },
+          "response": {
+            "risk_score": 0.8,
+            "has_sandboxing": false,
+            "impact": "Arbitrary code execution without restrictions"
+          },
+          "success": true,
+          "impact_demonstrated": "Tool 'calculate' executes arbitrary code via parameter(s): . No sandboxing detected. Risk score: 80%. Attacker can execute malicious code, access files, exfiltrate data, or compromise the system.",
+          "timestamp": "2025-11-20T07:59:47.288714Z"
+        }
+      ],
+      "evidence": {
+        "tools_analyzed": 7,
+        "code_exec_tools": [
+          {
+            "tool_name": "calculate",
+            "risk_score": 0.8,
+            "dangerous_params": [],
+            "has_sandbox": false
+          }
+        ],
+        "tested_tools": [],
+        "mode": "balanced"
+      },
+      "standards": {
+        "cwe": "CWE-94",
+        "owasp_llm": "LLM07",
+        "owasp_api": "API8:2023",
+        "asvs": [
+          "V5.2",
+          "V5.3"
+        ],
+        "capec": [
+          "CAPEC-242"
+        ],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+          "base_score": 9.8,
+          "severity": "CRITICAL"
+        }
+      },
+      "remediation": "Secure code execution: (1) Implement strict sandboxing (containers, VMs), (2) Whitelist allowed operations/modules, (3) Set resource limits (CPU, memory, time), (4) Disable dangerous functions (file I/O, network, exec), (5) Validate and sanitize all code inputs, (6) Log all executions for audit.",
+      "timestamp": "2025-11-20T07:59:47.237738Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-CI-001",
+      "detector_name": "Command Injection Detector",
+      "detector_version": "1.0.0",
+      "status": "ABSENT",
+      "confidence": 0.9,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "tools_analyzed": 7,
+        "command_tools": [],
+        "vulnerable_tools": [],
+        "mode": "balanced"
+      },
+      "standards": {
+        "cwe": "CWE-78",
+        "owasp_llm": "LLM07",
+        "owasp_api": "API8:2023",
+        "asvs": [
+          "V5.2",
+          "V5.3"
+        ],
+        "capec": [
+          "CAPEC-88"
+        ],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+          "base_score": 9.8,
+          "severity": "CRITICAL"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-20T07:59:47.288863Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-DUMMY-001",
+      "detector_name": "Dummy Detector",
+      "detector_version": "1.0.0",
+      "status": "ABSENT",
+      "confidence": 1.0,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "test": "passed",
+        "probes_sent": 0
+      },
+      "standards": {
+        "cwe": "CWE-0",
+        "owasp_llm": "LLM00",
+        "owasp_api": null,
+        "asvs": [],
+        "capec": [],
+        "cvss": null
+      },
+      "remediation": "No issues found",
+      "timestamp": "2025-11-20T07:59:47.339776Z",
+      "execution_time_ms": 0.0
+    },
+    {
+      "detector_id": "MCP-2024-EP-001",
+      "detector_name": "Excessive Permissions Detector",
+      "detector_version": "1.0.0",
+      "status": "PRESENT",
+      "confidence": 0.65,
+      "affected_resources": [],
+      "signals": [
+        {
+          "type": "schema_overpermissive",
+          "value": true,
+          "context": {
+            "tool_name": "batch_calculate",
+            "risk_score": 0.6,
+            "capabilities": [
+              "network_access"
+            ],
+            "unrestricted_params": [],
+            "reason": "N/A"
+          },
+          "timestamp": "2025-11-20T07:59:47.391361Z"
+        }
+      ],
+      "proof_of_concepts": [
+        {
+          "target": "batch_calculate",
+          "attack_type": "excessive_permissions",
+          "payload": {
+            "tool_name": "batch_calculate",
+            "detection_method": "capability_analysis"
+          },
+          "response": {
+            "risk_score": 0.6,
+            "capabilities": [
+              "network_access"
+            ],
+            "unrestricted_params": [],
+            "reason": "N/A"
+          },
+          "success": true,
+          "impact_demonstrated": "Tool 'batch_calculate' has excessive permissions (risk: 60%). Capabilities: network_access. Unrestricted params: 0. Potential for: external network access.",
+          "timestamp": "2025-11-20T07:59:47.391582Z"
+        }
+      ],
+      "evidence": {
+        "tools_analyzed": 7,
+        "overpermissive_tools": [
+          {
+            "tool_name": "batch_calculate",
+            "risk_score": 0.6,
+            "capabilities": [
+              "network_access"
+            ],
+            "unrestricted_params": [],
+            "reason": "N/A"
+          }
+        ],
+        "high_risk_tools": [],
+        "capability_distribution": {
+          "network_access": 1
+        },
+        "confirmed_tools": [],
+        "mode": "balanced"
+      },
+      "standards": {
+        "cwe": "CWE-269",
+        "owasp_llm": "LLM08",
+        "owasp_api": "API6:2023",
+        "asvs": [
+          "V4.1",
+          "V4.2"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+          "base_score": 9.1,
+          "severity": "CRITICAL"
+        }
+      },
+      "remediation": "Apply principle of least privilege: (1) Restrict tool parameters to specific allowed values/paths, (2) Implement path validation and sanitization, (3) Split multi-capability tools into focused tools, (4) Add explicit access control checks, (5) Document and justify any high-risk capabilities.",
+      "timestamp": "2025-11-20T07:59:47.339832Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-II-001",
+      "detector_name": "Indirect Prompt Injection Detector",
+      "detector_version": "1.0.0",
+      "status": "ABSENT",
+      "confidence": 0.85,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "resources_analyzed": 0,
+        "tools_analyzed": 7,
+        "poisoned_resources": [],
+        "poisoned_tool_responses": [],
+        "canary_tool_responses": [],
+        "mode": "balanced"
+      },
+      "standards": {
+        "cwe": "CWE-74",
+        "owasp_llm": "LLM01",
+        "owasp_api": "API8:2023",
+        "asvs": [
+          "V5.1",
+          "V5.3"
+        ],
+        "capec": [
+          "CAPEC-242"
+        ],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N",
+          "base_score": 8.1,
+          "severity": "HIGH"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-20T07:59:47.391753Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-IS-001",
+      "detector_name": "Insecure Token Storage Detector",
+      "detector_version": "1.0.0",
+      "status": "ABSENT",
+      "confidence": 0.85,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "tools_analyzed": 7,
+        "tools_tested": 5,
+        "insecure_tools": [],
+        "weak_validation_tools": [],
+        "mode": "balanced"
+      },
+      "standards": {
+        "cwe": "CWE-522",
+        "owasp_llm": "LLM01",
+        "owasp_api": "API2:2023",
+        "asvs": [
+          "V2.1",
+          "V2.7"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:N",
+          "base_score": 8.6,
+          "severity": "HIGH"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-20T07:59:47.693512Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-PA-001",
+      "detector_name": "Privilege Abuse Detector",
+      "detector_version": "1.1.0",
+      "status": "ABSENT",
+      "confidence": 0.8,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "mode": "balanced",
+        "threshold": 0.55,
+        "tools_analyzed": 7,
+        "analysis": [
+          {
+            "tool_name": "calculate",
+            "detected_capabilities": [],
+            "score": 0.0,
+            "flagged": false
+          },
+          {
+            "tool_name": "demo_progress",
+            "detected_capabilities": [],
+            "score": 0.0,
+            "flagged": false
+          },
+          {
+            "tool_name": "solve_math_problem",
+            "detected_capabilities": [],
+            "score": 0.0,
+            "flagged": false
+          },
+          {
+            "tool_name": "explain_formula",
+            "detected_capabilities": [],
+            "score": 0.0,
+            "flagged": false
+          },
+          {
+            "tool_name": "calculator_assistant",
+            "detected_capabilities": [
+              "database"
+            ],
+            "score": 0.45,
+            "flagged": false,
+            "unexpected_capabilities": [
+              "database"
+            ],
+            "purpose": "calculator"
+          },
+          {
+            "tool_name": "batch_calculate",
+            "detected_capabilities": [
+              "network"
+            ],
+            "score": 0.4,
+            "flagged": false,
+            "unexpected_capabilities": [
+              "network"
+            ],
+            "purpose": "calculator"
+          },
+          {
+            "tool_name": "advanced_calculate",
+            "detected_capabilities": [],
+            "score": 0.0,
+            "flagged": false
+          }
+        ]
+      },
+      "standards": {
+        "cwe": "CWE-250",
+        "owasp_llm": null,
+        "owasp_api": "API4",
+        "asvs": [
+          "V4.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+          "base_score": 6.5,
+          "severity": "MEDIUM"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-20T07:59:51.704158Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-PI-001",
+      "detector_name": "Prompt Injection via Resource Parameters",
+      "detector_version": "1.0.0",
+      "status": "ABSENT",
+      "confidence": 0.8,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "reason": "No resources found to test"
+      },
+      "standards": {
+        "cwe": "CWE-74",
+        "owasp_llm": "LLM01",
+        "owasp_api": "API8:2023",
+        "asvs": [
+          "V5.1",
+          "V9.1"
+        ],
+        "capec": [
+          "CAPEC-242"
+        ],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+          "base_score": 7.5,
+          "severity": "HIGH"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-20T07:59:53.037249Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-RUG-001",
+      "detector_name": "Tool Behavior Monitor (Rug Pull Detector)",
+      "detector_version": "1.0.0",
+      "status": "PRESENT",
+      "confidence": 0.9,
+      "affected_resources": [],
+      "signals": [
+        {
+          "type": "schema_overpermissive",
+          "value": true,
+          "context": {
+            "tool_name": "solve_math_problem",
+            "iteration": 2,
+            "change_type": "response_modified"
+          },
+          "timestamp": "2025-11-20T08:00:02.966419Z"
+        },
+        {
+          "type": "schema_overpermissive",
+          "value": true,
+          "context": {
+            "tool_name": "explain_formula",
+            "iteration": 2,
+            "change_type": "response_modified"
+          },
+          "timestamp": "2025-11-20T08:00:03.882633Z"
+        },
+        {
+          "type": "schema_overpermissive",
+          "value": true,
+          "context": {
+            "tool_name": "calculator_assistant",
+            "iteration": 2,
+            "change_type": "response_modified"
+          },
+          "timestamp": "2025-11-20T08:00:04.815123Z"
+        }
+      ],
+      "proof_of_concepts": [
+        {
+          "target": "solve_math_problem",
+          "attack_type": "rug_pull_response",
+          "payload": {
+            "tool_name": "solve_math_problem",
+            "iteration": 2
+          },
+          "response": {
+            "baseline_response": "{\n  \"problem\": \"test\",\n  \"solution\": \"Please provide a more specific mathematical expression or equation.\",\n  \"steps\": [\n    \"This problem requires advanced mathematical analysis.\",\n    \"Breaking down",
+            "modified_response": "{\n  \"problem\": \"test\",\n  \"solution\": \"Please provide a more specific mathematical expression or equation.\",\n  \"steps\": [\n    \"This problem requires advanced mathematical analysis.\",\n    \"Breaking down"
+          },
+          "success": true,
+          "impact_demonstrated": "Tool 'solve_math_problem' returned different content for identical inputs after 2 invocation(s), indicating dynamic behaviour.",
+          "timestamp": "2025-11-20T08:00:21.676358Z"
+        },
+        {
+          "target": "explain_formula",
+          "attack_type": "rug_pull_response",
+          "payload": {
+            "tool_name": "explain_formula",
+            "iteration": 2
+          },
+          "response": {
+            "baseline_response": "{\n  \"formula\": \"test\",\n  \"explanation\": {\n    \"name\": \"Custom Formula\",\n    \"description\": \"This appears to be a mathematical relationship between variables\",\n    \"analysis\": \"The formula \\\"test\\\" con",
+            "modified_response": "{\n  \"formula\": \"test\",\n  \"explanation\": {\n    \"name\": \"Custom Formula\",\n    \"description\": \"This appears to be a mathematical relationship between variables\",\n    \"analysis\": \"The formula \\\"test\\\" con"
+          },
+          "success": true,
+          "impact_demonstrated": "Tool 'explain_formula' returned different content for identical inputs after 2 invocation(s), indicating dynamic behaviour.",
+          "timestamp": "2025-11-20T08:00:21.676376Z"
+        },
+        {
+          "target": "calculator_assistant",
+          "attack_type": "rug_pull_response",
+          "payload": {
+            "tool_name": "calculator_assistant",
+            "iteration": 2
+          },
+          "response": {
+            "baseline_response": "{\n  \"query\": \"test\",\n  \"timestamp\": \"2025-11-20T07:59:58.044Z\",\n  \"type\": \"general\",\n  \"message\": \"I'm ready to help with mathematical calculations. Try asking me to calculate something or type \\\"help",
+            "modified_response": "{\n  \"query\": \"test\",\n  \"timestamp\": \"2025-11-20T08:00:04.812Z\",\n  \"type\": \"general\",\n  \"message\": \"I'm ready to help with mathematical calculations. Try asking me to calculate something or type \\\"help"
+          },
+          "success": true,
+          "impact_demonstrated": "Tool 'calculator_assistant' returned different content for identical inputs after 2 invocation(s), indicating dynamic behaviour.",
+          "timestamp": "2025-11-20T08:00:21.676383Z"
+        }
+      ],
+      "evidence": {
+        "tools_analyzed": 7,
+        "tools_called": 28,
+        "changed_tools": [],
+        "response_changes": [
+          {
+            "tool_name": "solve_math_problem",
+            "iteration": 2,
+            "baseline_response": "{\n  \"problem\": \"test\",\n  \"solution\": \"Please provide a more specific mathematical expression or equation.\",\n  \"steps\": [\n    \"This problem requires advanced mathematical analysis.\",\n    \"Breaking down",
+            "modified_response": "{\n  \"problem\": \"test\",\n  \"solution\": \"Please provide a more specific mathematical expression or equation.\",\n  \"steps\": [\n    \"This problem requires advanced mathematical analysis.\",\n    \"Breaking down"
+          },
+          {
+            "tool_name": "explain_formula",
+            "iteration": 2,
+            "baseline_response": "{\n  \"formula\": \"test\",\n  \"explanation\": {\n    \"name\": \"Custom Formula\",\n    \"description\": \"This appears to be a mathematical relationship between variables\",\n    \"analysis\": \"The formula \\\"test\\\" con",
+            "modified_response": "{\n  \"formula\": \"test\",\n  \"explanation\": {\n    \"name\": \"Custom Formula\",\n    \"description\": \"This appears to be a mathematical relationship between variables\",\n    \"analysis\": \"The formula \\\"test\\\" con"
+          },
+          {
+            "tool_name": "calculator_assistant",
+            "iteration": 2,
+            "baseline_response": "{\n  \"query\": \"test\",\n  \"timestamp\": \"2025-11-20T07:59:58.044Z\",\n  \"type\": \"general\",\n  \"message\": \"I'm ready to help with mathematical calculations. Try asking me to calculate something or type \\\"help",
+            "modified_response": "{\n  \"query\": \"test\",\n  \"timestamp\": \"2025-11-20T08:00:04.812Z\",\n  \"type\": \"general\",\n  \"message\": \"I'm ready to help with mathematical calculations. Try asking me to calculate something or type \\\"help"
+          }
+        ],
+        "call_failures": [],
+        "mode": "balanced"
+      },
+      "standards": {
+        "cwe": "CWE-494",
+        "owasp_llm": "LLM03",
+        "owasp_api": "API8:2023",
+        "asvs": [
+          "V14.2"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N",
+          "base_score": 7.8,
+          "severity": "HIGH"
+        }
+      },
+      "remediation": "Implement immutable tool definitions: (1) Lock tool descriptions after registration, (2) Use version control for tool changes, (3) Require re-approval for any modifications, (4) Implement integrity checks (hashing) to detect unauthorized changes, (5) Log all tool definition updates with audit trail.",
+      "timestamp": "2025-11-20T07:59:53.037353Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-TE-001",
+      "detector_name": "Tool Enumeration Analyzer",
+      "detector_version": "1.0.0",
+      "status": "PRESENT",
+      "confidence": 0.9,
+      "affected_resources": [],
+      "signals": [
+        {
+          "type": "schema_overpermissive",
+          "value": true,
+          "context": {
+            "tool_name": "advanced_calculate",
+            "risk_type": "dangerous_tool",
+            "severity": "MEDIUM",
+            "rationale": "Tool contains potentially dangerous keyword 'eval' indicating system-level access",
+            "tool_description": "SECURITY WARNING: This tool demonstrates unsafe expression evaluation and should NOT be used in production",
+            "keyword": "eval"
+          },
+          "timestamp": "2025-11-20T08:00:21.727645Z"
+        }
+      ],
+      "proof_of_concepts": [],
+      "evidence": {
+        "tools_analyzed": 7,
+        "dangerous_tools": [
+          {
+            "name": "advanced_calculate",
+            "keyword": "eval",
+            "description": "SECURITY WARNING: This tool demonstrates unsafe expression evaluation and should NOT be used in production"
+          }
+        ],
+        "tools_without_validation": [],
+        "risk_summary": {
+          "dangerous_tool": 1
+        }
+      },
+      "standards": {
+        "cwe": "CWE-250",
+        "owasp_llm": null,
+        "owasp_api": "API4",
+        "asvs": [
+          "V4.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+          "base_score": 6.5,
+          "severity": "MEDIUM"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-20T08:00:21.676578Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-TP-001",
+      "detector_name": "Tool Poisoning Detector",
+      "detector_version": "1.0.0",
+      "status": "ABSENT",
+      "confidence": 0.9,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "tools_analyzed": 7,
+        "resources_analyzed": 0,
+        "poisoned_items": [],
+        "pattern_matches": {}
+      },
+      "standards": {
+        "cwe": "CWE-74",
+        "owasp_llm": "LLM02",
+        "owasp_api": "API8:2023",
+        "asvs": [
+          "V5.1",
+          "V12.3"
+        ],
+        "capec": [
+          "CAPEC-242"
+        ],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N",
+          "base_score": 8.1,
+          "severity": "HIGH"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-20T08:00:22.390369Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-TS-001",
+      "detector_name": "Tool Shadowing Detector",
+      "detector_version": "1.0.0",
+      "status": "ABSENT",
+      "confidence": 0.9,
+      "affected_resources": [],
+      "signals": [],
+      "proof_of_concepts": [],
+      "evidence": {
+        "tools_analyzed": 7,
+        "duplicates": [],
+        "similar_names": [],
+        "generic_names": [],
+        "impersonation_attempts": []
+      },
+      "standards": {
+        "cwe": "CWE-706",
+        "owasp_llm": "LLM07",
+        "owasp_api": "API8:2023",
+        "asvs": [
+          "V14.4"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N",
+          "base_score": 7.5,
+          "severity": "HIGH"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-20T08:00:23.321896Z",
+      "execution_time_ms": null
+    },
+    {
+      "detector_id": "MCP-2024-UA-001",
+      "detector_name": "Unauthenticated Access Detector",
+      "detector_version": "1.1.0",
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "affected_resources": [],
+      "signals": [
+        {
+          "type": "auth_mismatch",
+          "value": true,
+          "context": {
+            "tools_accessible": true,
+            "resources_accessible": true,
+            "resources_supported": true,
+            "vulnerability": "unauthenticated_access",
+            "severity": "CRITICAL"
+          },
+          "timestamp": "2025-11-20T08:00:24.924504Z"
+        }
+      ],
+      "proof_of_concepts": [
+        {
+          "target": "MCP Server",
+          "attack_type": "unauthenticated_access_test",
+          "payload": {
+            "operations": [
+              "list_tools",
+              "list_resources"
+            ],
+            "authenticated": false
+          },
+          "response": {
+            "tools_count": 7,
+            "resources_count": 0,
+            "tool_samples": [
+              "calculate",
+              "demo_progress",
+              "solve_math_problem",
+              "explain_formula",
+              "calculator_assistant"
+            ],
+            "resource_samples": [],
+            "vulnerable": true
+          },
+          "success": true,
+          "impact_demonstrated": "Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.",
+          "timestamp": "2025-11-20T08:00:24.924520Z"
+        }
+      ],
+      "evidence": {
+        "mode": "balanced",
+        "tools_accessible": true,
+        "resources_accessible": true,
+        "resources_supported": true,
+        "auth_required": false,
+        "errors": {},
+        "tool_samples": [
+          "calculate",
+          "demo_progress",
+          "solve_math_problem",
+          "explain_formula",
+          "calculator_assistant"
+        ],
+        "tool_count": 7,
+        "resource_samples": [],
+        "resource_count": 0
+      },
+      "standards": {
+        "cwe": "CWE-284",
+        "owasp_llm": null,
+        "owasp_api": "API1",
+        "asvs": [
+          "V1.1"
+        ],
+        "capec": [],
+        "cvss": {
+          "version": "3.1",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "base_score": 10.0,
+          "severity": "CRITICAL"
+        }
+      },
+      "remediation": null,
+      "timestamp": "2025-11-20T08:00:23.989390Z",
+      "execution_time_ms": null
+    }
+  ],
+  "threat_model": null,
+  "summary": {
+    "present": 5,
+    "absent": 9,
+    "unknown": 0,
+    "not_applicable": 0
+  },
+  "audit_log_path": "captures\\audit_5d32c669-52ed-4296-8cb7-cb5e12053952.jsonl",
+  "framework_version": "0.2.0"
+}

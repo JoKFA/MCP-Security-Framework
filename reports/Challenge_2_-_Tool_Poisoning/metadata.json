@@ -1,8 +1,8 @@
 {
-  "assessment_id": "d0767036-97f0-4281-935f-6c4df7349313",
+  "assessment_id": "fc342f17-49f2-4a9d-998b-ebb9118bda9b",
   "target": "Challenge 2 - Tool Poisoning",
-  "started_at": "2025-11-05T21:43:42.699206+00:00",
-  "completed_at": "2025-11-05T21:43:58.671409+00:00",
+  "started_at": "2025-11-19T23:19:54.681570+00:00",
+  "completed_at": "2025-11-19T23:20:03.116182+00:00",
   "framework_version": "0.2.0",
   "summary": {
     "present": 7,

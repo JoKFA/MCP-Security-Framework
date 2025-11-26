@@ -1,8 +1,8 @@
 {
-  "assessment_id": "92d105fc-3de4-4af8-a353-f5a32259f087",
+  "assessment_id": "96a2e7a2-635b-4bcc-b59b-59b7a965fc13",
   "target": "Challenge 1 - Basic Prompt Injection",
-  "started_at": "2025-11-05T21:43:29.016063+00:00",
-  "completed_at": "2025-11-05T21:43:39.489115+00:00",
+  "started_at": "2025-11-19T22:38:30.132159+00:00",
+  "completed_at": "2025-11-19T22:38:35.425234+00:00",
   "framework_version": "0.2.0",
   "summary": {
     "present": 4,

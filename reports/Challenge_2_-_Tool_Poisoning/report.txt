@@ -5,11 +5,11 @@
 TARGET INFORMATION
 ────────────────────────────────────────────────────────────────────────────────
 Server:       Challenge 2 - Tool Poisoning
-Version:      1.16.0
+Version:      1.21.2
 Transport:    sse
 Exposure:     LOCAL
-Assessment:   d0767036-97f0-4281-935f-6c4df7349313
-Duration:     15.97s
+Assessment:   fc342f17-49f2-4a9d-998b-ebb9118bda9b
+Duration:     8.43s
 
 SUMMARY
 ────────────────────────────────────────────────────────────────────────────────
@@ -52,7 +52,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: CODE_EXECUTION
   Target:        execute_command
   Success:       YES
-  Timestamp:     2025-11-05 21:43:43 UTC
+  Timestamp:     2025-11-19 23:19:55 UTC
 
   Impact:
     Tool 'execute_command' executes arbitrary code via parameter(s): command. Limited sandboxing. Risk score: 70%. Attacker can execute malicious code, access files, exfiltrate data, or compromise the system.
@@ -102,7 +102,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: COMMAND_INJECTION
   Target:        execute_command
   Success:       YES
-  Timestamp:     2025-11-05 21:43:44 UTC
+  Timestamp:     2025-11-19 23:19:55 UTC
 
   Impact:
     Safe payload echoed canary token via tool 'execute_command', confirming command injection through parameter 'command'.
@@ -157,7 +157,7 @@ PROOF OF CONCEPT: 2 exploit(s) demonstrated
 PoC #1: EXCESSIVE_PERMISSIONS
   Target:        execute_command
   Success:       YES
-  Timestamp:     2025-11-05 21:43:45 UTC
+  Timestamp:     2025-11-19 23:19:55 UTC
 
   Impact:
     Tool 'execute_command' has excessive permissions (risk: 100%). Capabilities: code_execution, system_commands. Unrestricted params: 1. Potential for: arbitrary code execution, system command execution.
@@ -175,7 +175,7 @@ PoC #1: EXCESSIVE_PERMISSIONS
 PoC #2: EXCESSIVE_PERMISSIONS
   Target:        read_file
   Success:       YES
-  Timestamp:     2025-11-05 21:43:45 UTC
+  Timestamp:     2025-11-19 23:19:55 UTC
 
   Impact:
     Tool 'read_file' has excessive permissions (risk: 100%). Capabilities: filesystem_access, system_commands. Unrestricted params: 1. Potential for: system command execution, unrestricted file system access.
@@ -225,7 +225,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: INDIRECT_INJECTION_CANARY
   Target:        read_file
   Success:       YES
-  Timestamp:     2025-11-05 21:43:47 UTC
+  Timestamp:     2025-11-19 23:19:56 UTC
 
   Impact:
     Tool 'read_file' executed canary instructions, confirming indirect injection impact.
@@ -272,7 +272,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: PRIVILEGE_MISMATCH_DETECTION
   Target:        read_file
   Success:       YES
-  Timestamp:     2025-11-05 21:43:48 UTC
+  Timestamp:     2025-11-19 23:19:57 UTC
 
   Impact:
     Tool 'read_file' exposes command_execution capabilities despite its declared purpose, enabling privilege abuse.
@@ -336,7 +336,7 @@ PROOF OF CONCEPT: 2 exploit(s) demonstrated
 PoC #1: TOOL_ABUSE
   Target:        execute_command
   Success:       YES
-  Timestamp:     2025-11-05 21:43:56 UTC
+  Timestamp:     2025-11-19 23:20:01 UTC
 
   Impact:
     Successfully called dangerous tool 'execute_command' (contains keyword 'execute')
@@ -352,7 +352,7 @@ PoC #1: TOOL_ABUSE
 PoC #2: TOOL_ABUSE
   Target:        execute_command
   Success:       YES
-  Timestamp:     2025-11-05 21:43:56 UTC
+  Timestamp:     2025-11-19 23:20:02 UTC
 
   Impact:
     Successfully called dangerous tool 'execute_command' (contains keyword 'command')
@@ -396,7 +396,7 @@ PROOF OF CONCEPT: 1 exploit(s) demonstrated
 PoC #1: UNAUTHENTICATED_ACCESS_TEST
   Target:        MCP Server
   Success:       YES
-  Timestamp:     2025-11-05 21:43:58 UTC
+  Timestamp:     2025-11-19 23:20:03 UTC
 
   Impact:
     Server exposes both tools and resources without authentication, allowing reconnaissance by unauthenticated clients.
@@ -415,6 +415,6 @@ PoC #1: UNAUTHENTICATED_ACCESS_TEST
 --------------------------------------------------------------------------------
 
 ────────────────────────────────────────────────────────────────────────────────
-Report generated: 2025-11-05T13:43:58.676869
+Report generated: 2025-11-19T15:20:03.121525
 Framework version: 0.2.0
 ================================================================================

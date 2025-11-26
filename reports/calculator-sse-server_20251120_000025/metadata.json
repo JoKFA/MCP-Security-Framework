@@ -1,0 +1,13 @@
+{
+  "assessment_id": "5d32c669-52ed-4296-8cb7-cb5e12053952",
+  "target": "calculator-sse-server",
+  "started_at": "2025-11-20T07:59:46.677319+00:00",
+  "completed_at": "2025-11-20T08:00:24.924609+00:00",
+  "framework_version": "0.2.0",
+  "summary": {
+    "present": 5,
+    "absent": 9,
+    "unknown": 0,
+    "not_applicable": 0
+  }
+}

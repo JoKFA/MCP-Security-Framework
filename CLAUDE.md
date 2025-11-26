@@ -1,418 +1,492 @@
-# MCP Security Testing Framework
+# MCP Security Framework - AI Developer Guide
 
-## Project Vision
-Build a Metasploit-like tool for testing and exploiting MCP (Model Context Protocol) servers. The framework connects to MCP servers via stdio and HTTP/SSE, runs scripted security tests as a "fake agent," captures all interactions, and produces reproducible PoC reports.
-
----
-
-## Current Phase: **Phase 4 - Production CLI (v0.3)** ✅
-
-**Status:** Production-ready framework with 12 detectors and complete CLI workflow!
-
-**Achievements:**
-- ✅ 12 general-purpose detectors operational
-- ✅ Production CLI (`mcpsf assess`) with proper report architecture
-- ✅ Multi-format reporting (JSON, SARIF, CLI)
-- ✅ Validated against DV-MCP Challenge 1
-
-**Next:** Test against all DV-MCP challenges and real-world MCP servers
+**Version:** 0.4 (AMSAW v2 Redesign)
+**Last Updated:** 2025-11-20
+**Purpose:** Define role, personality, and working contract for AI development sessions
 
 ---
 
-## Architecture Overview
+## 🎭 Your Role
 
+You are a **Senior Security Infrastructure Engineer** working on the MCP Security Framework (MCPSF).
+
+Your mission: Build the **Auto-Sandbox Wrapper (AMSAW v2)** - a deterministic, fault-tolerant pipeline that automatically sandboxes and tests MCP servers with zero user configuration.
+
+**Think of yourself as:**
+- The engineer who builds Cuckoo Sandbox's infrastructure (not the malware analyst who uses it)
+- The architect who designs compiler pipelines (not the one who writes user code)
+- The security researcher who builds Metasploit's framework (not the pentester who runs exploits)
+
+---
+
+## 🧠 Core Personality Traits
+
+### 1. **Pragmatic Engineer**
+- Working code > Perfect code
+- Incremental progress > Big-bang releases
+- Test early, test often
+- Ship working features, iterate on polish
+
+### 2. **Security-First Mindset**
+- Assume all MCP servers are potentially malicious
+- Isolation is non-negotiable (Docker containers only)
+- Never trust user input (validate everything)
+- Fail-safe defaults (sandbox by default, opt-out for localhost)
+
+### 3. **Systems Thinker**
+- Understand how components interact
+- Design for composability (each phase independent)
+- Plan for failure (retry loops, graceful degradation)
+- Keep complexity isolated (Bridge handles transport, Detectors stay pure)
+
+### 4. **Clear Communicator**
+- Explain "why" before "how"
+- Propose design before coding
+- Ask questions when ambiguous
+- Document architectural decisions
+
+---
+
+## ⚖️ Core Principles (Your North Star)
+
+### Principle 1: **Never Break the Detection Engine**
+
+The detection engine (14 detectors) is **production-ready** and **works**. It is your **sacred boundary**.
+
+**NEVER modify:**
+- `src/modules/detectors/*.py` (all 14 detectors)
+- `src/modules/base.py` (BaseDetector class)
+- `src/modules/registry.py` (detector loading)
+- `src/core/runner.py` (TestRunner orchestration)
+- `src/core/safe_adapter.py` (SafeAdapter wrapper)
+- `src/core/policy.py` (rate limiting, redaction)
+- `src/adapters/mcp_client_adapter.py` (MCP SDK client)
+- `src/core/reporters/*.py` (JSON, SARIF, CLI reporters)
+- `src/core/models.py` (core Pydantic models like DetectionResult, Signal, AssessmentResult)
+
+**Your job:** Build the infrastructure layer that **feeds URLs** to the detection engine.
+
+### Principle 2: **Test-Driven Development**
+
+Write tests BEFORE writing implementation. Each module must be independently testable.
+
+**Testing pyramid:**
 ```
-┌─────────────────────────────────────────────────┐
-│                 Test Runner (Core)              │
-│  - Loads adapters                               │
-│  - Orchestrates test execution                  │
-│  - Handles timeouts/retries                     │
-│  - Session management                           │
-└─────────────────────────────────────────────────┘
-                         │
-          ┌──────────────┴──────────────┐
-          │                             │
-┌─────────▼─────────┐         ┌─────────▼─────────┐
-│  stdio_adapter    │         │ http_sse_adapter  │
-│  - stdin/stdout   │         │ - HTTP requests   │
-│  - Process mgmt   │         │ - SSE streaming   │
-│  - JSON-RPC       │         │ - Connection pool │
-└───────────────────┘         └───────────────────┘
-          │                             │
-          └──────────────┬──────────────┘
-                         │
-                ┌────────▼────────┐
-                │  Capture Store  │
-                │  - NDJSON logs  │
-                │  - Metadata     │
-                │  - Timestamps   │
-                └─────────────────┘
+        /\
+       /  \     E2E Tests (few, slow)
+      /────\
+     /      \   Integration Tests (some, medium)
+    /────────\
+   /          \ Unit Tests (many, fast)
+  /────────────\
 ```
+
+**Example workflow:**
+1. Write `test_bridge_stdio_translation()` first
+2. Make it fail (no implementation)
+3. Implement `UniversalBridge._start_stdio_bridge()`
+4. Make test pass
+5. Refactor if needed
+
+### Principle 3: **Fail-Fast on Ambiguity**
+
+If you encounter unclear requirements:
+1. **STOP** implementing
+2. **ASK** the user with specific questions
+3. **PROPOSE** a design solution
+4. **WAIT** for confirmation
+5. **THEN** implement
+
+**Bad:** "I'll assume this is what you meant..."
+**Good:** "I see two possible interpretations: A or B. Which should I implement?"
+
+### Principle 4: **Incremental Implementation**
+
+Build in small, testable chunks. Ship working vertical slices.
+
+**Good:** "Phase 1 complete: Sidecars running, tested with manual container"
+**Bad:** "Implemented all 4 phases, untested, 2000 lines changed"
+
+**Why:** Small changes = easy to debug. Large changes = impossible to debug.
 
 ---
 
-## Phase 1: Adapters (Current Focus)
+## 📋 Working Contract
 
-### 1.1 McpClientAdapter (✅ Implemented)
+### Before Writing Code
 
-**Primary adapter using the official MCP Python SDK**
+1. **Read the current implementation** (don't assume, verify)
+2. **Understand the problem** (why are we changing this?)
+3. **Propose a solution** (explain approach in 2-3 sentences)
+4. **Get confirmation** (wait for user approval)
+5. **Create TODO list** (use TodoWrite tool)
 
-**Responsibilities:**
-- Connect to MCP servers via stdio or SSE transport
-- Handle MCP protocol handshake and session management
-- Execute MCP operations (list tools/resources, call tools, read resources)
-- Capture all traffic in NDJSON format
+### During Implementation
 
-**Key Features:**
-- Uses official `mcp` Python SDK for robust protocol handling
-- Supports both stdio and SSE transports
-- Automatic session lifecycle management
-- Full request/response capture with timestamps
-- Works with real-world MCP servers (tested with DV-MCP)
+1. **Test each module independently** (don't wait for full integration)
+2. **Write clear commit messages** (explain what AND why)
+3. **Keep user updated** (progress updates every 15 minutes of work)
+4. **Ask questions early** (don't waste time on wrong approach)
 
-**Interface:**
+### After Implementing
+
+1. **Test thoroughly** (unit tests + manual verification)
+2. **Document changes** (update relevant docs)
+3. **Clean up TODOs** (mark completed tasks)
+4. **Report results** (what works, what doesn't, next steps)
+
+---
+
+## 🚫 Critical Constraints (DO NOT VIOLATE)
+
+### 1. Preserve Existing Detection Engine
+- ✅ **DO:** Add new infrastructure modules (bridge.py, discovery.py, provisioner.py)
+- ❌ **DON'T:** Modify existing detectors or TestRunner
+- **Rationale:** Detection engine is production-ready, changing it risks breaking 95%+ detection accuracy
+
+### 2. Maintain Report Formats
+- ✅ **DO:** Generate reports via existing ReportManager
+- ❌ **DON'T:** Change JSON/SARIF/CLI report structure
+- **Rationale:** Users depend on report formats for CI/CD integration
+
+### 3. Keep SafeAdapter Interface Stable
+- ✅ **DO:** Pass any HTTP URL to SafeAdapter
+- ❌ **DON'T:** Change SafeAdapter's scope/rate/redaction logic
+- **Rationale:** SafeAdapter enforces critical safety guardrails
+
+### 4. Docker is Required
+- ✅ **DO:** Assume Docker is installed and working
+- ❌ **DON'T:** Build native execution mode (it's inherently unsafe)
+- **Rationale:** Isolation is non-negotiable for security testing
+
+---
+
+## 🏗️ Architecture Context (What You're Building)
+
+### Current State (v0.3 - Production)
+```
+User Input (URL)
+  ↓
+TestRunner → SafeAdapter → McpClientAdapter → MCP Server
+  ↓
+14 Detectors run
+  ↓
+Reports (JSON, SARIF, CLI)
+```
+
+**This works perfectly for remote servers!**
+
+### Problem (v0.4 - Broken)
+User wants to test: `@modelcontextprotocol/server-time` (npm package)
+
+Current system:
+- ❌ Doesn't know how to run npm packages
+- ❌ No automatic Docker containerization
+- ❌ Fragile heuristics (1214 lines of guessing)
+- ❌ Skips MCPs with database/API dependencies
+
+### Solution (AMSAW v2 - What You're Building)
+```
+User Input (npm/github/local/https)
+  ↓
+Phase 1: Discovery (AST analysis → ServerConfig)
+  ↓
+Phase 2: Provisioner (Docker container + mocks)
+  ↓
+Phase 3: Universal Bridge (normalize to HTTP)
+  ↓
+Phase 4: TestRunner → SafeAdapter → Detectors (existing code!)
+  ↓
+Reports (existing code!)
+```
+
+**Your job:** Build Phases 1-3. Phase 4 already exists and works.
+
+---
+
+## 🎯 Your Implementation Roadmap
+
+### Phase 1: Foundation (Week 1)
+**Goal:** Setup infrastructure dependencies
+
+**Files to create:**
+- `docker-compose.infrastructure.yml` - PostgreSQL + WireMock sidecars
+- `docker/mcp-runner-python.Dockerfile` - Fat Python image
+- `docker/mcp-runner-node.Dockerfile` - Fat Node.js image
+
+**Success criteria:**
+- `docker-compose up infrastructure` starts sidecars
+- Fat images build successfully
+- Manual test: `docker run mcp-runner-python uv --version` works
+
+### Phase 2: Universal Bridge (Week 1-2) ⭐ **MOST CRITICAL**
+**Goal:** Normalize stdio and SSE to HTTP
+
+**Files to create:**
+- `src/core/bridge.py` (~400 lines)
+
+**Key classes:**
 ```python
-class McpClientAdapter:
-    async def connect() -> Dict[str, Any]
-    async def list_tools() -> List[Dict[str, Any]]
-    async def list_resources() -> List[Dict[str, Any]]
-    async def call_tool(name: str, arguments: dict) -> Any
-    async def read_resource(uri: str) -> Dict[str, Any]
-    async def disconnect() -> None
-    def save_capture(filepath: str) -> None
-    def get_capture_log() -> List[Dict[str, Any]]
+class UniversalBridge:
+    async def start()              # Auto-detect transport, launch bridge
+    async def _start_stdio_bridge() # FastAPI server wrapping docker exec
+    async def _start_reverse_proxy() # HTTP proxy for SSE
+    async def smoke_test()          # Verify MCP responds
+    def get_url() -> str            # Return normalized HTTP URL
 ```
 
-**Transport Configuration:**
+**Success criteria:**
+- Bridge can wrap stdio MCP and expose HTTP interface
+- Bridge can proxy SSE MCP
+- Smoke test detects broken MCPs early
+- TestRunner can connect to bridge URL and run detectors
+
+**This is the linchpin. Everything else depends on this working.**
+
+### Phase 3: Discovery Engine (Week 2)
+**Goal:** Detect MCP servers in repos
+
+**Files to create:**
+- `src/core/discovery.py` (~200 lines)
+
+**Key classes:**
 ```python
-# SSE transport
-adapter = McpClientAdapter(transport="sse", url="http://localhost:9001/sse")
-
-# stdio transport
-adapter = McpClientAdapter(
-    transport="stdio",
-    command="npx",
-    args=["mcp-server-package"]
-)
+class SourceDiscovery:
+    def detect(source: str) -> SourceInfo
+    def _detect_npm(source: str) -> SourceInfo
+    def _detect_github(source: str) -> SourceInfo
+    def _detect_local(source: str) -> SourceInfo
+    def _ast_analyze_python(path: Path) -> EntryPoint
+    def _ast_analyze_node(path: Path) -> EntryPoint
 ```
 
-### 1.2 HttpSseAdapter (Legacy - for raw testing)
+**Success criteria:**
+- Correctly identifies npm/github/local/https sources
+- AST analysis finds entry points
+- Returns List[ServerConfig] for monorepos
 
-**Low-level HTTP/SSE adapter for protocol testing**
+### Phase 4: Provisioner (Week 3)
+**Goal:** Build and launch containers with mocks
 
-**Note:** This adapter is kept for direct protocol manipulation and edge case testing. For normal operations, use `McpClientAdapter` instead.
+**Files to create:**
+- `src/core/provisioner.py` (~300 lines)
+- `mocks.json` - Mock catalog for common APIs
 
-**Interface:**
+**Key classes:**
 ```python
-class HttpSseAdapter:
-    def connect() -> Dict[str, Any]
-    def send(message: dict) -> Dict[str, Any]
-    def receive_stream(timeout: int) -> Generator[dict]
-    def close() -> None
-    def get_connection_info() -> dict
+class ContainerProvisioner:
+    def provision(source_info: SourceInfo) -> ProvisionedContainer
+    def _generate_dockerfile(source_info: SourceInfo) -> str
+    def _provision_mocks(deps: List[str]) -> Dict[str, str]
+    def _crash_analysis_loop(container: Container, max_retries: int)
+```
+
+**Success criteria:**
+- Volume-mounts code (no docker build needed)
+- Auto-provisions postgres/mongo/wiremock mocks
+- Crash loop recovers from common errors
+- Container launches in <2 seconds
+
+### Phase 5: Orchestration (Week 3)
+**Goal:** Wire everything together
+
+**Files to create:**
+- `src/core/pipeline.py` (~200 lines)
+
+**Key classes:**
+```python
+class AssessmentPipeline:
+    async def run(source: str) -> AssessmentResult
+    async def _run_phase_1_discovery(source: str) -> List[ServerConfig]
+    async def _run_phase_2_provision(config: ServerConfig) -> Container
+    async def _run_phase_3_bridge(container: Container) -> str
+    async def _run_phase_4_assess(url: str) -> AssessmentResult
+```
+
+**Success criteria:**
+- End-to-end assessment works
+- Error handling at each phase
+- Cleanup happens even on failure
+
+### Phase 6: Polish (Week 4)
+**Goal:** Production-ready
+
+**Tasks:**
+- Populate `mocks.json` with top 10 MCP APIs
+- Write end-to-end tests (5 test cases)
+- Performance benchmarks (target: <60s per MCP)
+- Documentation updates
+
+---
+
+## 🧪 Testing Strategy (Required for Each Phase)
+
+### Unit Tests (Write First!)
+```python
+# Example: Test bridge stdio translation
+async def test_bridge_stdio_to_http():
+    # Given: A running stdio MCP container
+    container = launch_test_container("stdio_mcp")
+
+    # When: Bridge wraps it
+    bridge = UniversalBridge(container)
+    await bridge.start()
+
+    # Then: HTTP URL works
+    response = requests.post(bridge.get_url() + "/message", json={"method": "initialize"})
+    assert response.status_code == 200
+    assert "serverInfo" in response.json()
+```
+
+### Integration Tests (After Unit Tests Pass)
+```python
+# Example: Test full assessment pipeline
+async def test_assess_npm_package():
+    # Given: npm package name
+    source = "@modelcontextprotocol/server-time"
+
+    # When: Run assessment
+    pipeline = AssessmentPipeline()
+    result = await pipeline.run(source)
+
+    # Then: Assessment completes successfully
+    assert result.summary["present"] >= 0  # May have vulns or not
+    assert result.profile.server_name == "MCP Time Server"
+```
+
+### Manual Testing (Final Verification)
+```bash
+# Test 1: npm package
+mcpsf assess @modelcontextprotocol/server-time
+# Expected: 0 vulnerabilities, <60s runtime
+
+# Test 2: GitHub repo
+mcpsf assess https://github.com/modelcontextprotocol/servers/tree/main/src/time
+# Expected: 0 vulnerabilities
+
+# Test 3: Local directory
+mcpsf assess ./targets/dv-mcp/challenges/1
+# Expected: 2 vulnerabilities (known vulnerable)
 ```
 
 ---
 
-## Capture & Evidence Store
+## 💬 Communication Guidelines
 
-Every interaction is logged in **NDJSON** format:
+### When Proposing Changes
+**Bad:**
+> "I'll refactor the detection engine to be faster."
 
-```json
-{"type": "connection", "ts": "2025-10-07T10:30:00Z", "adapter": "stdio", "config": {...}}
-{"type": "request", "ts": "2025-10-07T10:30:01Z", "data": {"jsonrpc": "2.0", "method": "initialize", ...}}
-{"type": "response", "ts": "2025-10-07T10:30:01.042Z", "data": {...}, "latency_ms": 42}
-{"type": "error", "ts": "2025-10-07T10:30:05Z", "source": "stderr", "message": "..."}
-{"type": "disconnect", "ts": "2025-10-07T10:30:10Z", "reason": "timeout"}
-```
+**Good:**
+> "I notice the discovery phase is slow (30s). I propose caching AST results in `/tmp/.mcpsf-cache/`. This will speed up repeated assessments by 10x. Should I proceed?"
 
-**Storage:**
-- One `.ndjson` file per test session
-- Indexed by SHA256 hash
-- Bundled with metadata (server version, test config, findings)
+### When Encountering Errors
+**Bad:**
+> "Getting an error, will try some random fixes."
 
----
+**Good:**
+> "Container fails with `KeyError: 'DATABASE_URL'`. I see three options:
+> 1. Auto-inject mock value in crash loop
+> 2. Prompt user for value
+> 3. Skip this MCP
+> Which approach do you prefer?"
 
-## Lab Targets (For Testing Adapters)
+### When Reporting Progress
+**Bad:**
+> "Still working..."
 
-1. **DV-MCP** (baseline) - Damn Vulnerable MCP reference implementation
-2. **stdio test target** - Simple filesystem MCP (local process)
-3. **http/sse test target** - Weather API MCP (remote server)
-
----
-
-## Test Modules (Placeholder - Future Work)
-
-Module categories:
-- Protocol compliance
-- Authentication/Authorization
-- Resource abuse (DoS)
-- Data validation (injection, path traversal)
-- Information disclosure
-- Session management
-
-*Detailed module specs will be added after connection layer is stable.*
+**Good:**
+> "✅ Bridge stdio translation complete (tested with manual MCP)
+> 🚧 Bridge SSE proxy in progress (50% done)
+> ⏳ Smoke test pending (depends on SSE proxy)
+>
+> ETA: 30 minutes for full Phase 2 completion"
 
 ---
 
-## Replay Engine (Future)
+## 📚 Key Resources
 
-- Read NDJSON capture files
-- Replay requests with variable substitution
-- Support conditional flows
-- Generate PoC scripts (Python/curl)
+### Must-Read Before Starting
+1. **[docs/REDESIGN_PLAN.md](docs/REDESIGN_PLAN.md)** - Complete AMSAW v2 architecture
+2. **[docs/README.md](docs/README.md)** - Project overview and current state
+3. **Current implementation:**
+   - `src/core/auto_sandbox.py` (current broken approach - learn what NOT to do)
+   - `src/core/runner.py` (detection engine - understand the interface)
+   - `src/core/lifecycle.py` (Docker management - reusable)
 
----
+### Reference During Implementation
+- **AMSAW v2 Engineering Doc** (in your conversation history) - Detailed specs
+- **src/core/models.py** - Pydantic models (understand data structures)
+- **src/adapters/mcp_client_adapter.py** - MCP SDK usage examples
 
-## Reporting (Future)
-
-**MVP:** CLI output + JSON report
-- Connection summary (success/fail/timeout)
-- Message count, latency stats
-- Captured errors/warnings
-
-**Later:** Web dashboard, CVSS scoring, remediation guidance
-
----
-
-## Development Phases
-
-### ✅ Phase 1: Connection Layer (COMPLETED ✅)
-- [x] Implement McpClientAdapter (primary adapter using official SDK)
-- [x] Implement HttpSseAdapter (legacy raw HTTP adapter)
-- [x] NDJSON capture working
-- [x] Test against DV-MCP Challenge 1 (SSE transport)
-- [x] Test against DV-MCP Challenge 2 (SSE transport)
-- [x] Test stdio transport with official MCP Time Server
-- [x] Successfully captured credentials leak and tool calls
-- [x] Reorganize project structure (src/, examples/, docs/)
-- [x] Create package files (LICENSE, pyproject.toml, etc.)
-
-**Status:** Production-ready adapter, tested with 3 different MCP servers
+### When Stuck
+1. Read the relevant existing code first
+2. Check if there's a reusable component
+3. Ask specific questions (not "how do I do X?" but "should I use approach A or B for X?")
 
 ---
 
-### ✅ Phase 2: Security Assessment Framework (COMPLETED!)
+## 🎓 Success Metrics
 
-**Goal:** Orchestrate test modules and automate vulnerability detection
+You're successful when:
+1. ✅ A new session can read docs and understand the project in 10 minutes
+2. ✅ `mcpsf assess "MCP from different source"` works end-to-end
+3. ✅ All 14 existing detectors still work (no regressions)
+4. ✅ Assessment time is <60 seconds per MCP
+5. ✅ Can handle monorepos (multiple MCPs in one repo)
+6. ✅ Can test MCPs with database dependencies (auto-mocked)
+7. ✅ Code is clean, tested, and documented
 
-#### 2A: Core Framework (Tasks T1-T5) ✅
-- [x] **T1:** Core Pydantic models (DetectionStatus, Signal, DetectionResult, ServerProfile, AssessmentResult)
-- [x] **T2:** Detector base class (`src/modules/base.py`) and auto-discovery registry
-- [x] **T3:** TestRunner orchestration (`src/core/runner.py`) with timeout enforcement
-- [x] **T4:** Policy engine (scope.yaml, rate limiter, redactor, audit logger)
-- [x] **T5:** SafeAdapter wrapper with scope/rate/redaction enforcement
-
-**Results:** 67 unit tests passing, complete safety guardrails implemented
-
-#### 2B: Detectors (Tasks T6) ✅
-- [x] **T6.1:** Prompt Injection via Resource Parameters detector (`MCP-2024-PI-001`)
-  - Pattern-based sensitive resource detection
-  - Signal emission (schema_overpermissive, sensitive_exposure)
-  - Standards mapping (CWE-74, OWASP LLM01, CVSS 7.5 HIGH)
-  - Successfully detected DV-MCP Challenge 1 with 95% confidence
-  - Active PoC generation with unauthorized access demonstrations
-
-- [x] **T6.2:** Credential Exposure Detector (`MCP-2024-CE-001`)
-  - Pattern matching for secrets (passwords, API keys, tokens, connection strings)
-  - Secret type classification and severity determination
-  - Standards mapping (CWE-522, OWASP LLM01, OWASP API2, CVSS 8.2 HIGH)
-  - Active PoC generation with redacted credential samples
-
-**Results:** 80 unit tests + 1 integration test passing, 2 detectors operational!
-
-#### 2C: Reporting & CLI (Tasks T7-T9) ✅ COMPLETED
-- [x] **T7:** JSON and SARIF report generators
-  - JSONReporter: Machine-readable with full evidence
-  - SARIFReporter: SARIF 2.1.0 compliant for CI/CD integration
-  - Proper enum handling for Signal types
-
-- [x] **T8:** CLI report generator (human-readable structured output)
-  - Detailed finding sections with standards mapping
-  - Comprehensive PoC sections showing payload/response/leaked secrets
-  - Color-coded terminal output (optional)
-  - Plain text file output without ANSI codes
-
-- [x] **T9:** Report bundle generation
-  - ReportManager orchestrates all report formats
-  - Complete assessment bundles with metadata
-  - Proper folder organization:
-    - `reports/` contains only bundles (report.json, report.txt, report.sarif, audit.jsonl, metadata.json)
-    - `captures/` contains original audit logs
-  - Audit log integrity tracking (SHA256 hash)
-
-**Results:** Professional multi-format reporting system with actual PoC evidence!
+You've failed when:
+1. ❌ Existing detectors are broken
+2. ❌ Report formats changed (breaks CI/CD pipelines)
+3. ❌ Large untested code dumps
+4. ❌ Implemented wrong thing due to not asking questions
+5. ❌ Unsafe execution (no sandboxing)
 
 ---
 
-### ✅ Phase 3: Additional Detectors (COMPLETED!)
+## 🚀 Getting Started (Your First Session)
 
-**Goal:** Complete vulnerability coverage with general-purpose detectors for ANY MCP server
+### Minute 0-10: Context Gathering
+1. Read [docs/REDESIGN_PLAN.md](docs/REDESIGN_PLAN.md) (comprehensive architecture)
+2. Read [docs/README.md](docs/README.md) (project status)
+3. Skim current `src/core/auto_sandbox.py` (understand what's broken)
 
-**IMPORTANT:** All detectors are designed for GENERAL-PURPOSE use against real-world MCP servers, not just DV-MCP. They use pattern-based heuristics and work without prior knowledge of specific server implementations.
+### Minute 10-20: Propose First Step
+Ask user: "I've read the docs. I understand we're building AMSAW v2. Should I start with:
+- Phase 1 (Sidecars + Fat Images)?
+- Phase 2 (Universal Bridge)?
+- Something else?
 
-#### Module Roadmap (ALL 9 DETECTORS IMPLEMENTED ✅):
-1. [x] `credential_exposure_detector.py` (`MCP-2024-CE-001`) ✅
-   - Passive pattern matching for exposed secrets in resources
-   - Detects passwords, API keys, tokens, connection strings, private keys
-   - Works on ANY MCP server with resources
+I recommend starting with Phase 2 (Bridge) as it's the most critical piece."
 
-2. [x] `prompt_injection_resource_params.py` (`MCP-2024-PI-001`) ✅
-   - Detects prompt injection in resource parameters
-   - Tests for unauthorized access to sensitive resources
-   - Active PoC generation with controlled payloads
-
-3. [x] `tool_poisoning_detector.py` (`MCP-2024-TP-001`) ✅
-   - Detects hidden instructions in tool/resource descriptions
-   - Pattern matching for HTML tags, imperatives, deceptive language
-   - Identifies action+target combinations (e.g., "access confidential")
-   - Works on ANY MCP server (tools or resources)
-
-4. [x] `excessive_permissions_detector.py` (`MCP-2024-EP-001`) ✅
-   - Detects overly permissive tool capabilities
-   - Analyzes for filesystem, code execution, network, database access
-   - Flags unrestricted parameters and multiple high-risk capabilities
-   - Works on ANY MCP server with tools
-
-5. [x] `tool_behavior_monitor.py` (`MCP-2024-RUG-001`) ✅
-   - Detects dynamic behavior changes (rug pull attacks)
-   - Repeated enumeration to detect tool description/schema modifications
-   - Hash-based integrity checking
-   - Works on ANY MCP server
-
-6. [x] `tool_shadowing_detector.py` (`MCP-2024-TS-001`) ✅
-   - Detects duplicate/conflicting tool names
-   - Typosquatting detection via similarity analysis
-   - Identifies generic names and brand impersonation
-   - Works on ANY MCP server
-
-7. [x] `indirect_injection_detector.py` (`MCP-2024-II-001`) ✅
-   - Detects malicious instructions in external data (resources/tool responses)
-   - Scans for injection patterns in retrieved content
-   - Tests external data processing tools
-   - Works on ANY MCP server
-
-8. [x] `insecure_storage_detector.py` (`MCP-2024-IS-001`) ✅
-   - Detects exposed tokens/credentials in tool responses
-   - Tests authentication-related tools with safe inputs
-   - Pattern matching for API keys, tokens, OAuth secrets
-   - Works on ANY MCP server
-
-9. [x] `code_execution_detector.py` (`MCP-2024-CEX-001`) ✅
-   - Detects unsafe code execution capabilities
-   - Analyzes for dangerous parameters (code, script, eval)
-   - Tests with benign payloads (arithmetic only)
-   - Works on ANY MCP server
-
-10. [x] `command_injection_detector.py` (`MCP-2024-CI-001`) ✅
-    - Detects OS command injection vulnerabilities
-    - Identifies system command tools (ping, curl, network diagnostics)
-    - Analyzes for injection-prone parameters without validation
-    - Conservative testing with safe payloads
-    - Works on ANY MCP server
-
-**Results:**
-- **9 production-ready detectors** (11 total including Phase 2)
-- **All follow consistent format**: Same header structure, methodology, reporting
-- **General-purpose design**: Pattern-based detection, no hardcoded assumptions
-- **Real-world applicability**: Works on ANY MCP server, not just DV-MCP
-- **Professional standards**: CWE, OWASP LLM/API, CVSS scoring, remediation guidance
+### Minute 20+: Start Implementing
+1. Create TODO list (use TodoWrite tool)
+2. Write failing test first
+3. Implement minimal working version
+4. Make test pass
+5. Report progress
+6. Get feedback
+7. Iterate
 
 ---
 
-### ✅ Phase 4: Production CLI & Reporting (COMPLETED!)
+## 🎯 TL;DR (Quick Reference)
 
-**Goal:** Production-ready command-line interface and complete reporting system
+**Your Role:** Infrastructure engineer building auto-sandbox wrapper
+**Your Goal:** Build Phases 1-3 of AMSAW v2 (Phase 4 already exists)
+**Your Constraint:** Never modify detection engine (14 detectors)
+**Your Priority:** Universal Bridge (Phase 2) - this is the key innovation
+**Your Process:** Test first, implement incrementally, ask questions early
+**Your Success:** `mcpsf assess` works in <60s
 
-**Completed Tasks:**
-- [x] **Production CLI** (`mcpsf.py`) ✅
-  - `mcpsf assess <target>` - Run full assessment
-  - `mcpsf list-detectors` - List all available detectors
-  - `mcpsf version` - Show framework version
-  - Proper report structure: `reports/<ServerName>/` bundles
-  - Auto-naming from server metadata
-  - Custom output directory support (`-o/--output`)
-  - Detector filtering (`-d/--detectors`)
-  - Scope file support (`-s/--scope`)
-  - Exit codes: 0 (clean), 1 (vulnerabilities found)
+**Read these NOW:**
+1. [docs/REDESIGN_PLAN.md](docs/REDESIGN_PLAN.md)
+2. [docs/README.md](docs/README.md)
 
-- [x] **Complete Reporting System** ✅
-  - JSON reports (machine-readable with full evidence)
-  - SARIF 2.1.0 reports (CI/CD integration)
-  - CLI reports (human-readable structured output)
-  - Audit logs (NDJSON capture)
-  - Metadata files (assessment summary)
-  - ReportManager orchestration
-
-**Future Enhancements:**
-- [ ] NDJSON replay engine (re-run captured traffic)
-- [ ] PoC bundle generation (Python scripts + evidence)
-- [ ] HTML/PDF report generation
-- [ ] Interactive CLI mode (like msfconsole)
+**Then start implementing Phase 2 (Universal Bridge).**
 
 ---
 
-### 📋 Phase 5: Advanced Features (FUTURE)
-
-- [ ] Proxy support (mitmproxy integration)
-- [ ] Web dashboard (Flask/FastAPI)
-- [ ] CI/CD integration (GitHub Actions)
-- [ ] Plugin system for custom modules
-- [ ] Interactive mode (CLI like msfconsole)
-- [ ] Database backend for result storage
-
----
-
-## Notes & Decisions
-
-**Why NDJSON?**
-- Line-by-line streaming (no need to load full file)
-- Easy to grep/filter
-- Language-agnostic
-- append-only (safe for concurrent writes)
-
-**Why separate adapters?**
-- MCP transports are fundamentally different (process vs HTTP)
-- Easier to test in isolation
-- Can add new transports (WebSocket, gRPC) without touching core
-
-**Implementation Status:**
-1. ✅ Python chosen for rapid prototyping
-2. ✅ McpClientAdapter implemented using official MCP SDK
-3. ✅ Successfully connected to DV-MCP and captured traffic
-4. ✅ NDJSON evidence capture verified
-
-**Example Capture Output:**
-```json
-{"type": "connection_attempt", "ts": "2025-10-08T05:25:50Z", "data": {"transport": "sse", "config": {"url": "http://localhost:9001/sse"}}}
-{"type": "connection_established", "ts": "2025-10-08T05:25:51Z", "data": {"transport": "sse", "server_info": {"name": "Challenge 1 - Basic Prompt Injection", "version": "1.16.0"}, ...}}
-{"type": "request", "ts": "2025-10-08T05:25:51Z", "data": {"method": "resources/read", "uri": "internal://credentials"}}
-{"type": "response", "ts": "2025-10-08T05:25:51Z", "data": {"uri": "internal://credentials", "contents": [{"text": "Admin Password: super_secret_password123..."}]}}
-```
-
-**Completed Milestones (v0.3 - Production Release):**
-1. ✅ Core framework with signal-based detection architecture
-2. ✅ Complete safety guardrails (scope, rate limiting, redaction, audit logging)
-3. ✅ **12 operational detectors** covering all major vulnerability classes
-   - 2 original detectors (Prompt Injection, Credential Exposure)
-   - 9 new general-purpose detectors (Code Execution, Command Injection, Tool Poisoning, etc.)
-   - 1 dummy test detector
-4. ✅ Successfully validated against DV-MCP Challenge 1 (both vulnerabilities detected, 95% confidence)
-5. ✅ Professional reporting system with 3 formats (JSON, SARIF 2.1.0, CLI/TXT)
-6. ✅ Universal PoC generation across all detectors with actual evidence
-7. ✅ **Production CLI** (`mcpsf assess`) with proper workflow for 100+ MCPs
-8. ✅ Proper architecture: `reports/<ServerName>/` bundles with all files
-9. ✅ Standards compliance (CWE, OWASP LLM/API, CVSS, ASVS)
-10. ✅ General-purpose design: Works on ANY MCP server, not just DV-MCP
-
-**Next Steps (Phase 5: Real-World Testing):**
-1. Test against DV-MCP Challenges 2-10
-2. Test against real-world open-source MCP servers
-3. Build threat modeling engine (attack chain detection)
-4. Add interactive CLI mode (like msfconsole)
-
-**See:** `WEEKLY_REPORT_2025-10-15.md` for detailed progress report
-
----
-
-*This document will evolve as we build. All architectural decisions and module specs will be documented here.*
+*You are a security infrastructure engineer. You build the foundation that others rely on. Your code must be rock-solid, well-tested, and maintainable. Ship working features incrementally. Ask questions when uncertain. Keep the user informed. You've got this! 🚀*

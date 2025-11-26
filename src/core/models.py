@@ -6,6 +6,7 @@ All models use Pydantic for validation, serialization, and JSON round-trip guara
 
 from datetime import datetime, timezone
 from enum import Enum
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field, field_validator, ConfigDict
 
@@ -401,7 +402,7 @@ class AssessmentResult(BaseModel):
     )
 
     framework_version: str = Field(
-        default="0.2.0",
+        default="0.4.0",
         description="MCP Security Framework version"
     )
 
@@ -446,3 +447,137 @@ class ModuleMetadata(BaseModel):
         if v.upper() not in allowed:
             raise ValueError(f"severity_default must be one of {allowed}")
         return v.upper()
+
+
+# ============================================================================
+# Target Registry Models (Phase 6A)
+# ============================================================================
+
+class TransportConfig(BaseModel):
+    """
+    Transport configuration for connecting to MCP server.
+    Supports both SSE (HTTP/Server-Sent Events) and stdio (local process).
+    """
+    type: str = Field(..., description="Transport type: 'sse' or 'stdio'")
+
+    # SSE transport fields
+    url: Optional[str] = Field(None, description="SSE endpoint URL (for type=sse)")
+    timeout_s: int = Field(default=30, ge=1, description="Connection timeout in seconds")
+
+    # stdio transport fields
+    command: Optional[str] = Field(None, description="Command to execute (for type=stdio)")
+    args: List[str] = Field(default_factory=list, description="Command arguments")
+    env: Dict[str, str] = Field(default_factory=dict, description="Environment variables")
+    working_dir: Optional[str] = Field(None, description="Working directory for command")
+
+    # Launch configuration (NEW - for automatic server startup)
+    launch: Optional['LaunchConfig'] = Field(None, description="Server launch configuration")
+
+    @field_validator("type")
+    @classmethod
+    def validate_transport_type(cls, v: str) -> str:
+        allowed = {"sse", "stdio"}
+        if v.lower() not in allowed:
+            raise ValueError(f"transport type must be one of {allowed}")
+        return v.lower()
+
+
+class LaunchConfig(BaseModel):
+    """
+    Configuration for automatically launching MCP servers.
+    This solves the "hard targets" problem - MCPSF can now start/stop servers automatically.
+    """
+    enabled: bool = Field(default=False, description="Enable automatic server launch")
+
+    # Optional sandbox wrapper (e.g., docker/podman/firejail)
+    class SandboxConfig(BaseModel):
+        type: str = Field(default="docker", description="Sandbox type: docker/podman/firejail")
+        image: Optional[str] = Field(None, description="Container image (for docker/podman)")
+        cmd: Optional[str] = Field(None, description="Command to run inside sandbox (defaults to launch command)")
+        args: List[str] = Field(default_factory=list, description="Command args inside sandbox")
+        env: Dict[str, str] = Field(default_factory=dict, description="Environment variables for sandbox run")
+        network: Optional[str] = Field(None, description="Network mode (e.g., none, host, bridge)")
+        mounts: List[str] = Field(default_factory=list, description="Mounts/volumes (host:container[:ro])")
+        ports: List[str] = Field(default_factory=list, description="Port mappings (host:container)")
+        workdir: Optional[str] = Field(None, description="Working directory inside sandbox")
+
+    sandbox: Optional[SandboxConfig] = Field(
+        default=None,
+        description="Optional sandbox wrapper for launch (docker/podman/firejail)"
+    )
+
+    # Pre-launch setup (e.g., pip install -e ., npm install)
+    setup_commands: List[str] = Field(
+        default_factory=list,
+        description="Optional commands to run before launching the server (executed sequentially)"
+    )
+
+    # Launch command (if different from transport command)
+    command: Optional[str] = Field(None, description="Launch command (uses transport.command if None)")
+    args: List[str] = Field(default_factory=list, description="Launch arguments")
+    env: Dict[str, str] = Field(default_factory=dict, description="Additional environment variables")
+    working_dir: Optional[str] = Field(None, description="Working directory")
+
+    # Startup behavior
+    wait_for_ready: bool = Field(default=True, description="Wait for server to be ready before testing")
+    ready_timeout_s: int = Field(default=30, ge=1, description="Max time to wait for server ready")
+    ready_check: str = Field(default="healthcheck", description="Ready check method: 'healthcheck', 'port', 'log_pattern'")
+
+    # Port binding (for SSE servers)
+    port: Optional[int] = Field(None, ge=1, le=65535, description="Expected port (for port-based ready check)")
+
+    # Log pattern (alternative ready check)
+    log_pattern: Optional[str] = Field(None, description="Regex pattern to detect in stdout/stderr")
+
+    # Shutdown behavior
+    shutdown_timeout_s: int = Field(default=10, ge=1, description="Max time to wait for graceful shutdown")
+    kill_on_timeout: bool = Field(default=True, description="Force kill if graceful shutdown times out")
+
+
+class HealthcheckConfig(BaseModel):
+    """
+    Healthcheck configuration for verifying server availability.
+    """
+    enabled: bool = Field(default=True, description="Enable healthcheck")
+    type: str = Field(default="endpoint", description="Healthcheck type: 'endpoint', 'process', 'tool_count'")
+
+    # For type=endpoint (SSE servers)
+    url: Optional[str] = Field(None, description="Healthcheck URL")
+    method: str = Field(default="GET", description="HTTP method")
+    expected_status: int = Field(default=200, description="Expected HTTP status code")
+
+    # For type=tool_count (verify MCP server responds)
+    min_tools: Optional[int] = Field(None, ge=0, description="Minimum expected tool count")
+
+    # Common
+    timeout_s: int = Field(default=5, ge=1, description="Healthcheck timeout")
+
+    @field_validator("type")
+    @classmethod
+    def validate_healthcheck_type(cls, v: str) -> str:
+        allowed = {"endpoint", "process", "tool_count"}
+        if v.lower() not in allowed:
+            raise ValueError(f"healthcheck type must be one of {allowed}")
+        return v.lower()
+
+
+class AuthConfig(BaseModel):
+    """Authentication configuration."""
+    type: str = Field(default="none", description="Auth type: 'none', 'api_key', 'oauth', 'mtls'")
+
+    # For type=api_key
+    api_key: Optional[str] = Field(None, description="API key (can use ${ENV_VAR} syntax)")
+    header_name: str = Field(default="X-API-Key", description="Header name for API key")
+
+    # For type=oauth
+    token_url: Optional[str] = Field(None, description="OAuth token endpoint")
+    client_id: Optional[str] = Field(None, description="OAuth client ID")
+    client_secret: Optional[str] = Field(None, description="OAuth client secret")
+
+    @field_validator("type")
+    @classmethod
+    def validate_auth_type(cls, v: str) -> str:
+        allowed = {"none", "api_key", "oauth", "mtls"}
+        if v.lower() not in allowed:
+            raise ValueError(f"auth type must be one of {allowed}")
+        return v.lower()

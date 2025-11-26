@@ -1,0 +1,16 @@
+# Git ignore for targets directory
+
+# Batch state file (resume logic)
+.batch_state.json
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# Don't ignore these important files
+!registry.yaml
+!profiles/*.yaml
+!groups/*.txt
+!README.md
+!.gitignore

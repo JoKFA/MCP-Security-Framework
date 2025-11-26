@@ -36,6 +36,9 @@ from src.core.policy import ScopeConfig, RateLimitConfig, PolicyConfig
 from src.core.models import DetectionStatus
 from src.modules.registry import DetectorRegistry
 
+# Version
+VERSION = "0.4.0"
+
 
 def run_async(coro):
     """
@@ -54,10 +57,10 @@ def run_async(coro):
 def print_banner():
     """Print MCP Security Framework banner"""
     try:
-        banner = """
+        banner = f"""
 ╔════════════════════════════════════════════════════════════════════╗
 ║                                                                    ║
-║           MCP Security Framework (mcpsf) v0.2.0                    ║
+║           MCP Security Framework (mcpsf) v{VERSION}                    ║
 ║           Professional Security Testing for MCP Servers            ║
 ║                                                                    ║
 ╚════════════════════════════════════════════════════════════════════╝
@@ -65,12 +68,12 @@ def print_banner():
         print(banner)
     except UnicodeEncodeError:
         # Fallback for Windows consoles that don't support Unicode box characters
-        banner = """
+        banner = f"""
 ======================================================================
-                                                                   
-           MCP Security Framework (mcpsf) v0.4.0                    
-           Professional Security Testing for MCP Servers            
-                                                                   
+
+           MCP Security Framework (mcpsf) v{VERSION}
+           Professional Security Testing for MCP Servers
+
 ======================================================================
 """
         print(banner)
@@ -97,6 +100,110 @@ def list_detectors():
         print(f"{meta.id:<25} {meta.name:<45} {meta.severity_default:<10}")
 
     print(f"\n[+] Total: {len(detectors)} detectors\n")
+
+
+def cleanup_containers(args):
+    """Clean up orphaned MCPSF containers"""
+    import docker
+    from datetime import datetime
+
+    print_banner()
+    print("\n[*] Scanning for orphaned MCPSF containers...\n")
+
+    try:
+        docker_client = docker.from_env()
+    except Exception as e:
+        print(f"[!] Error: Cannot connect to Docker: {e}")
+        print("[*] Make sure Docker is running")
+        return 1
+
+    # Find all containers with mcpsf.managed label
+    try:
+        mcpsf_containers = docker_client.containers.list(
+            all=True,
+            filters={"label": "mcpsf.managed=true"}
+        )
+    except Exception as e:
+        print(f"[!] Error listing containers: {e}")
+        return 1
+
+    if not mcpsf_containers:
+        print("[+] No MCPSF containers found")
+        return 0
+
+    print(f"[*] Found {len(mcpsf_containers)} MCPSF container(s):\n")
+
+    # Display containers with details
+    for container in mcpsf_containers:
+        labels = container.labels
+        mcp_name = labels.get("mcpsf.mcp_name", "unknown")
+        language = labels.get("mcpsf.language", "unknown")
+        transport = labels.get("mcpsf.transport", "unknown")
+        created_at = labels.get("mcpsf.created_at", "unknown")
+        is_mock = labels.get("mcpsf.mock", None)
+        is_temp = labels.get("mcpsf.temporary", None)
+
+        # Calculate age
+        age_str = "unknown"
+        if created_at != "unknown":
+            try:
+                created_timestamp = int(created_at)
+                age_seconds = int(datetime.now().timestamp()) - created_timestamp
+                age_minutes = age_seconds // 60
+                age_hours = age_minutes // 60
+                if age_hours > 0:
+                    age_str = f"{age_hours}h {age_minutes % 60}m"
+                else:
+                    age_str = f"{age_minutes}m"
+            except:
+                pass
+
+        container_type = "Mock" if is_mock else ("Temporary" if is_temp else "MCP")
+        status = container.status
+
+        print(f"  [{container.short_id}] {container_type}")
+        print(f"    Name:      {mcp_name}")
+        print(f"    Language:  {language}")
+        print(f"    Transport: {transport}")
+        print(f"    Status:    {status}")
+        print(f"    Age:       {age_str}")
+        if is_mock:
+            print(f"    Mock Type: {is_mock}")
+        print()
+
+    # Ask for confirmation unless --force flag is used
+    if not args.force:
+        response = input(f"Remove all {len(mcpsf_containers)} container(s)? [y/N]: ").strip().lower()
+        if response not in ['y', 'yes']:
+            print("[*] Cleanup cancelled")
+            return 0
+
+    # Remove containers
+    print()
+    removed_count = 0
+    error_count = 0
+
+    for container in mcpsf_containers:
+        try:
+            print(f"[*] Removing {container.short_id}...")
+            if container.status == "running":
+                container.stop(timeout=2)
+            container.remove()
+            removed_count += 1
+            print(f"[+] Removed {container.short_id}")
+        except Exception as e:
+            error_count += 1
+            print(f"[!] Failed to remove {container.short_id}: {e}")
+
+    print()
+    print("=" * 70)
+    if error_count == 0:
+        print(f"[+] Successfully removed {removed_count} container(s)")
+    else:
+        print(f"[+] Removed {removed_count} container(s), {error_count} failed")
+    print("=" * 70)
+
+    return 0 if error_count == 0 else 1
 
 
 def parse_target(target_str: str) -> dict:
@@ -472,6 +579,10 @@ For more information, see: https://github.com/yourorg/mcp-security-framework
     batch_parser.add_argument("--output", help="Batch output directory (default: reports/)")
     batch_parser.add_argument("--no-skip-completed", action="store_true", help="Do not skip targets already marked completed in batch state")
 
+    # cleanup command
+    cleanup_parser = subparsers.add_parser("cleanup", help="Clean up orphaned MCPSF containers")
+    cleanup_parser.add_argument("--force", "-f", action="store_true", help="Skip confirmation prompt")
+
     # version command
     subparsers.add_parser("version", help="Show version information")
 
@@ -491,11 +602,15 @@ For more information, see: https://github.com/yourorg/mcp-security-framework
         list_detectors()
         sys.exit(0)
 
+    elif args.command == "cleanup":
+        exit_code = cleanup_containers(args)
+        sys.exit(exit_code)
+
     elif args.command == "version":
         print_banner()
         registry = DetectorRegistry()
         registry.load_detectors()
-        print("\n[+] Version: 0.4.0")
+        print(f"\n[+] Version: {VERSION}")
         print("[+] Python: " + sys.version.split()[0])
         print("[+] Detectors: " + str(len(registry.get_all_detectors())))
         sys.exit(0)

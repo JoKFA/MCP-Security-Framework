@@ -86,8 +86,23 @@ class ContainerProvisioner:
 
         Args:
             interactive: If True, prompt user for credentials. If False, auto-provision mocks.
+
+        Raises:
+            ProvisioningError: If Docker is not available
         """
-        self.docker_client = docker.from_env()
+        try:
+            self.docker_client = docker.from_env()
+            # Test Docker connectivity
+            self.docker_client.ping()
+        except Exception as e:
+            raise ProvisioningError(
+                "Cannot connect to Docker daemon",
+                suggestion="Make sure Docker is installed and running:\n"
+                          "  • Windows/macOS: Start Docker Desktop\n"
+                          "  • Linux: Run 'sudo systemctl start docker'\n"
+                          f"  • Original error: {str(e)}"
+            )
+
         self.mock_containers: List[docker.models.containers.Container] = []
         self.interactive = interactive
 
@@ -128,6 +143,19 @@ class ContainerProvisioner:
                 transport=config.transport
             )
 
+        # Check if Docker image exists
+        try:
+            self.docker_client.images.get(image)
+        except docker.errors.ImageNotFound:
+            raise ProvisioningError(
+                f"Docker image not found: {image}",
+                suggestion=f"Build the required Docker image:\n"
+                          f"  docker build -t {image.split(':')[0]} -f docker/{image.split(':')[0]}.Dockerfile .\n\n"
+                          f"Or build all MCPSF images:\n"
+                          f"  docker build -t mcp-runner-python -f docker/mcp-runner-python.Dockerfile .\n"
+                          f"  docker build -t mcp-runner-node -f docker/mcp-runner-node.Dockerfile ."
+            )
+
         # Prepare volume mounts (Runner Pattern)
         volumes = {}
         if config.project_root:
@@ -160,13 +188,15 @@ class ContainerProvisioner:
             try:
                 # Create temporary container just for CLI detection
                 temp_volumes = {str(config.project_root.absolute()): {'bind': '/app', 'mode': 'rw'}}
+                temp_labels = {"mcpsf.managed": "true", "mcpsf.temporary": "true"}
                 temp_container = self.docker_client.containers.run(
                     image,
                     command=["sleep", "infinity"],  # Keep alive during detection
                     detach=True,
                     stdin_open=True,
                     volumes=temp_volumes,
-                    network_mode="bridge"
+                    network_mode="bridge",
+                    labels=temp_labels
                 )
 
                 # Install dependencies temporarily
@@ -201,6 +231,16 @@ class ContainerProvisioner:
             target_port = config.sse_port or 9001
             ports = {f"{target_port}/tcp": None}  # None -> random host port
 
+        # Add labels for container tracking and cleanup
+        import time as time_module
+        labels = {
+            "mcpsf.managed": "true",
+            "mcpsf.mcp_name": config.name,
+            "mcpsf.language": config.language,
+            "mcpsf.transport": config.transport,
+            "mcpsf.created_at": str(int(time_module.time()))
+        }
+
         container = self.docker_client.containers.run(
             image,
             command=["sleep", "infinity"],  # Keep alive!
@@ -209,7 +249,8 @@ class ContainerProvisioner:
             volumes=volumes if volumes else None,
             environment=environment if environment else None,
             ports=ports,
-            network_mode="bridge"
+            network_mode="bridge",
+            labels=labels
         )
 
         print(f"[+] Sidecar container launched: {container.short_id}")
@@ -769,6 +810,7 @@ class ContainerProvisioner:
                     "POSTGRES_PASSWORD": "mcpsf",
                     "POSTGRES_DB": "mcpsf"
                 },
+                labels={"mcpsf.managed": "true", "mcpsf.mock": "postgres"},
                 remove=True
             )
             self.mock_containers.append(pg_container)
@@ -785,6 +827,7 @@ class ContainerProvisioner:
             mongo_container = self.docker_client.containers.run(
                 "mongo:6-jammy",
                 detach=True,
+                labels={"mcpsf.managed": "true", "mcpsf.mock": "mongodb"},
                 remove=True
             )
             self.mock_containers.append(mongo_container)
@@ -818,4 +861,19 @@ class ContainerProvisioner:
 
 class ProvisioningError(Exception):
     """Failed to provision container."""
-    pass
+
+    def __init__(self, message: str, suggestion: str = None):
+        full_message = message
+        if suggestion:
+            full_message += f"\n\n💡 Suggestion: {suggestion}"
+        elif "port" in message.lower() or "address already in use" in message.lower():
+            full_message += "\n\n💡 Suggestion: Port conflict detected"
+            full_message += "\n  • Another service is using this port"
+            full_message += "\n  • Run 'docker ps' to see active containers"
+            full_message += "\n  • Or run 'mcpsf cleanup' to remove orphaned containers"
+        elif "connection" in message.lower() or "not become ready" in message.lower():
+            full_message += "\n\n💡 Suggestion: Server failed to start"
+            full_message += "\n  • Check container logs above for errors"
+            full_message += "\n  • Verify server code has no syntax errors"
+            full_message += "\n  • Missing dependencies will be auto-installed (check retry logs)"
+        super().__init__(full_message)

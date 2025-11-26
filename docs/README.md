@@ -19,10 +19,22 @@ This documentation covers the complete MCP Security Framework, from automatic sa
 | **[Detectors Guide](DETECTORS_GUIDE.md)** | Security vulnerability detection engine | Security Engineers |
 | **[Reports Guide](REPORTS_GUIDE.md)** | Report formats and CI/CD integration | DevOps, Security Teams |
 | **[API Reference](API_REFERENCE.md)** | CLI commands and Python API | Developers |
+| **[Web View Guide](../WEB_VIEW_README.md)** | Flask web UI for running assessments and browsing reports | Web UI Users |
 
 ---
 
 ## 🚀 Quick Start
+
+### Prerequisites
+
+- **Python:** 3.11+ recommended (tested with 3.11/3.12)
+- **Node.js:** 18+ for Node-based MCPs (npm available on PATH)
+- **Docker:** 24+ with permission to run containers (required for sandboxing)
+- **Package managers:** `uv` or `pip`, plus `npm`
+- **Git + tar:** Needed for cloning/downloading targets
+- **Recommended host:** 4+ vCPU, 8GB RAM, 5GB free disk per assessment
+- **Network/proxy:** Allow Git/npm/tarball downloads; behind proxies set `HTTP(S)_PROXY` and `npm config set proxy`/`https-proxy`
+- **Offline caching:** Pre-download npm tarballs and Python wheels if running in restricted networks
 
 ### Installation
 
@@ -186,6 +198,16 @@ python mcpsf.py assess <source> -o ./my-reports
 
 ---
 
+## ⚠️ Known Limitations
+
+- **Success rate scope:** The 100% figure applies to the curated set of known-good Python MCPs; real-world targets with custom deps or unusual startup flows may require manual fixes.
+- **Language/transport:** Only Python and Node.js MCPs are supported; transports limited to stdio and SSE.
+- **Native/system deps:** Auto-fixes cover common cases (e.g., ffmpeg), but bespoke native libraries or GPU tooling may fail to build inside the sandbox without manual intervention.
+- **Network constraints:** Fully offline/proxy-restricted environments need pre-fetched npm tarballs/Python wheels and Docker images; otherwise provisioning will fail.
+- **Web UI exposure:** The Flask web view ships without auth; do not bind to non-localhost without putting it behind your own reverse proxy/auth.
+
+---
+
 ## 📖 Detailed Guides
 
 ### For Security Engineers
@@ -240,12 +262,12 @@ python tests/test_wikipedia_mcp.py
 
 ## 🤝 Contributing
 
-See **[DEVELOPMENT.md](DEVELOPMENT.md)** for:
-- Setting up development environment
-- Writing new detectors
-- Adding new wrapper features
-- Testing guidelines
-- Code review process
+See **[CONTRIBUTING.md](../CONTRIBUTING.md)** for:
+- Development setup and tooling
+- Coding style and lint/test expectations
+- How to run smoke/unit/integration suites
+- Release/versioning checklist
+- Code review guidelines
 
 ---
 

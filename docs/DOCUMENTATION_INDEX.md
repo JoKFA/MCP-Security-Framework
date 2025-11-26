@@ -6,59 +6,77 @@
 
 ---
 
-## üìö Core Documentation
+## üìö Core Documentation (Current)
 
-| Document | Size | Audience | Purpose |
-|----------|------|----------|---------|
-| **[README.md](README.md)** | 12KB | Everyone | Main documentation hub, quick start |
-| **[ARCHITECTURE.md](ARCHITECTURE.md)** | 24KB | Developers, Engineers | Complete system architecture and data flow |
-| **[OLD_AUTO_SANDBOX_ANALYSIS.md](OLD_AUTO_SANDBOX_ANALYSIS.md)** | 6KB | Developers | Historical context: old vs new system |
+| Document | Audience | Purpose |
+|----------|----------|---------|
+| **[README.md](README.md)** | Everyone | Main hub: overview, quick start, prerequisites, limitations |
+| **[ARCHITECTURE.md](ARCHITECTURE.md)** | Developers, Engineers | Complete system architecture and data flow |
+| **[WRAPPER_GUIDE.md](WRAPPER_GUIDE.md)** | Developers, DevOps | AMSAW v2 discovery/provisioning/bridge details |
+| **[DETECTORS_GUIDE.md](DETECTORS_GUIDE.md)** | Security Engineers | Detector taxonomy, behaviors, authoring, testing |
+| **[REPORTS_GUIDE.md](REPORTS_GUIDE.md)** | DevOps, Security Teams | Report formats, CI/CD integration, analysis |
+| **[API_REFERENCE.md](API_REFERENCE.md)** | Developers, Automation | CLI, Python API, Web API, config files |
+| **[WEB_VIEW_README.md](../WEB_VIEW_README.md)** | Web UI Users | Running the Flask web view and browsing reports |
+| **[OLD_AUTO_SANDBOX_ANALYSIS.md](OLD_AUTO_SANDBOX_ANALYSIS.md)** | Developers | Historical context: old vs new system |
 
 ---
 
 ## üìñ Documentation Guide by Role
 
 ### **For New Users / Quick Start**
-1. Start here: **[README.md](README.md)** (10 min read)
-   - Installation instructions
-   - Basic usage examples
-   - Quick reference
+1. **[README.md](README.md)** - Prereqs, install, basic usage
+2. **[DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md)** - Choose the next doc
 
 ### **For Developers / Integration**
-1. **[README.md](README.md)** ‚Üí Get started
-2. **[ARCHITECTURE.md](ARCHITECTURE.md)** ‚Üí Understand system design
-3. Source code: `src/core/` ‚Üí Implementation details
+1. **[README.md](README.md)** - Setup and CLI usage
+2. **[ARCHITECTURE.md](ARCHITECTURE.md)** - System design + data flows
+3. **[WRAPPER_GUIDE.md](WRAPPER_GUIDE.md)** - AMSAW v2 details
+4. **[API_REFERENCE.md](API_REFERENCE.md)** - CLI/Python/Web APIs
 
 ### **For Security Engineers**
-1. **[ARCHITECTURE.md](ARCHITECTURE.md)** ‚Üí Phase 4 (Security Assessment)
-2. Source code: `src/modules/detectors/` ‚Üí Detector implementations
-3. Test cases: `tests/` ‚Üí Example assessments
+1. **[ARCHITECTURE.md](ARCHITECTURE.md)** - Phase 4 assessment model
+2. **[DETECTORS_GUIDE.md](DETECTORS_GUIDE.md)** - Detector behaviors + authoring
+3. **[REPORTS_GUIDE.md](REPORTS_GUIDE.md)** - Finding interpretation + CI
+
+### **For DevOps / CI**
+1. **[REPORTS_GUIDE.md](REPORTS_GUIDE.md)** - SARIF/JSON and pipelines
+2. **[API_REFERENCE.md](API_REFERENCE.md)** - Automation hooks
+3. **[WRAPPER_GUIDE.md](WRAPPER_GUIDE.md)** - Docker/bridge expectations
+
+### **For Web UI Users**
+1. **[WEB_VIEW_README.md](../WEB_VIEW_README.md)** - Run the web UI and view reports
+2. **[REPORTS_GUIDE.md](REPORTS_GUIDE.md)** - Report content reference
 
 ### **For AI / Future Sessions**
-1. **[README.md](README.md)** ‚Üí Project overview
-2. **[ARCHITECTURE.md](ARCHITECTURE.md)** ‚Üí Technical details
-3. **[OLD_AUTO_SANDBOX_ANALYSIS.md](OLD_AUTO_SANDBOX_ANALYSIS.md)** ‚Üí Historical context
+1. **[README.md](README.md)** - Project overview
+2. **[ARCHITECTURE.md](ARCHITECTURE.md)** - Technical details
+3. **[OLD_AUTO_SANDBOX_ANALYSIS.md](OLD_AUTO_SANDBOX_ANALYSIS.md)** - Historical context
 
 ---
 
-## üóÇÔ∏è Documentation Structure
+## üóÇÔ∏?Documentation Structure
 
 ```
 docs/
-‚îú‚îÄ‚îÄ README.md                          # Main documentation hub
-‚îú‚îÄ‚îÄ ARCHITECTURE.md                    # System architecture (detailed)
-‚îú‚îÄ‚îÄ OLD_AUTO_SANDBOX_ANALYSIS.md       # Historical: old vs new system
-‚îú‚îÄ‚îÄ DOCUMENTATION_INDEX.md             # This file
-‚îÇ
-‚îî‚îÄ‚îÄ archive/                           # Historical development docs
-    ‚îú‚îÄ‚îÄ AMSAW_FULL_SNAPSHOT.md         # Development snapshot
-    ‚îú‚îÄ‚îÄ AUTO_SANDBOX_IMPLEMENTATION.md  # Old implementation details
-    ‚îú‚îÄ‚îÄ FIXES_APPLIED.md               # Development log
-    ‚îú‚îÄ‚îÄ IMPLEMENTATION_STATUS.md        # Development log
-    ‚îú‚îÄ‚îÄ REDESIGN_PLAN.md               # Original design doc (superseded by ARCHITECTURE.md)
-    ‚îú‚îÄ‚îÄ SIDECAR_PATTERN.md             # Design exploration
-    ‚îú‚îÄ‚îÄ UI_EVALUATION_2025-11-19.md    # UI exploration
-    ‚îî‚îÄ‚îÄ MCP_TEST_PLAYBOOK_2025-11-05.md # Test notes
+©¿©§©§ README.md                          # Main documentation hub
+©¿©§©§ ARCHITECTURE.md                    # System architecture (detailed)
+©¿©§©§ WRAPPER_GUIDE.md                   # AMSAW v2 details
+©¿©§©§ DETECTORS_GUIDE.md                 # Detector taxonomy + authoring
+©¿©§©§ REPORTS_GUIDE.md                   # Reporting and CI/CD integration
+©¿©§©§ API_REFERENCE.md                   # CLI/Python/Web APIs
+©¿©§©§ OLD_AUTO_SANDBOX_ANALYSIS.md       # Historical: old vs new system
+©¿©§©§ DOCUMENTATION_INDEX.md             # This file
+©∏©§©§ WEB_VIEW_README.md                 # Flask web UI reference
+
+©∏©§©§ archive/                           # Historical development docs
+    ©¿©§©§ AMSAW_FULL_SNAPSHOT.md         # Development snapshot
+    ©¿©§©§ AUTO_SANDBOX_IMPLEMENTATION.md  # Old implementation details
+    ©¿©§©§ FIXES_APPLIED.md               # Development log
+    ©¿©§©§ IMPLEMENTATION_STATUS.md        # Development log
+    ©¿©§©§ REDESIGN_PLAN.md               # Original design doc (superseded by ARCHITECTURE.md)
+    ©¿©§©§ SIDECAR_PATTERN.md             # Design exploration
+    ©¿©§©§ UI_EVALUATION_2025-11-19.md    # UI exploration (keep bookmarked for next UI revamp)
+    ©∏©§©§ MCP_TEST_PLAYBOOK_2025-11-05.md # Test notes
 ```
 
 ---
@@ -67,22 +85,22 @@ docs/
 
 ### Archived (Moved to `docs/archive/`)
 These docs served their purpose during development but are now superseded:
-- ‚úÖ `AMSAW_FULL_SNAPSHOT.md` ‚Üí Historical snapshot (166KB)
-- ‚úÖ `AUTO_SANDBOX_IMPLEMENTATION.md` ‚Üí Old implementation (30KB)
-- ‚úÖ `FIXES_APPLIED.md` ‚Üí Development log (11KB)
-- ‚úÖ `IMPLEMENTATION_STATUS.md` ‚Üí Development log (8KB)
-- ‚úÖ `REDESIGN_PLAN.md` ‚Üí Superseded by ARCHITECTURE.md (43KB)
-- ‚úÖ `SIDECAR_PATTERN.md` ‚Üí Design exploration (10KB)
-- ‚úÖ `UI_EVALUATION_2025-11-19.md` ‚Üí UI exploration (20KB)
-- ‚úÖ `MCP_TEST_PLAYBOOK_2025-11-05.md` ‚Üí Test notes (5KB)
+- ‚ú?`AMSAW_FULL_SNAPSHOT.md` ‚Ü?Historical snapshot (166KB)
+- ‚ú?`AUTO_SANDBOX_IMPLEMENTATION.md` ‚Ü?Old implementation (30KB)
+- ‚ú?`FIXES_APPLIED.md` ‚Ü?Development log (11KB)
+- ‚ú?`IMPLEMENTATION_STATUS.md` ‚Ü?Development log (8KB)
+- ‚ú?`REDESIGN_PLAN.md` ‚Ü?Superseded by ARCHITECTURE.md (43KB)
+- ‚ú?`SIDECAR_PATTERN.md` ‚Ü?Design exploration (10KB)
+- ‚ú?`UI_EVALUATION_2025-11-19.md` ‚Ü?UI exploration (20KB)
+- ‚ú?`MCP_TEST_PLAYBOOK_2025-11-05.md` ‚Ü?Test notes (5KB)
 
 ### Deleted
-- ‚úÖ `CLOUD_ROADMAP.md` ‚Üí Not relevant to current system
+- ‚ú?`CLOUD_ROADMAP.md` ‚Ü?Not relevant to current system
 
 ### Kept & Refactored
-- ‚úÖ `README.md` ‚Üí Completely rewritten (production-ready)
-- ‚úÖ `ARCHITECTURE.md` ‚Üí NEW comprehensive technical guide
-- ‚úÖ `OLD_AUTO_SANDBOX_ANALYSIS.md` ‚Üí Valuable historical analysis
+- ‚ú?`README.md` ‚Ü?Completely rewritten (production-ready)
+- ‚ú?`ARCHITECTURE.md` ‚Ü?NEW comprehensive technical guide
+- ‚ú?`OLD_AUTO_SANDBOX_ANALYSIS.md` ‚Ü?Valuable historical analysis
 
 ---
 
@@ -102,7 +120,7 @@ These docs served their purpose during development but are now superseded:
 
 ### Accessibility
 - Multiple entry points for different audiences
-- Progressive disclosure (overview ‚Üí details)
+- Progressive disclosure (overview ‚Ü?details)
 - Cross-references between documents
 - Searchable structure
 
@@ -158,26 +176,26 @@ python tests/test_challenge1.py
 
 ## üìù Future Documentation Plans
 
-### Phase 1 (Current) - Core Docs ‚úÖ
-- ‚úÖ Main README
-- ‚úÖ Architecture overview
-- ‚úÖ Historical analysis
+### Phase 1 (Complete) - Core & Specialized
+- README.md - Main hub
+- ARCHITECTURE.md - System design
+- WRAPPER_GUIDE.md - AMSAW v2 implementation
+- DETECTORS_GUIDE.md - Detector taxonomy/authoring
+- REPORTS_GUIDE.md - Reporting + CI/CD
+- API_REFERENCE.md - CLI/Python/Web APIs
+- WEB_VIEW_README.md - Flask web UI reference
 
-### Phase 2 (Next) - Specialized Guides
-- ‚è≥ WRAPPER_GUIDE.md - AMSAW v2 implementation details
-- ‚è≥ DETECTORS_GUIDE.md - Writing custom detectors
-- ‚è≥ REPORTS_GUIDE.md - CI/CD integration
-- ‚è≥ API_REFERENCE.md - Python API and CLI
+### Phase 2 (Next) - Advanced Topics
+- CONTRIBUTING.md - Dev workflow and release process (current)
+- TROUBLESHOOTING.md - Common provisioning/detector/report issues (to add)
+- PERFORMANCE.md - Optimization guide (to add)
+- SECURITY.md - Threat model deep dive (to add)
 
-### Phase 3 (Future) - Advanced Topics
-- ‚è≥ DEVELOPMENT.md - Contributing guide
-- ‚è≥ TROUBLESHOOTING.md - Common issues
-- ‚è≥ PERFORMANCE.md - Optimization guide
-- ‚è≥ SECURITY.md - Threat model deep dive
+### Phase 3 (Future) - Playbooks & Scaling
+- Batch scanning guide (revisit archive docs for inputs)
+- Web UI UX revamp (see archive/UI_EVALUATION_2025-11-19.md)
 
----
-
-## ‚úÖ Documentation Checklist
+## ‚ú?Documentation Checklist
 
 Before each release, ensure:
 - [ ] All version numbers updated
@@ -207,5 +225,7 @@ Before each release, ensure:
 
 ---
 
-**Documentation Status:** Production-ready ‚úÖ
+**Documentation Status:** Production-ready ‚ú?
 **Next Update:** When new features ship (v0.5.0)
+
+

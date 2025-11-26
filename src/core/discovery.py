@@ -601,12 +601,26 @@ class SourceDiscovery:
 # Exceptions
 class SourceDetectionError(Exception):
     """Cannot determine source type."""
-    pass
+
+    def __init__(self, message: str):
+        suggestion = "\n\n💡 Supported source types:"
+        suggestion += "\n  • npm packages: @modelcontextprotocol/server-time"
+        suggestion += "\n  • GitHub repos: https://github.com/owner/repo"
+        suggestion += "\n  • Local paths: ./path/to/mcp-server"
+        suggestion += "\n  • Remote URLs: http://localhost:9001/sse"
+        super().__init__(message + suggestion)
 
 
 class MCPNotFoundError(Exception):
     """No MCP SDK found in source."""
-    pass
+
+    def __init__(self, message: str):
+        suggestion = "\n\n💡 MCP Detection Tips:"
+        suggestion += "\n  • Python: Check for 'mcp' in requirements.txt or pyproject.toml"
+        suggestion += "\n  • Node.js: Check for '@modelcontextprotocol/sdk' in package.json"
+        suggestion += "\n  • Verify source code imports MCP SDK"
+        suggestion += "\n  • Ensure you're pointing to the correct directory"
+        super().__init__(message + suggestion)
 
 
 class TransportAnalyzer(ast.NodeVisitor):

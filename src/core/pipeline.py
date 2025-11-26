@@ -52,6 +52,7 @@ Design Principles:
 """
 
 import asyncio
+import signal
 from typing import Optional, List
 from pathlib import Path
 
@@ -84,6 +85,32 @@ class AssessmentPipeline:
         """
         self.discovery = SourceDiscovery()
         self.provisioner = ContainerProvisioner(interactive=interactive)
+        self._shutdown_requested = False
+        self._active_resources = {
+            "bridge": None,
+            "runner": None,
+            "provisioned": None
+        }
+
+    def _setup_signal_handlers(self):
+        """
+        Setup signal handlers for graceful shutdown.
+
+        Catches Ctrl+C (SIGINT) and SIGTERM to ensure containers are cleaned up.
+        """
+        def signal_handler(signum, frame):
+            if not self._shutdown_requested:
+                self._shutdown_requested = True
+                print("\n[!] Interrupt received, cleaning up containers...")
+                # The cleanup will happen in the finally block
+
+        # Register handlers (Windows supports SIGINT, Unix supports both)
+        signal.signal(signal.SIGINT, signal_handler)
+        try:
+            signal.signal(signal.SIGTERM, signal_handler)
+        except (AttributeError, ValueError):
+            # SIGTERM not available on Windows
+            pass
 
     async def run(
         self,
@@ -110,6 +137,9 @@ class AssessmentPipeline:
         import time
         start_time = time.time()
 
+        # Setup signal handlers for graceful shutdown
+        self._setup_signal_handlers()
+
         print("=" * 70)
         print("  AMSAW v2 - Automatic MCP Security Assessment")
         print("=" * 70)
@@ -121,6 +151,9 @@ class AssessmentPipeline:
         provisioned = None
 
         try:
+            # Check for shutdown request
+            if self._shutdown_requested:
+                raise KeyboardInterrupt("Assessment cancelled by user")
             # Phase 1: Discovery
             print("[Phase 1] Discovery Engine")
             print("-" * 70)
@@ -142,10 +175,15 @@ class AssessmentPipeline:
             print(f"[+] Transport: {config.transport}")
             print()
 
+            # Check for shutdown before provisioning
+            if self._shutdown_requested:
+                raise KeyboardInterrupt("Assessment cancelled by user")
+
             # Phase 2: Provisioner
             print("[Phase 2] Container Provisioner")
             print("-" * 70)
             provisioned = await self.provisioner.provision(config)
+            self._active_resources["provisioned"] = provisioned  # Track for cleanup
 
             if provisioned.container_id:
                 print(f"[+] Container: {provisioned.container_id[:12]}")
@@ -153,6 +191,10 @@ class AssessmentPipeline:
                 if provisioned.mocks:
                     print(f"[+] Mocks: {', '.join(provisioned.mocks.keys())}")
                 print()
+
+                # Check for shutdown before bridging
+                if self._shutdown_requested:
+                    raise KeyboardInterrupt("Assessment cancelled by user")
 
                 # Phase 3: Universal Bridge
                 print("[Phase 3] Universal Bridge")
@@ -163,6 +205,7 @@ class AssessmentPipeline:
                     container_port=config.sse_port or 9001,
                     transport_hint=config.transport
                 )
+                self._active_resources["bridge"] = bridge  # Track for cleanup
                 await bridge.start()
                 url = bridge.get_url()
                 print(f"[+] Bridge URL: {url}")
@@ -175,6 +218,10 @@ class AssessmentPipeline:
                 print(f"[+] Remote server: {url}")
                 print()
 
+            # Check for shutdown before assessment
+            if self._shutdown_requested:
+                raise KeyboardInterrupt("Assessment cancelled by user")
+
             # Phase 4: TestRunner (existing code!)
             print("[Phase 4] Security Assessment")
             print("-" * 70)
@@ -184,6 +231,7 @@ class AssessmentPipeline:
                 mode=profile
             )
             runner = TestRunner(scope=scope)
+            self._active_resources["runner"] = runner  # Track for cleanup
             result = await runner.assess(detector_ids=detectors)
 
             elapsed = time.time() - start_time
@@ -211,22 +259,39 @@ class AssessmentPipeline:
             raise
 
         finally:
-            # Cleanup (ALWAYS runs!)
+            # Cleanup (ALWAYS runs - even on Ctrl+C!)
             print()
-            print("[Cleanup] Stopping services...")
+            if self._shutdown_requested:
+                print("[Cleanup] Interrupted assessment - cleaning up resources...")
+            else:
+                print("[Cleanup] Stopping services...")
 
+            # Use tracked resources for cleanup
+            runner = self._active_resources.get("runner") or runner
+            bridge = self._active_resources.get("bridge") or bridge
+            provisioned = self._active_resources.get("provisioned") or provisioned
+
+            cleanup_errors = []
+
+            # Cleanup runner
             if runner:
                 try:
                     await runner.cleanup()
+                    print("[+] TestRunner cleaned up")
                 except Exception as e:
+                    cleanup_errors.append(f"Runner: {e}")
                     print(f"[!] Warning: Runner cleanup failed: {e}")
 
+            # Cleanup bridge
             if bridge:
                 try:
                     await bridge.stop()
+                    print("[+] Bridge stopped")
                 except Exception as e:
+                    cleanup_errors.append(f"Bridge: {e}")
                     print(f"[!] Warning: Bridge cleanup failed: {e}")
 
+            # Cleanup main container
             if provisioned and provisioned.container_id:
                 try:
                     container = self.provisioner.docker_client.containers.get(
@@ -234,14 +299,22 @@ class AssessmentPipeline:
                     )
                     container.stop(timeout=2)
                     container.remove()
-                    print(f"[+] Container {provisioned.container_id[:12]} removed")
+                    print(f"[+] Container {provisioned.container_id[:12]} stopped and removed")
                 except Exception as e:
+                    cleanup_errors.append(f"Container {provisioned.container_id[:12]}: {e}")
                     print(f"[!] Warning: Container cleanup failed: {e}")
 
+            # Cleanup provisioner (mock containers)
             try:
                 await self.provisioner.cleanup()
+                if self.provisioner.mock_containers:
+                    print(f"[+] Mock containers cleaned up")
             except Exception as e:
+                cleanup_errors.append(f"Provisioner: {e}")
                 print(f"[!] Warning: Provisioner cleanup failed: {e}")
 
-            print("[+] Cleanup complete")
+            if cleanup_errors:
+                print(f"[!] Cleanup completed with {len(cleanup_errors)} warning(s)")
+            else:
+                print("[+] Cleanup complete - all resources released")
             print()

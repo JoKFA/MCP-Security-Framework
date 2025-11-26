@@ -1,4 +1,4 @@
-# Documentation Index & Summary
+ï»¿# Documentation Index & Summary
 
 **Version:** 0.4.0
 **Last Updated:** 2025-11-24
@@ -54,53 +54,53 @@
 
 ---
 
-## ðŸ—‚ï¸?Documentation Structure
+## ðŸ—‚ Documentation Structure
 
-```
+`
 docs/
-©À©¤©¤ README.md                          # Main documentation hub
-©À©¤©¤ ARCHITECTURE.md                    # System architecture (detailed)
-©À©¤©¤ WRAPPER_GUIDE.md                   # AMSAW v2 details
-©À©¤©¤ DETECTORS_GUIDE.md                 # Detector taxonomy + authoring
-©À©¤©¤ REPORTS_GUIDE.md                   # Reporting and CI/CD integration
-©À©¤©¤ API_REFERENCE.md                   # CLI/Python/Web APIs
-©À©¤©¤ OLD_AUTO_SANDBOX_ANALYSIS.md       # Historical: old vs new system
-©À©¤©¤ DOCUMENTATION_INDEX.md             # This file
-©¸©¤©¤ WEB_VIEW_README.md                 # Flask web UI reference
+â”œâ”€â”€ README.md                          # Main documentation hub
+â”œâ”€â”€ ARCHITECTURE.md                    # System architecture (detailed)
+â”œâ”€â”€ WRAPPER_GUIDE.md                   # AMSAW v2 details
+â”œâ”€â”€ DETECTORS_GUIDE.md                 # Detector taxonomy + authoring
+â”œâ”€â”€ REPORTS_GUIDE.md                   # Reporting and CI/CD integration
+â”œâ”€â”€ API_REFERENCE.md                   # CLI/Python/Web APIs
+â”œâ”€â”€ OLD_AUTO_SANDBOX_ANALYSIS.md       # Historical: old vs new system
+â”œâ”€â”€ DOCUMENTATION_INDEX.md             # This file
+â””â”€â”€ WEB_VIEW_README.md                 # Flask web UI reference
 
-©¸©¤©¤ archive/                           # Historical development docs
-    ©À©¤©¤ AMSAW_FULL_SNAPSHOT.md         # Development snapshot
-    ©À©¤©¤ AUTO_SANDBOX_IMPLEMENTATION.md  # Old implementation details
-    ©À©¤©¤ FIXES_APPLIED.md               # Development log
-    ©À©¤©¤ IMPLEMENTATION_STATUS.md        # Development log
-    ©À©¤©¤ REDESIGN_PLAN.md               # Original design doc (superseded by ARCHITECTURE.md)
-    ©À©¤©¤ SIDECAR_PATTERN.md             # Design exploration
-    ©À©¤©¤ UI_EVALUATION_2025-11-19.md    # UI exploration (keep bookmarked for next UI revamp)
-    ©¸©¤©¤ MCP_TEST_PLAYBOOK_2025-11-05.md # Test notes
-```
+â””â”€â”€ archive/                           # Historical development docs
+    â”œâ”€â”€ AMSAW_FULL_SNAPSHOT.md         # Development snapshot
+    â”œâ”€â”€ AUTO_SANDBOX_IMPLEMENTATION.md # Old implementation details
+    â”œâ”€â”€ FIXES_APPLIED.md               # Development log
+    â”œâ”€â”€ IMPLEMENTATION_STATUS.md       # Development log
+    â”œâ”€â”€ REDESIGN_PLAN.md               # Original design doc (superseded by ARCHITECTURE.md)
+    â”œâ”€â”€ SIDECAR_PATTERN.md             # Design exploration
+    â”œâ”€â”€ UI_EVALUATION_2025-11-19.md    # UI exploration (keep bookmarked for next UI revamp)
+    â””â”€â”€ MCP_TEST_PLAYBOOK_2025-11-05.md # Test notes
+`
 
 ---
 
 ## ðŸ“Š Documentation Cleanup Summary
 
-### Archived (Moved to `docs/archive/`)
+### Archived (Moved to docs/archive/)
 These docs served their purpose during development but are now superseded:
-- âœ?`AMSAW_FULL_SNAPSHOT.md` â†?Historical snapshot (166KB)
-- âœ?`AUTO_SANDBOX_IMPLEMENTATION.md` â†?Old implementation (30KB)
-- âœ?`FIXES_APPLIED.md` â†?Development log (11KB)
-- âœ?`IMPLEMENTATION_STATUS.md` â†?Development log (8KB)
-- âœ?`REDESIGN_PLAN.md` â†?Superseded by ARCHITECTURE.md (43KB)
-- âœ?`SIDECAR_PATTERN.md` â†?Design exploration (10KB)
-- âœ?`UI_EVALUATION_2025-11-19.md` â†?UI exploration (20KB)
-- âœ?`MCP_TEST_PLAYBOOK_2025-11-05.md` â†?Test notes (5KB)
+- AMSAW_FULL_SNAPSHOT.md - Historical snapshot (166KB)
+- AUTO_SANDBOX_IMPLEMENTATION.md - Old implementation (30KB)
+- FIXES_APPLIED.md - Development log (11KB)
+- IMPLEMENTATION_STATUS.md - Development log (8KB)
+- REDESIGN_PLAN.md - Superseded by ARCHITECTURE.md (43KB)
+- SIDECAR_PATTERN.md - Design exploration (10KB)
+- UI_EVALUATION_2025-11-19.md - UI exploration (20KB)
+- MCP_TEST_PLAYBOOK_2025-11-05.md - Test notes (5KB)
 
 ### Deleted
-- âœ?`CLOUD_ROADMAP.md` â†?Not relevant to current system
+- CLOUD_ROADMAP.md - Not relevant to current system
 
 ### Kept & Refactored
-- âœ?`README.md` â†?Completely rewritten (production-ready)
-- âœ?`ARCHITECTURE.md` â†?NEW comprehensive technical guide
-- âœ?`OLD_AUTO_SANDBOX_ANALYSIS.md` â†?Valuable historical analysis
+- README.md - Completely rewritten (production-ready)
+- ARCHITECTURE.md - NEW comprehensive technical guide
+- OLD_AUTO_SANDBOX_ANALYSIS.md - Valuable historical analysis
 
 ---
 
@@ -120,7 +120,7 @@ These docs served their purpose during development but are now superseded:
 
 ### Accessibility
 - Multiple entry points for different audiences
-- Progressive disclosure (overview â†?details)
+- Progressive disclosure (overview -> details)
 - Cross-references between documents
 - Searchable structure
 
@@ -148,7 +148,7 @@ These docs served their purpose during development but are now superseded:
 
 ## ðŸš€ Quick Command Reference
 
-```bash
+`ash
 # Installation
 git clone https://github.com/yourorg/mcp-security-framework
 cd mcp-security-framework
@@ -170,7 +170,7 @@ python mcpsf.py assess <source> --profile aggressive
 # Testing:
 pytest tests/unit/
 python tests/test_challenge1.py
-```
+`
 
 ---
 
@@ -195,7 +195,9 @@ python tests/test_challenge1.py
 - Batch scanning guide (revisit archive docs for inputs)
 - Web UI UX revamp (see archive/UI_EVALUATION_2025-11-19.md)
 
-## âœ?Documentation Checklist
+---
+
+## âœ… Documentation Checklist
 
 Before each release, ensure:
 - [ ] All version numbers updated
@@ -221,11 +223,9 @@ Before each release, ensure:
 
 - **Issues:** https://github.com/yourorg/mcp-security-framework/issues
 - **Discussions:** https://github.com/yourorg/mcp-security-framework/discussions
-- **Questions:** Tag with `documentation` label
+- **Questions:** Tag with documentation label
 
 ---
 
-**Documentation Status:** Production-ready âœ?
+**Documentation Status:** Production-ready
 **Next Update:** When new features ship (v0.5.0)
-
-
